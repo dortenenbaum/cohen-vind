@@ -2430,9 +2430,16 @@ addEventListener('resize',()=>{
 (function(){
   if(REDUCED || !matchMedia('(hover:hover) and (pointer:fine)').matches) return;
 
-  const OWN='#mapbox,.mappanel,.menu,select,textarea,[data-native-scroll]';
+  const OWN='#mapbox,.mappanel,.pscroll,.menu,.carousel,select,textarea,[data-native-scroll]';
   const LERP=0.105;                    /* how fast the page catches its target */
   let target=scrollY, current=scrollY, raf=0, driving=false;
+
+  /* the sheet asks for scroll-behavior:smooth, which makes every write
+     below start a native animation that the next frame replaces before
+     it arrives — the two easings fight and the page crawls. From here
+     on this loop is the only thing easing the page. */
+  document.documentElement.style.scrollBehavior='auto';
+  const put=y=>scrollTo({top:y,left:0,behavior:'instant'});
 
   const limit=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);
   const clamp=v=>Math.max(0,Math.min(limit(),v));
@@ -2441,11 +2448,11 @@ addEventListener('resize',()=>{
     const d=target-current;
     if(Math.abs(d)<0.4){
       current=target; driving=false; raf=0;
-      scrollTo(0,Math.round(current));
+      put(Math.round(current));
       return;
     }
     current+=d*LERP;
-    scrollTo(0,Math.round(current));
+    put(Math.round(current));
     raf=requestAnimationFrame(frame);
   }
 
