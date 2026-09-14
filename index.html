@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>כהן וינד ושות׳</title>
 <link rel="preload" as="font" type="font/otf" href="assets/fonts/SimplerPro_V3-Light.otf" crossorigin>
 <link rel="preload" as="font" type="font/otf" href="assets/fonts/SimplerPro_V3-Regular.otf" crossorigin>
@@ -44,6 +45,7 @@
   /* layout — 1920 breakpoint, 1740 content, 90px gutters */
   --maxw:1740px;
   --gutter:clamp(16px,4.6875vw,90px);
+  --hdr-h:91px;
   --cw:min(var(--maxw), 100vw - 2*var(--gutter));
 
   /* type — exact Figma values at 1920, scaled fluidly below it */
@@ -86,8 +88,42 @@ a{color:inherit;text-decoration:none}
 .meas{max-width:1149px}
 
 /* ---------- header ---------- */
-.hdr{position:sticky;top:0;z-index:60;background:var(--ground)}
-.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:91px}
+.hdr{position:sticky;top:0;z-index:60;background:var(--ground);
+  transition:background .5s var(--ease)}
+
+/* ---- header over the film ------------------------------------------
+   While the opener is still uncovered the bar has no ground of its own
+   and everything on it turns white. The logo mark steps aside rather
+   than being forced into white — it is five tones of terrain, and a
+   flat silhouette would throw that away — and returns when the bar
+   gets its ground back.
+   -------------------------------------------------------------------- */
+.brand{transition:gap .5s var(--ease)}
+.brand-mark{transition:width .5s var(--ease),opacity .38s var(--ease)}
+.brand-txt,.lang button,.burger,.burger i{
+  transition:color .5s var(--ease),background .5s var(--ease),box-shadow .5s var(--ease)}
+
+body.hdr-clear .hdr{background:transparent}
+body.hdr-clear .brand{gap:0}
+body.hdr-clear .brand-mark{width:0;opacity:0}
+body.hdr-clear .brand-txt{color:#fff}
+body.hdr-clear .brand-txt span{color:rgba(255,255,255,.72)}
+body.hdr-clear .lang button{color:rgba(255,255,255,.72)}
+body.hdr-clear .lang button[aria-pressed="true"]{color:#fff}
+body.hdr-clear .lang span{color:rgba(255,255,255,.45)}
+body.hdr-clear .burger{background:transparent;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+body.hdr-clear .burger i{background:#fff}
+body.hdr-clear .burger:hover{background:rgba(255,255,255,.16)}
+/* an open menu always needs its own ground */
+body.menu-open.hdr-clear .hdr{background:var(--ground)}
+body.menu-open.hdr-clear .brand{gap:13px}
+body.menu-open.hdr-clear .brand-mark{width:63px;opacity:1}
+body.menu-open.hdr-clear .brand-txt{color:var(--vind-text)}
+body.menu-open.hdr-clear .brand-txt span{color:var(--vind-60)}
+body.menu-open.hdr-clear .lang button{color:inherit}
+body.menu-open.hdr-clear .burger{background:var(--vind-light-b);box-shadow:none}
+body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:var(--hdr-h)}
 .brand{display:flex;align-items:center;gap:13px}
 .brand-mark{width:63px;height:63px;flex:none;display:block}
 .brand-txt{font-weight:700;font-size:var(--t-micro);line-height:18px;letter-spacing:.36px;color:var(--vind-text)}
@@ -152,8 +188,36 @@ a{color:inherit;text-decoration:none}
 
 /* ---------- home ---------- */
 .intro{padding-block:80px 40px;display:grid;gap:34px;justify-items:start}
-.hero{width:100%;height:clamp(280px,55.4vw,1064px);object-fit:cover;background:var(--vind-20)}
-video.hero{transform:scale(1.16);transform-origin:100% 100%}
+/* ---- the opener ----------------------------------------------------
+   The film fills the first screen and then stays exactly where it is.
+   Everything after it is opaque and sits one layer up, so scrolling
+   draws the page over the film like a curtain rather than pushing it
+   off the top. Sticky, not fixed — the film keeps its place in flow,
+   so the router can swap the page without leaving a ghost behind.
+   -------------------------------------------------------------------- */
+.opener{position:sticky;top:0;height:100svh;margin-block-start:calc(-1 * var(--hdr-h));
+  z-index:0;overflow:hidden;background:var(--ink)}
+.opener-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transform:scale(1.16);transform-origin:100% 100%}
+.opener-scrim{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,rgba(18,17,15,.66) 0%,rgba(18,17,15,.2) 38%,rgba(18,17,15,0) 66%),
+             linear-gradient(to bottom,rgba(18,17,15,.42) 0%,rgba(18,17,15,0) 24%)}
+.opener-txt{position:absolute;inset-inline:0;
+  inset-block-end:calc(clamp(30px,5.4vh,74px) + env(safe-area-inset-bottom,0px));
+  color:#fff;will-change:transform,opacity}
+.opener-name{font-weight:300;font-size:var(--t-hero);line-height:1.02;color:#fff;margin:0}
+.opener-name span{display:block;font-weight:400;font-size:.3em;letter-spacing:.08em;
+  color:rgba(255,255,255,.78);margin-block-start:.9em}
+
+/* the layer that climbs over the film */
+.over{position:relative;z-index:1;background:var(--paper)}
+
+@media (max-width:760px){
+  /* the floating contact buttons sit in the bottom corner on the reading
+     side; at phone gutters the title runs straight into them */
+  .opener-txt{inset-block-end:calc(118px + env(safe-area-inset-bottom,0px))}
+}
+@media (prefers-reduced-motion:reduce){ .opener-txt{transform:none!important;opacity:1!important} }
 .sec{padding-block:80px}
 .sec-head{display:grid;justify-items:start;gap:18px;margin-bottom:40px}
 .values{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;align-items:start}
@@ -229,14 +293,18 @@ img.icoimg.big{width:32px;height:32px}
 
 /* ---------- projects toolbar ---------- */
 .plan-bar{display:flex;flex-wrap:wrap;gap:10px;padding-block:20px 16px}
-.plan{display:inline-flex;align-items:center;gap:8px;background:var(--white);
-  border:1px solid var(--vind-40);border-radius:2px;padding:8px 12px;color:var(--vind-text);
+.plan{display:inline-flex;align-items:center;gap:8px;background:transparent;
+  border:1px solid var(--vind-80);border-radius:2px;padding:8px 12px;color:var(--vind-text);
   transition:border-color .18s var(--ease),color .18s var(--ease)}
 .plan:hover{border-color:var(--vind-dark)}
-.plan[aria-pressed="true"]{border-color:var(--vind-dark);color:var(--vind-dark)}
+/* the resting stroke is strong now, so the pressed tab doubles its own
+   weight with an inset ring rather than a thicker border — a wider
+   border would grow the box and nudge the whole row */
+.plan[aria-pressed="true"]{border-color:var(--vind-dark);color:var(--vind-dark);
+  box-shadow:inset 0 0 0 1px var(--vind-dark)}
 .badge{height:20px;min-width:30px;display:inline-flex;align-items:center;justify-content:center;
   padding:0 8px;border-radius:999px;box-sizing:border-box;
-  background:var(--vind-40);border:1px solid var(--vind-60);color:var(--vind-80);
+  background:transparent;border:1px solid var(--vind-80);color:var(--vind-text);
   font-size:var(--t-badge);line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums}
 .badge.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
 
@@ -246,7 +314,7 @@ img.icoimg.big{width:32px;height:32px}
 .count{display:inline-flex;align-items:center;gap:10px;margin-inline-end:6px;color:var(--vind-text)}
 
 .chip{position:relative;display:inline-flex;align-items:center;gap:8px;height:36px;padding:6px 14px;
-  border:1px solid var(--vind-40);border-radius:30px;background:var(--white);color:var(--vind-text);
+  border:1px solid var(--vind-80);border-radius:30px;background:transparent;color:var(--vind-text);
   transition:border-color .18s var(--ease),background .18s var(--ease),color .18s var(--ease)}
 .chip svg{width:16px;height:16px;color:currentColor;opacity:.85}
 .chip:hover{border-color:var(--vind-dark)}
@@ -272,7 +340,7 @@ img.icoimg.big{width:32px;height:32px}
 
 .views{display:flex;gap:10px}
 .view-btn{display:inline-flex;align-items:center;gap:8px;height:36px;padding:6px 14px;border-radius:30px;
-  border:1px solid var(--vind-40);background:var(--white);color:var(--vind-text);
+  border:1px solid var(--vind-80);background:transparent;color:var(--vind-text);
   transition:background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease)}
 .view-btn svg{width:16px;height:16px}
 .view-btn:hover{border-color:var(--vind-dark)}
@@ -625,7 +693,7 @@ td.go svg{width:17px;height:11px}
 .jobrow h3{margin:0;font-weight:300;font-size:var(--t-title);line-height:1.1;letter-spacing:.74px}
 .jobmeta{display:flex;flex-wrap:wrap;gap:8px 10px}
 .jobmeta span{display:inline-flex;align-items:center;gap:7px;height:32px;padding-inline:12px;border-radius:999px;
-  border:1px solid var(--vind-40);background:var(--white);font-size:var(--t-micro);color:var(--vind-text)}
+  border:1px solid var(--vind-80);background:transparent;font-size:var(--t-micro);color:var(--vind-text)}
 .jobmeta svg{width:13px;height:13px;color:var(--vind-80)}
 
 /* job detail + form */
@@ -1107,14 +1175,21 @@ const CAROUSEL = [
 
 function homeHTML(){
   return `
+  <div class="opener" id="opener">
+    <video class="opener-film" id="hero-film" poster="assets/hero.jpg" muted playsinline
+      preload="auto" disablepictureinpicture aria-label="הדמיית רחוב עירוני צפוף, מגובה הולך רגל"
+      ><source src="assets/hero.hevc.mp4" type='video/mp4; codecs="hvc1"'><source src="assets/hero.mp4" type="video/mp4"></video>
+    <div class="opener-scrim" aria-hidden="true"></div>
+    <div class="opener-txt" id="opener-txt"><div class="wrap">
+      <h1 class="opener-name">כהן וינד ושות׳<span>אדריכלות ותכנון ערים</span></h1>
+    </div></div>
+  </div>
+
+  <div class="over">
   <section class="wrap intro rv">
     <p class="t-display meas">משרד כהן וינד ושות׳ אדריכלות ובינוי ערים פועל בירושלים משנת 1996. המשרד עוסק במגוון פרויקטים עירוניים, אזוריים וארציים ברחבי הארץ. לקוחותינו הינם גופים עירוניים וממשלתיים לצד חברות פרטיות, המייצגים יחדיו קשת רחבה של נושאים וקבוצות בחברה הישראלית.</p>
     <a class="link-btn t-ui" href="#/projects" data-nav="projects">${icon('i-arrow')}<span>כל הפרוייקטים</span></a>
   </section>
-
-  <div class="rv rv-img"><video class="hero" id="hero-film" poster="assets/hero.jpg" muted playsinline
-      preload="auto" disablepictureinpicture aria-label="הדמיית רחוב עירוני צפוף, מגובה הולך רגל"
-      ><source src="assets/hero.hevc.mp4" type='video/mp4; codecs="hvc1"'><source src="assets/hero.mp4" type="video/mp4"></video></div>
 
   <section class="wrap sec">
     <div class="sec-head rv">
@@ -1181,7 +1256,8 @@ function homeHTML(){
       <p class="t-display meas">הזדמנות לצמוח. <span class="dim">אנחנו תמיד סקרנים לפגוש אנשים חדשים שמכירים את עבודותינו ומזדהים עם השקפת העולם שלנו.</span></p>
       <a class="link-btn t-ui" href="#/join" data-nav="join">${icon('i-arrow')}<span>משרות פנויות</span></a>
     </div>
-  </section>`;
+  </section>
+  </div>`;
 }
 
 /* ---------- projects ---------- */
@@ -1956,8 +2032,45 @@ const app = document.getElementById('app');
 function render(reveal=true){
   app.innerHTML = (VIEWS[state.page] || homeHTML)();
   renderMenu();
-  wireMap(); wireCarousels(); wireFilm();
+  wireMap(); wireCarousels(); wireFilm(); wireOpener();
   if(reveal) initReveal();
+}
+
+/* ---------- opener ---------------------------------------------------
+   Two things follow the first screen: the header drops its ground while
+   the film is still uncovered, and the title drifts up and dims as the
+   page closes over it. The header watches the covering layer rather
+   than the scroll position — the film is sticky, so its own box never
+   moves and would report nothing.
+   --------------------------------------------------------------------- */
+let openerRAF=0, openerTick=null, openerWantClear=false;
+/* the bar only goes clear once the preloader has handed the logo over —
+   until then the logo needs a full-size target to fly into */
+function applyHdrClear(){
+  document.body.classList.toggle('hdr-clear', openerWantClear && veilDone);
+}
+function wireOpener(){
+  if(openerTick){ removeEventListener('scroll',openerTick); removeEventListener('resize',openerTick); openerTick=null }
+  const over=document.querySelector('.over'), txt=document.getElementById('opener-txt');
+  if(!over){ openerWantClear=false; applyHdrClear(); return }
+
+  const HDR=110;                       /* the bar's own height, plus a little */
+  const step=()=>{
+    openerRAF=0;
+    /* measure the covering layer, not the film: the film is sticky, so
+       its own box never moves and would report nothing */
+    openerWantClear = over.getBoundingClientRect().top > HDR;
+    applyHdrClear();
+    if(txt && !REDUCED){
+      const p=Math.min(1,Math.max(0,scrollY/(innerHeight||1)));
+      txt.style.transform=`translateY(${-p*90}px)`;
+      txt.style.opacity=String(1-Math.min(1,p*1.45));
+    }
+  };
+  openerTick=()=>{ if(!openerRAF) openerRAF=requestAnimationFrame(step) };
+  addEventListener('scroll',openerTick,{passive:true});
+  addEventListener('resize',openerTick,{passive:true});
+  step();
 }
 function refresh(reveal=false){ const y=scrollY; render(reveal); scrollTo(0,y); }
 function go(page){
@@ -1972,8 +2085,8 @@ function go(page){
 
 /* ---------- menu ---------- */
 const menu=document.getElementById('menu'), burger=document.getElementById('burger');
-const openMenu =()=>{renderMenu();menu.hidden=false;menu.classList.add('open');burger.setAttribute('aria-expanded','true');burger.setAttribute('aria-label','סגירת תפריט')};
-const closeMenu=()=>{menu.classList.remove('open');menu.hidden=true;burger.setAttribute('aria-expanded','false');burger.setAttribute('aria-label','פתיחת תפריט')};
+const openMenu =()=>{renderMenu();menu.hidden=false;menu.classList.add('open');document.body.classList.add('menu-open');burger.setAttribute('aria-expanded','true');burger.setAttribute('aria-label','סגירת תפריט')};
+const closeMenu=()=>{menu.classList.remove('open');menu.hidden=true;document.body.classList.remove('menu-open');burger.setAttribute('aria-expanded','false');burger.setAttribute('aria-label','פתיחת תפריט')};
 burger.addEventListener('click',()=> burger.getAttribute('aria-expanded')==='true'?closeMenu():openMenu());
 
 const closePops = except => document.querySelectorAll('.pop.open').forEach(p=>{if(p!==except)p.classList.remove('open')});
@@ -2290,7 +2403,8 @@ function liftVeil(){
   const target=document.querySelector('.hdr .brand');
   document.body.classList.remove('booting');
   document.body.classList.add('booted');
-  if(REDUCED || !lock || !target){ veilDone=true; startFilm(); veil.classList.add('gone'); setTimeout(()=>{veil.hidden=true},600); return; }
+  if(REDUCED || !lock || !target){ veilDone=true; startFilm(); applyHdrClear();
+    veil.classList.add('gone'); setTimeout(()=>{veil.hidden=true},600); return; }
 
   const a=lock.getBoundingClientRect(), b=target.getBoundingClientRect();
   const k=b.height/a.height;
@@ -2301,7 +2415,7 @@ function liftVeil(){
   requestAnimationFrame(()=>{
     lock.style.transform=`translate(${dx}px,${dy}px) scale(${k})`;
     setTimeout(()=>veil.classList.add('gone'),470);
-    setTimeout(()=>{veil.hidden=true},1100);
+    setTimeout(()=>{veil.hidden=true; applyHdrClear();},1100);
   });
 }
 
