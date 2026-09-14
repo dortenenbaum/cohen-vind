@@ -1,19 +1,19 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Icon Avatar">
 <g id="Property 1=detailed, active=no">
-<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" fill="#D8D8D8"/>
-<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" stroke="#BDBDBD"/>
+<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" fill="#CFCCC4"/>
+<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" stroke="#B3B3AF"/>
 <g id="Layer_1" clip-path="url(#clip0_65_1793)">
 <g id="Group 34">
-<rect id="Rectangle 59" x="12.5723" y="12.5713" width="6.85711" height="6.85711" fill="#808080"/>
-<rect id="Rectangle 60" x="12.5723" y="8" width="6.85711" height="3.0476" fill="#808080"/>
-<rect id="Rectangle 61" x="12.5723" y="20.9531" width="6.85711" height="3.0476" fill="#808080"/>
-<rect id="Rectangle 62" x="20.9531" y="8" width="3.0476" height="3.0476" fill="#808080"/>
-<rect id="Rectangle 63" x="20.9531" y="20.9531" width="3.0476" height="3.0476" fill="#808080"/>
-<rect id="Rectangle 64" x="8" y="8" width="3.0476" height="3.0476" fill="#808080"/>
-<rect id="Rectangle 65" x="8" y="20.9531" width="3.0476" height="3.0476" fill="#808080"/>
-<rect id="Rectangle 66" x="20.9531" y="12.5713" width="3.0476" height="6.85711" fill="#808080"/>
-<rect id="Rectangle 67" x="8" y="12.5713" width="3.0476" height="6.85711" fill="#808080"/>
+<rect id="Rectangle 59" x="12.5723" y="12.5713" width="6.85711" height="6.85711" fill="#72726F"/>
+<rect id="Rectangle 60" x="12.5723" y="8" width="6.85711" height="3.0476" fill="#72726F"/>
+<rect id="Rectangle 61" x="12.5723" y="20.9531" width="6.85711" height="3.0476" fill="#72726F"/>
+<rect id="Rectangle 62" x="20.9531" y="8" width="3.0476" height="3.0476" fill="#72726F"/>
+<rect id="Rectangle 63" x="20.9531" y="20.9531" width="3.0476" height="3.0476" fill="#72726F"/>
+<rect id="Rectangle 64" x="8" y="8" width="3.0476" height="3.0476" fill="#72726F"/>
+<rect id="Rectangle 65" x="8" y="20.9531" width="3.0476" height="3.0476" fill="#72726F"/>
+<rect id="Rectangle 66" x="20.9531" y="12.5713" width="3.0476" height="6.85711" fill="#72726F"/>
+<rect id="Rectangle 67" x="8" y="12.5713" width="3.0476" height="6.85711" fill="#72726F"/>
 </g>
 </g>
 </g>
