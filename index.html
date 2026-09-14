@@ -25,6 +25,7 @@
   --paper-2:#e9e6de;
   --ink:#282828;
   --accent:#fa3600;
+  --accent-tint:#ffd8cc;    /* its wash, sitting behind a mark */
   --accent-ink:#ffffff;
 
   /* Figma library names, repointed at the paper system, so every rule
@@ -116,7 +117,7 @@ body.hdr-clear .brand-neg{opacity:1}
 body.hdr-clear .brand-txt{color:#fff}
 body.hdr-clear .brand-txt span{color:rgba(255,255,255,.72)}
 body.hdr-clear .lang button{color:rgba(255,255,255,.72)}
-body.hdr-clear .lang button[aria-pressed="true"]{color:#fff}
+body.hdr-clear .lang button[aria-pressed="true"]{color:#fff;border-bottom-color:#fff}
 body.hdr-clear .lang span{color:rgba(255,255,255,.45)}
 body.hdr-clear .burger{background:transparent;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
 body.hdr-clear .burger i{background:#fff}
@@ -153,7 +154,8 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
 .burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-6.8px) rotate(-45deg)}
 .lang{display:flex;align-items:center;gap:5px;color:var(--vind-80)}
 .lang button{padding-bottom:3px}
-.lang button[aria-pressed="true"]{color:var(--vind-text);border-bottom:1.5px solid var(--vind-dark)}
+.lang button[aria-pressed="true"]{color:var(--vind-text);border-bottom:1.5px solid var(--vind-dark);
+  transition:color .5s var(--ease),border-color .5s var(--ease)}
 
 /* ---------- menu ---------- */
 .menu{position:fixed;inset:0;z-index:55;background:var(--ground);padding-top:91px;display:none;overflow:auto}
@@ -171,17 +173,12 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
 .menu nav a .ar{width:30px;height:14px;flex:none;opacity:0;transform:translateX(14px);
   transition:opacity .22s var(--ease),transform .22s var(--ease)}
 .menu nav a .ar svg{display:block;width:100%;height:100%}
-.menu-jump .ico{flex:none}
 .menu nav a:hover,.menu nav a[aria-current="page"]{color:var(--vind-dark)}
 .menu nav a:hover{padding-inline-end:14px}
 .menu nav a:hover .ar,.menu nav a[aria-current="page"] .ar{opacity:1;transform:none}
 .menu nav a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--accent)}
 .menu-side{display:grid;gap:14px;animation:navIn .5s var(--ease) backwards;animation-delay:.2s}
-.menu-label{color:var(--vind-80);letter-spacing:.36px;padding-bottom:6px;border-bottom:1px solid var(--vind-20)}
-.menu-jump{display:flex;align-items:center;gap:12px;width:100%;padding:11px 4px;text-align:start;
-  border-bottom:1px solid var(--vind-20);color:var(--vind-text);transition:color .18s var(--ease),padding-inline .2s var(--ease)}
-.menu-jump:hover{color:var(--vind-dark);padding-inline-start:10px}
-.menu-jump .lbl{flex:1}
+
 .menu-contact{display:grid;gap:6px;margin-top:18px;color:var(--vind-80)}
 .menu-contact a:hover{color:var(--vind-dark)}
 
@@ -218,12 +215,6 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
   inset-block-end:calc(clamp(30px,5.4vh,74px) + env(safe-area-inset-bottom,0px));
   color:#fff;will-change:transform,opacity}
 .opener-claim{font-weight:300;font-size:var(--t-hero);line-height:1.02;color:#fff;margin:0}
-.opener-sig{display:flex;align-items:center;gap:13px;margin:clamp(20px,2.4vh,34px) 0 0}
-.opener-sig img{width:clamp(38px,3.3vw,54px);height:auto;flex:none;
-  filter:drop-shadow(0 1px 3px rgba(0,0,0,.45))}
-.opener-sig>span{font-weight:700;font-size:var(--t-micro);line-height:18px;
-  letter-spacing:.36px;color:#fff}
-.opener-sig>span>span{display:block;font-weight:400;color:rgba(255,255,255,.74)}
 
 /* the layer that climbs over the film */
 .over{position:relative;z-index:1;background:var(--paper)}
@@ -237,15 +228,15 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
 .sec{padding-block:80px}
 .sec-head{display:grid;justify-items:start;gap:18px;margin-bottom:40px}
 .values{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;align-items:start}
-.value .rv-img{display:block;margin-inline-start:auto;width:74.1%}
-.value h3{margin:20px 0 10px}
-/* the practice draws plans — so do its icons: one stroke weight, one lime accent */
-.vicon{display:block;width:100%;aspect-ratio:415/300;background:var(--white)}
-.vicon .ln{fill:none;stroke:var(--vind-60);stroke-width:1.25}
-.vicon .ln2{fill:none;stroke:var(--vind-40);stroke-width:1.25}
-.vicon .dash{fill:none;stroke:var(--vind-60);stroke-width:1.25;stroke-dasharray:5 4}
-.vicon .fill{fill:var(--vind-light-b);stroke:var(--vind-dark);stroke-width:1.25}
-.vicon .dot{fill:var(--vind-dark)}
+/* no illustration on these — the practice's own annotation instead:
+   a measured rule opening across the column, with the survey mark
+   sitting on its head */
+.value-rule{position:relative;height:1px;background:var(--vind-60);
+  transform-origin:100% 50%}
+.value-rule::before{content:"";position:absolute;inset-block-start:-3.5px;
+  inset-inline-start:0;width:8px;height:8px;background:var(--accent)}
+.value h3{margin:clamp(22px,2.2vw,34px) 0 10px}
+/* the practice draws plans — so do its icons: one stroke weight, one accent */
 .rule{height:1px;background:var(--vind-20)}
 
 /* selected-projects carousel: right-aligned track that bleeds off the left page edge */
@@ -293,9 +284,11 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
 /* ---------- attribute rows (label + 25.6px avatar) ---------- */
 .attrs{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:flex-start}
 .attr{display:flex;align-items:center;gap:8px}
+/* same two tones as the exported pin and icon-avatar assets, so a
+   drawn marker and a placed one are indistinguishable */
 .ico{width:25.6px;height:25.6px;border-radius:50%;display:grid;place-items:center;flex:none;
-  background:var(--vind-light);border:1px solid var(--vind-medium);color:var(--vind-dark)}
-.ico.off{background:var(--vind-40);border-color:var(--vind-60);color:var(--vind-80)}
+  background:var(--accent-tint);border:1px solid var(--accent);color:var(--accent)}
+.ico.off{background:var(--vind-40);border-color:var(--vind-80);color:var(--vind-80)}
 .ico svg{width:12px;height:12px}
 img.icoimg{width:25.6px;height:25.6px;flex:none;display:block;object-fit:contain;aspect-ratio:1}
 img.icoimg.big{width:32px;height:32px}
@@ -348,7 +341,7 @@ img.icoimg.big{width:32px;height:32px}
 .pop.open{display:block;animation:popIn .18s var(--ease)}
 @keyframes popIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .opt{display:flex;align-items:center;gap:12px;width:100%;padding:8px 10px;border-radius:6px;text-align:start;transition:background .15s var(--ease)}
-.opt:hover{background:#f6ffe4}
+.opt:hover{background:var(--vind-10)}
 .opt .lbl{flex:1}
 .opt .box{width:20px;height:20px;border-radius:4px;border:1.5px solid var(--vind-40);flex:none;display:grid;place-items:center;color:transparent}
 .opt[aria-checked="true"] .box{background:var(--vind-dark);border-color:var(--vind-dark);color:var(--vind-light)}
@@ -554,6 +547,8 @@ td.go svg{width:17px;height:11px}
     transition-delay:calc(var(--li,0) * var(--rv-step) + 90ms)}
 
   .rv-pre .rv-img::after{transform:scaleY(1);transform-origin:bottom}
+  .rv-pre .value-rule{transform:scaleX(0)}
+  .rv-in  .value-rule{transform:scaleX(1);transition:transform .95s var(--ease-rv) .1s}
   .rv-in  .rv-img::after{transform:scaleY(0);transform-origin:top;
     transition:transform .82s var(--ease-rv);
     transition-delay:calc(var(--li,0) * var(--rv-step))}
@@ -1104,46 +1099,6 @@ function attrs(p,order){
 /* ---------- home ---------- */
 const VALUE_TXT = 'הפרויקט מציע פיתוח של מרחב אורבני חדש בצפון העיר אור-יהודה, באזור המהווה עתודת הקרקע';
 
-/* --- icon language ---------------------------------------------------------
-   Three plan fragments in one hand: a single 1.25 stroke, the Vind greys for
-   what exists, one lime figure for what the practice adds. Nothing generic —
-   contours, parcels and a renewed block are what this office actually draws.  */
-const VICONS = {
-  contour: `<svg class="vicon" viewBox="0 0 415 300" aria-hidden="true">
-    <g transform="translate(207.5 150)">
-      <path class="ln2" d="M-150-52c46-26 104-26 150-4 42 20 82 18 118 2"/>
-      <path class="ln2" d="M-150-26c44-24 100-24 146-4 42 19 82 17 122 1"/>
-      <path class="ln" d="M-150 0c42-22 96-22 142-3 44 18 86 16 126 0"/>
-      <path class="ln" d="M-150 26c40-20 92-20 138-2 46 18 90 16 130 1"/>
-      <path class="ln" d="M-150 52c38-18 88-18 134-1 48 17 94 15 134 1"/>
-      <path class="dash" d="M22-96V96"/>
-      <circle class="fill" cx="22" cy="0" r="17"/>
-      <circle class="dot" cx="22" cy="0" r="3"/>
-    </g></svg>`,
-  parcels: `<svg class="vicon" viewBox="0 0 415 300" aria-hidden="true">
-    <g transform="translate(207.5 150)">
-      <path class="ln" d="M-150 62h300"/>
-      <path class="dash" d="M-150 78h300"/>
-      <rect class="ln" x="-150" y="-30" width="62" height="92"/>
-      <rect class="ln" x="-82" y="-54" width="62" height="116"/>
-      <rect class="fill" x="-14" y="-78" width="62" height="140"/>
-      <rect class="ln" x="54" y="-46" width="42" height="108"/>
-      <rect class="ln" x="102" y="-30" width="48" height="92"/>
-      <circle class="dot" cx="17" cy="74" r="3.5"/>
-    </g></svg>`,
-  renewal: `<svg class="vicon" viewBox="0 0 415 300" aria-hidden="true">
-    <g transform="translate(207.5 150)">
-      <path class="dash" d="M-138-58h132v116h-132z"/>
-      <path class="dash" d="M18-58h120v116H18z"/>
-      <path class="ln2" d="M-138 0h132M-72-58v116"/>
-      <path class="fill" d="M18-86h44v144H18z"/>
-      <path class="fill" d="M70-58h32v116H70z"/>
-      <path class="ln" d="M110-30h28v88h-28z"/>
-      <path class="ln" d="M-150 74h300"/>
-      <circle class="dot" cx="40" cy="-98" r="3.5"/>
-      <path class="ln" d="M40-94v8"/>
-    </g></svg>`
-};
 const VALUES = [
   ['renewal','ראייה חדשנית ומחדשת (מובילה?)'],
   ['parcels','תכנון אחראי והוגן'],
@@ -1172,8 +1127,6 @@ function homeHTML(){
     <div class="opener-scrim" aria-hidden="true"></div>
     <div class="opener-txt" id="opener-txt"><div class="wrap">
       <p class="opener-claim">תכנון רגיש למקום, מחויב לחברה</p>
-      <p class="opener-sig"><img src="assets/logomark-neg.svg" alt="" width="63" height="63">
-        <span>כהן וינד ושות׳<span>אדריכלות ותכנון ערים</span></span></p>
     </div></div>
   </div>
 
@@ -1191,7 +1144,7 @@ function homeHTML(){
     </div>
     <div class="values">
       ${VALUES.map(v=>`<article class="value rv">
-        <div class="rv-img">${VICONS[v[0]]}</div>
+        <div class="value-rule" aria-hidden="true"></div>
         <h3 class="t-title">${esc(v[1])}</h3>
         <p class="t-body dim">${esc(VALUE_TXT)}</p>
       </article>`).join('')}
@@ -1854,11 +1807,6 @@ const NAV = [
 const VIEWS = {home:homeHTML, projects:projectsHTML, project:projectHTML, vision:visionHTML,
                team:teamHTML, about:aboutHTML, join:joinHTML, job:jobHTML, article:articleHTML};
 function renderMenu(){
-  const jump = ['master','detailed','exec'].map(k=>
-    `<button class="menu-jump t-ui" data-jump="${k}">
-       ${av(k)}<span class="lbl">${PLAN[k].label}</span>
-       <span class="badge on">${P.filter(p=>p.plan===k).length}</span>
-     </button>`).join('');
   document.getElementById('menu').innerHTML = `
     <div class="wrap menu-in">
       <nav>
@@ -1867,8 +1815,6 @@ function renderMenu(){
           <span>${label}</span><span class="ar">${icon('i-arrow')}</span></a>`).join('')}
       </nav>
       <aside class="menu-side">
-        <div class="menu-label t-micro">לפי סוג תוכנית</div>
-        ${jump}
         <div class="menu-contact t-ui">
           <span>זבולון 2, תל אביב 4685002</span>
           <a href="#/">074-7015130</a>
@@ -2289,9 +2235,6 @@ document.addEventListener('click',e=>{
 
   const ex=t.closest('[data-ex]');
   if(ex){ ex.closest('.prow')?.classList.toggle('open'); return }
-
-  const jump=t.closest('[data-jump]');
-  if(jump){ state.plan=jump.dataset.jump; state.view='grid'; state.page='projects'; closeMenu(); render(); scrollTo(0,0); return }
 
   if(t.closest('[data-mapkey]')){
     const k=prompt('מפתח Google Maps JavaScript API:\n(נשמר בדפדפן שלכם בלבד)');
