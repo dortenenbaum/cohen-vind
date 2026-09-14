@@ -1,0 +1,16 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Icon Avatar">
+<g id="Property 1=urban renewal, active=no">
+<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" fill="#D8D8D8"/>
+<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" stroke="#BDBDBD"/>
+<g id="Layer_1" clip-path="url(#clip0_65_1793)">
+<path id="Vector" d="M26 16C26 10.4759 21.5241 6 16 6C10.4759 6 6 10.4759 6 16C6 21.5241 10.4759 26 16 26V23.931C11.6207 23.9241 8.07586 20.3655 8.08276 15.9862C8.08966 11.6069 11.6483 8.06207 16.0276 8.06897C20.4069 8.07586 23.9517 11.6345 23.9448 16.0138C23.9414 18.631 22.6448 21.0759 20.4828 22.5517V18.4138H18.4138V24.9655C18.4138 25.5379 18.8759 26 19.4483 26H26V23.931H22.0724C24.5448 22.0448 26 19.1103 26 16Z" fill="#808080"/>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_65_1793">
+<rect width="20" height="20" fill="white" transform="translate(6 6)"/>
+</clipPath>
+</defs>
+</svg>

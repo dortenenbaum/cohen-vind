@@ -1,0 +1,16 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Icon Avatar">
+<g id="Property 1=business, active=no">
+<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" fill="#D8D8D8"/>
+<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" stroke="#BDBDBD"/>
+<g id="Layer_1" clip-path="url(#clip0_65_1793)">
+<path id="Vector" d="M26 13.8243V12.7601C26 11.9561 25.2463 11.3176 24.358 11.3176H20.0511V9.75676C20.0511 9.33108 19.6474 9 19.1898 9H12.8102C12.3257 9 11.9489 9.35473 11.9489 9.75676V11.3176H7.64199C6.72678 11.3176 6 11.9797 6 12.7601V21.5574C6 22.3615 6.7537 23 7.64199 23H24.358C25.2732 23 26 22.3378 26 21.5574V14.652V13.8243ZM12.9358 10.2548C12.9358 10.0656 13.1242 9.90002 13.3395 9.90002H18.763C18.9784 9.90002 19.1668 10.0656 19.1668 10.2548V11.3176H12.9358V10.2548Z" fill="#808080"/>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_65_1793">
+<rect width="20" height="14" fill="white" transform="translate(6 9)"/>
+</clipPath>
+</defs>
+</svg>
