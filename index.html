@@ -46,6 +46,7 @@
   --maxw:1740px;
   --gutter:clamp(16px,4.6875vw,90px);
   --hdr-h:91px;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
   --cw:min(var(--maxw), 100vw - 2*var(--gutter));
 
   /* type — exact Figma values at 1920, scaled fluidly below it */
@@ -98,14 +99,20 @@ a{color:inherit;text-decoration:none}
    flat silhouette would throw that away — and returns when the bar
    gets its ground back.
    -------------------------------------------------------------------- */
-.brand{transition:gap .5s var(--ease)}
-.brand-mark{transition:width .5s var(--ease),opacity .38s var(--ease)}
+/* two marks in one slot: the positive, and the white knockout that
+   reads over film. Cross-fading them beats filtering one into the
+   other — five tones of terrain do not survive being flattened. */
+.brand-lockup{position:relative;width:63px;height:63px;flex:none}
+.brand-mark,.brand-neg{position:absolute;inset:0;width:100%;height:100%;display:block;
+  transition:opacity .42s var(--ease)}
+/* the knockout has to hold over a pale sky as well as a dark facade */
+.brand-neg{opacity:0;filter:drop-shadow(0 1px 3px rgba(0,0,0,.45))}
 .brand-txt,.lang button,.burger,.burger i{
   transition:color .5s var(--ease),background .5s var(--ease),box-shadow .5s var(--ease)}
 
 body.hdr-clear .hdr{background:transparent}
-body.hdr-clear .brand{gap:0}
-body.hdr-clear .brand-mark{width:0;opacity:0}
+body.hdr-clear .brand-mark{opacity:0}
+body.hdr-clear .brand-neg{opacity:1}
 body.hdr-clear .brand-txt{color:#fff}
 body.hdr-clear .brand-txt span{color:rgba(255,255,255,.72)}
 body.hdr-clear .lang button{color:rgba(255,255,255,.72)}
@@ -116,8 +123,8 @@ body.hdr-clear .burger i{background:#fff}
 body.hdr-clear .burger:hover{background:rgba(255,255,255,.16)}
 /* an open menu always needs its own ground */
 body.menu-open.hdr-clear .hdr{background:var(--ground)}
-body.menu-open.hdr-clear .brand{gap:13px}
-body.menu-open.hdr-clear .brand-mark{width:63px;opacity:1}
+body.menu-open.hdr-clear .brand-mark{opacity:1}
+body.menu-open.hdr-clear .brand-neg{opacity:0}
 body.menu-open.hdr-clear .brand-txt{color:var(--vind-text)}
 body.menu-open.hdr-clear .brand-txt span{color:var(--vind-60)}
 body.menu-open.hdr-clear .lang button{color:inherit}
@@ -187,7 +194,12 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
 .link-btn:hover svg{transform:translateX(-4px)}
 
 /* ---------- home ---------- */
-.intro{padding-block:80px 40px;display:grid;gap:34px;justify-items:start}
+/* the statement that meets you off the film — centred, and at the
+   largest size the page owns */
+.intro{padding-block:clamp(90px,13vh,190px) clamp(60px,8vh,120px);
+  display:grid;gap:clamp(28px,3.4vh,48px);justify-items:center;text-align:center}
+.intro .meas{max-width:32ch;font-size:var(--t-hero);line-height:1.08;font-weight:300;
+  text-wrap:balance}
 /* ---- the opener ----------------------------------------------------
    The film fills the first screen and then stays exactly where it is.
    Everything after it is opaque and sits one layer up, so scrolling
@@ -200,14 +212,18 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
 .opener-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   transform:scale(1.16);transform-origin:100% 100%}
 .opener-scrim{position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(to top,rgba(18,17,15,.66) 0%,rgba(18,17,15,.2) 38%,rgba(18,17,15,0) 66%),
-             linear-gradient(to bottom,rgba(18,17,15,.42) 0%,rgba(18,17,15,0) 24%)}
+  background:linear-gradient(to top,rgba(16,15,13,.80) 0%,rgba(16,15,13,.46) 30%,rgba(16,15,13,.12) 58%,rgba(16,15,13,0) 78%),
+             linear-gradient(to bottom,rgba(16,15,13,.52) 0%,rgba(16,15,13,.12) 16%,rgba(16,15,13,0) 30%)}
 .opener-txt{position:absolute;inset-inline:0;
   inset-block-end:calc(clamp(30px,5.4vh,74px) + env(safe-area-inset-bottom,0px));
   color:#fff;will-change:transform,opacity}
-.opener-name{font-weight:300;font-size:var(--t-hero);line-height:1.02;color:#fff;margin:0}
-.opener-name span{display:block;font-weight:400;font-size:.3em;letter-spacing:.08em;
-  color:rgba(255,255,255,.78);margin-block-start:.9em}
+.opener-claim{font-weight:300;font-size:var(--t-hero);line-height:1.02;color:#fff;margin:0}
+.opener-sig{display:flex;align-items:center;gap:13px;margin:clamp(20px,2.4vh,34px) 0 0}
+.opener-sig img{width:clamp(38px,3.3vw,54px);height:auto;flex:none;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.45))}
+.opener-sig>span{font-weight:700;font-size:var(--t-micro);line-height:18px;
+  letter-spacing:.36px;color:#fff}
+.opener-sig>span>span{display:block;font-weight:400;color:rgba(255,255,255,.74)}
 
 /* the layer that climbs over the film */
 .over{position:relative;z-index:1;background:var(--paper)}
@@ -564,38 +580,24 @@ td.go svg{width:17px;height:11px}
    the wordmark wipes in beside them, a hairline tracks the real
    load, then the whole lockup flies into the header.
    ============================================================ */
-.veil{position:fixed;inset:0;z-index:120;background:var(--ground);
-  display:grid;place-items:center;transition:opacity .55s var(--ease-rv)}
+/* ---- preloader -----------------------------------------------------
+   A hairline drawing itself across the top of the sheet and a number
+   counting under it. Nothing else: the site itself is the reveal, and
+   a logo held up for two seconds only delays it.
+   -------------------------------------------------------------------- */
+.veil{position:fixed;inset:0;z-index:120;background:var(--paper);
+  transition:opacity .6s var(--ease-rv)}
 .veil[hidden]{display:none}
 .veil.gone{opacity:0;pointer-events:none}
-.veil-lock{display:flex;align-items:center;gap:clamp(16px,1.8vw,28px);
-  transform-origin:100% 50%;will-change:transform}
-.veil-mark{width:clamp(92px,9.2vw,158px);height:clamp(92px,9.2vw,158px);flex:none;display:block}
-.veil-mark .bnd{transform-box:view-box;transform:translateY(70px);opacity:0}
-.veil-txt{display:grid;gap:2px}
-.vl{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}
-.vl>i{display:block;font-style:normal;font-weight:700;letter-spacing:.6px;
-  font-size:clamp(23px,2.45vw,42px);line-height:1.16;color:var(--vind-text);
-  transform:translateY(108%)}
-.vl.sub>i{font-weight:400;color:var(--vind-60)}
-.veil-rule{position:absolute;inset-block-end:clamp(40px,7vh,90px);inset-inline:var(--gutter);
-  height:1px;background:var(--vind-20);overflow:hidden}
-.veil-rule span{display:block;height:100%;width:0;background:var(--vind-dark);
-  transform-origin:100% 50%;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.veil-rule{position:absolute;inset-block-start:0;inset-inline-start:0;
+  height:1.5px;width:0;background:var(--ink);will-change:width}
+.veil-num{position:absolute;inset-block-end:clamp(18px,2.6vh,34px);
+  inset-inline-start:clamp(16px,2vw,30px);direction:ltr;
+  font:400 clamp(11px,.78vw,14px)/1 var(--mono);letter-spacing:.06em;
+  color:var(--ink);font-variant-numeric:tabular-nums}
+.veil.lift .veil-num{opacity:0;transition:opacity .28s linear}
 
-.veil.run .veil-mark .bnd{opacity:1;transform:translateY(0);
-  transition:transform 1.05s var(--ease-rv),opacity .5s linear;
-  transition-delay:calc(var(--b) * 95ms)}
-.veil.run .vl>i{transform:translateY(0);
-  transition:transform .95s var(--ease-rv);transition-delay:calc(340ms + var(--l) * 90ms)}
-.veil.lift .veil-rule{opacity:0;transition:opacity .3s linear}
-.veil.lift .veil-lock{transition:transform .95s cubic-bezier(.72,0,.16,1)}
-
-@media (prefers-reduced-motion:reduce){
-  .veil-mark .bnd{transform:none;opacity:1}
-  .vl>i{transform:none}
-  .veil{transition:none}
-}
+@media (prefers-reduced-motion:reduce){ .veil{transition:none} }
 
 
 /* ============================================================
@@ -870,7 +872,10 @@ td.go svg{width:17px;height:11px}
 <header class="hdr">
   <div class="wrap hdr-in">
     <a class="brand" href="#/" data-nav="home">
-      <svg class="brand-mark" viewBox="0 0 63 63" aria-hidden="true"><use href="#cv-mark"/></svg>
+      <span class="brand-lockup">
+        <svg class="brand-mark" viewBox="0 0 63 63" aria-hidden="true"><use href="#cv-mark"/></svg>
+        <img class="brand-neg" src="assets/logomark-neg.svg" alt="" width="63" height="63">
+      </span>
       <span class="brand-txt">כהן וינד ושות׳<span>אדריכלות ותכנון ערים</span></span>
     </a>
     <div class="hdr-left">
@@ -883,23 +888,8 @@ td.go svg{width:17px;height:11px}
 <div class="menu" id="menu" hidden></div>
 
 <div class="veil" id="veil" aria-hidden="true">
-  <div class="veil-lock" id="veil-lock">
-    <svg class="veil-mark" id="veil-mark" viewBox="0 0 63 63" aria-hidden="true">
-      <clipPath id="cv-disc-v"><circle cx="31.5" cy="31.5" r="31.5"/></clipPath>
-      <g clip-path="url(#cv-disc-v)"><g transform="translate(-26.165,-28.287)">
-      <path class="bnd b1" d="M99.4185 7.57678e-05H1.44376V34.6684H99.4185V7.57678e-05Z" fill="#E4E1D9"/>
-      <path class="bnd b2" d="M91.5687 28.7013L88.8363 28.5118L83.561 28.3223L81.2045 29.3584L77.436 28.9825C77.436 28.9825 72.6314 30.1133 72.1608 30.1133C71.6901 30.1133 63.8719 31.4337 63.8719 31.4337L60.5741 31.339L55.7695 31.7149L53.2266 30.9599L51.4356 31.3358L49.5529 30.4892L47.5755 31.0547L46.4446 31.5253L44.7483 31.6201L43.3363 31.2442L39.8521 32.2803L38.1558 31.7149L35.5181 31.1494L33.3512 30.0186L29.112 28.5118H26.0037L23.2713 29.0772L20.8232 29.6427L19.0321 28.417L16.8652 28.0411L15.4532 27.3809L6.97482 32.751L3.58222 45.7528C3.58222 45.7528 5.65443 51.2176 6.31463 51.4987C6.97482 51.783 70.9414 57.9996 70.9414 57.9996L104.103 53.5709L104.858 45.1873L91.575 28.7013H91.5687Z" fill="#CFCCC4"/>
-      <path class="bnd b3" d="M101.554 47.1965L96.9387 46.8206L96.8439 47.4808L95.1476 47.386H92.2289L91.4739 47.9515L89.2122 47.8567L88.0813 47.2913L86.9504 47.386L85.1594 47.1965L84.1233 46.9122L82.9924 47.5724L81.2013 48.419L79.4103 48.8897L77.9035 48.1347L76.6779 49.4551L75.0763 49.0792L73.7559 49.1739L71.8733 48.6085L68.765 47.6672L64.431 45.8761L62.1693 46.3468L61.228 45.8761L58.2144 47.007L55.1061 46.8175L51.3376 45.9709L49.1707 45.8761L47.3796 46.5363L45.9676 46.3468L45.3074 47.2881L42.8593 46.8175L39.6562 46.4415C39.6562 46.4415 38.5253 45.9709 38.2442 45.9709C37.9631 45.9709 35.6066 46.2552 35.6066 46.2552L34.1946 46.5363L33.2532 46.1604L31.2758 46.6311L29.9586 47.1017L28.2623 47.1965L26.0953 46.6311L23.9283 46.1604L22.4216 46.3499L21.4802 45.595L20.2546 46.2552L19.4996 45.6897L17.9929 45.2191L16.9568 45.595L15.0709 45.2191L11.3972 44.5589L7.34755 44.3693H1.31731L7.57678e-05 55.8612L0.189606 61.7967C0.189606 61.7967 3.67381 66.8856 4.42878 66.9772C5.18374 67.072 74.8015 73.5729 74.8015 73.5729L102.969 71.5007L101.557 47.1965H101.554Z" fill="#B3B3AF"/>
-      <path class="bnd b4" d="M99.8228 67.988H98.5434L96.4712 67.1667H94.7749L92.9839 66.696H91.2876L87.895 65.3756C87.895 65.3756 85.6332 64.2447 85.3521 64.15C85.0678 64.0552 83.3747 64.15 83.3747 64.15L81.6784 64.1089V64.9997L79.4166 64.1089H78.3805L77.534 64.5259L76.4031 64.1089H73.5759L72.1639 64.8102L70.5624 64.1089H67.7352L65.7578 63.3982H64.5322L63.2149 64.0584L61.6134 63.3982L60.2014 64.3395L58.5998 65.1861H56.3381L54.9261 65.2808L53.6057 65.6915H51.6283L49.6508 66.1274H48.0493L46.5425 66.5981L45.0358 66.6928L43.529 66.8824L42.3981 66.9771L40.6071 67.2583L38.816 66.7876L37.9694 67.1635H36.2731L34.3905 66.6928L33.0701 65.6915V67.1635L30.1513 65.6915H28.2686L27.2325 66.2222L24.219 65.1861L22.4279 65.6915L21.2971 64.5259L16.5872 63.9604L15.0804 63.8657L13.3841 63.395L10.9329 63.9604H8.76591L7.54028 64.4311L6.69371 63.8657L4.9595 62.8675L3.58541 65.4261L4.33721 74.5141L12.8566 85.6112C12.8566 85.6112 48.1472 92.4122 48.9938 92.4122C49.8404 92.4122 89.6924 91.0918 89.6924 91.0918L97.3241 80.636L99.8291 67.9848L99.8228 67.988Z" fill="#72726F"/>
-      <path class="bnd b5" d="M92.2071 82.1869C92.2071 82.1869 90.018 81.0814 88.9788 82.4112C87.9395 83.7443 86.9129 82.5565 86.9129 82.5565L85.6904 82.6418L84.7902 83.2641L83.5677 83.3494L83.1602 84.2655L81.9377 84.3508L79.9634 84.4897L76.3908 84.7393L75.2883 83.8137L73.273 83.3526L70.2374 83.163L69.6151 82.3796L68.6769 82.446L67.8651 81.6531L66.9237 81.7194L66.0771 81.7795L65.4422 80.7844L63.5975 80.0642L61.9991 80.1748L60.7324 79.603L59.3772 79.1323L57.2671 80.0358L56.2405 80.2032L54.7432 80.4022L54.0198 79.5082L52.5541 80.1779L51.6728 81.0908L49.9892 81.3025L49.0762 81.7447L48.2644 82.2754L46.3849 82.4081L45.1024 82.9703L43.8231 82.2091L42.1521 81.2867L41.3339 80.399L38.9837 80.5633L37.0095 80.7023L36.1029 79.9157L34.4129 80.0326L31.9711 80.2032L29.3082 79.9157L27.4603 80.5159L26.1715 80.9834C26.1715 80.9834 25.8271 81.4794 25.0501 81.1572C24.273 80.835 23.6065 80.7844 23.6065 80.7844L22.5988 81.233L21.6985 81.8616L20.435 82.705L19.4558 82.2059L17.9111 81.7479L16.5022 81.8458L15.5641 81.9121L13.893 80.9897L12.4273 81.6594L11.1448 82.2217L27.2139 109.429C27.2139 109.429 69.3402 116.306 69.7225 116.372C70.1047 116.438 83.4224 102.947 83.4224 102.947L91.4332 87.8444L92.204 82.1869H92.2071Z" fill="#414140"/>
-      </g></g>
-    </svg>
-    <div class="veil-txt">
-      <span class="vl"><i>כהן וינד ושות׳</i></span>
-      <span class="vl sub"><i>אדריכלות ותכנון ערים</i></span>
-    </div>
-  </div>
-  <div class="veil-rule"><span id="veil-bar"></span></div>
+  <span class="veil-rule" id="veil-bar"></span>
+  <span class="veil-num" id="veil-num">0</span>
 </div>
 
 <main id="app"></main>
@@ -1181,7 +1171,9 @@ function homeHTML(){
       ><source src="assets/hero.hevc.mp4" type='video/mp4; codecs="hvc1"'><source src="assets/hero.mp4" type="video/mp4"></video>
     <div class="opener-scrim" aria-hidden="true"></div>
     <div class="opener-txt" id="opener-txt"><div class="wrap">
-      <h1 class="opener-name">כהן וינד ושות׳<span>אדריכלות ותכנון ערים</span></h1>
+      <p class="opener-claim">תכנון רגיש למקום, מחויב לחברה</p>
+      <p class="opener-sig"><img src="assets/logomark-neg.svg" alt="" width="63" height="63">
+        <span>כהן וינד ושות׳<span>אדריכלות ותכנון ערים</span></span></p>
     </div></div>
   </div>
 
@@ -2376,49 +2368,46 @@ document.addEventListener('keydown',e=>{
 const veil=document.getElementById('veil');
 function runVeil(){
   if(!veil) return Promise.resolve();
-  veil.querySelectorAll('.veil-mark .bnd').forEach((p,i)=>p.style.setProperty('--b',i));
-  veil.querySelectorAll('.vl').forEach((l,i)=>l.style.setProperty('--l',i));
-  const bar=document.getElementById('veil-bar');
-  if(REDUCED){ veil.classList.add('run'); return new Promise(r=>setTimeout(r,240)); }
+  const bar=document.getElementById('veil-bar'), num=document.getElementById('veil-num');
+  let shown=0;
+  const paint=n=>{
+    n=Math.max(shown,Math.min(100,n));   /* a loading number never goes backwards */
+    shown=n;
+    if(bar) bar.style.width=n+'%';
+    if(num) num.textContent=String(Math.round(n));
+  };
+  if(REDUCED){ paint(100); return Promise.resolve(); }
 
-  requestAnimationFrame(()=>veil.classList.add('run'));
-
-  /* the hairline tracks what has actually arrived, not a fake timer */
+  /* the line tracks what has actually arrived, not a fake timer */
   const assets=[...document.images].filter(i=>i.getAttribute('loading')!=='lazy');
   let done=0;
-  const tick=()=>{ done++; if(bar) bar.style.width=Math.min(100,Math.round(done/Math.max(assets.length,1)*100))+'%'; };
-  assets.forEach(i=>i.complete?tick():(i.addEventListener('load',tick,{once:true}),i.addEventListener('error',tick,{once:true})));
-  if(bar && !assets.length) bar.style.width='100%';
+  const tick=()=>{ done++; paint(done/Math.max(assets.length,1)*100); };
+  assets.forEach(i=>i.complete?tick():(i.addEventListener('load',tick,{once:true}),
+                                       i.addEventListener('error',tick,{once:true})));
+  if(!assets.length) paint(100);
+
+  /* creep forward while nothing is landing, so the count never stalls */
+  const creep=setInterval(()=>paint(shown+(96-shown)*0.06),110);
 
   const ready=new Promise(r=>{ document.readyState==='complete' ? r() : addEventListener('load',r,{once:true}); });
-  const floor=new Promise(r=>setTimeout(r,1750));    /* let the terrain finish settling */
-  const ceiling=new Promise(r=>setTimeout(r,3400));  /* never hold the page hostage */
-  return Promise.race([Promise.all([ready,floor]),ceiling]).then(()=>{ if(bar) bar.style.width='100%'; });
+  const floor=new Promise(r=>setTimeout(r,900));     /* long enough to read */
+  const ceiling=new Promise(r=>setTimeout(r,3200));  /* never hold the page hostage */
+  return Promise.race([Promise.all([ready,floor]),ceiling])
+    .then(()=>{ clearInterval(creep); paint(100); return new Promise(r=>setTimeout(r,260)); });
 }
 
-/* fly the lockup into the header slot, then lift the veil */
+/* lift the sheet and let the film through */
 function liftVeil(){
   if(!veil) return;
-  const lock=document.getElementById('veil-lock');
-  const target=document.querySelector('.hdr .brand');
   document.body.classList.remove('booting');
   document.body.classList.add('booted');
-  if(REDUCED || !lock || !target){ veilDone=true; startFilm(); applyHdrClear();
-    veil.classList.add('gone'); setTimeout(()=>{veil.hidden=true},600); return; }
-
-  const a=lock.getBoundingClientRect(), b=target.getBoundingClientRect();
-  const k=b.height/a.height;
-  /* both lockups sit on their right edge, so match right edge + vertical middle */
-  const dx=b.right-a.right, dy=(b.top+b.height/2)-(a.top+a.height/2);
   veil.classList.add('lift');
-  veilDone=true; startFilm();
-  requestAnimationFrame(()=>{
-    lock.style.transform=`translate(${dx}px,${dy}px) scale(${k})`;
-    setTimeout(()=>veil.classList.add('gone'),470);
-    setTimeout(()=>{veil.hidden=true; applyHdrClear();},1100);
-  });
+  veilDone=true; startFilm(); applyHdrClear();
+  veil.classList.add('gone');
+  setTimeout(()=>{ veil.hidden=true },700);
 }
 
+if('scrollRestoration' in history) history.scrollRestoration='manual';
 if(!REDUCED) document.body.classList.add('booting');
 render();
 runVeil().then(liftVeil);
@@ -2428,4 +2417,50 @@ addEventListener('resize',()=>{
   clearTimeout(resplit);
   resplit=setTimeout(()=>document.querySelectorAll('[data-split]').forEach(splitLines),180);
 },{passive:true});
+
+/* ---------- inertial scroll -----------------------------------------
+   The wheel sets a destination rather than a position, and the page
+   eases toward it — so a flick glides to rest instead of stopping dead,
+   and the film underneath drifts rather than jerks. Same idea as Lenis,
+   written out here so the site keeps no CDN dependency.
+
+   Anything with its own scrolling — the map, its panel, the menu — is
+   left to the browser, as is a pinch or a ⌘-wheel.
+   -------------------------------------------------------------------- */
+(function(){
+  if(REDUCED || !matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+
+  const OWN='#mapbox,.mappanel,.menu,select,textarea,[data-native-scroll]';
+  const LERP=0.105;                    /* how fast the page catches its target */
+  let target=scrollY, current=scrollY, raf=0, driving=false;
+
+  const limit=()=>Math.max(0,document.documentElement.scrollHeight-innerHeight);
+  const clamp=v=>Math.max(0,Math.min(limit(),v));
+
+  function frame(){
+    const d=target-current;
+    if(Math.abs(d)<0.4){
+      current=target; driving=false; raf=0;
+      scrollTo(0,Math.round(current));
+      return;
+    }
+    current+=d*LERP;
+    scrollTo(0,Math.round(current));
+    raf=requestAnimationFrame(frame);
+  }
+
+  addEventListener('wheel',e=>{
+    if(e.ctrlKey||e.metaKey||e.defaultPrevented) return;
+    if(e.target.closest && e.target.closest(OWN)) return;
+    e.preventDefault();
+    if(!driving){ target=current=scrollY; driving=true; }
+    target=clamp(target + e.deltaY*(e.deltaMode===1?18:e.deltaMode===2?innerHeight:1));
+    if(!raf) raf=requestAnimationFrame(frame);
+  },{passive:false});
+
+  /* keyboard, scrollbar, and the router's own jumps all move the page
+     without us — adopt wherever they left it */
+  addEventListener('scroll',()=>{ if(!driving) target=current=scrollY },{passive:true});
+  addEventListener('resize',()=>{ if(!driving) target=current=scrollY },{passive:true});
+})();
 </script>
