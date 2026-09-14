@@ -21,25 +21,27 @@
      and one hot accent replaces the lime — used on marks, never as a
      surface.
      ------------------------------------------------------------------ */
-  --paper:#f2f0ea;
-  --paper-2:#e9e6de;
-  --ink:#282828;
-  --accent:#fa3600;
-  --accent-tint:#ffd8cc;    /* its wash, sitting behind a mark */
+  --paper:#f6f2eb;          /* wool   — was #f2f0ea */
+  --paper-2:#ede6d8;        /* linen  — was #e9e6de */
+  --ink:#302620;            /* slate  — was #282828 */
+  --accent:#7a3a20;         /* clay   — was #fa3600 */
+  --accent-tint:#e8dbd1;    /* its wash, sitting behind a mark */
   --accent-ink:#ffffff;
+  --walnut:#6b5a48;         /* secondary text and small caps labels */
+  --sand:#d4c9b4;           /* hairlines */
 
   /* Figma library names, repointed at the paper system, so every rule
      in the sheet restyles without being touched. */
   --vind-light-b:var(--paper-2);
-  --vind-light:#efece4;
-  --vind-medium:#cfccc4;
+  --vind-light:#ede6d8;
+  --vind-medium:#d4c9b4;
   --vind-dark:var(--ink);
   --vind-10:#f6f4ef;        /* was used twice but never defined */
   --vind-20:#e4e1d9;
   --vind-40:#cfccc4;
   --vind-60:#b3b3af;
   --vind-80:#72726f;
-  --vind-text:#414140;
+  --vind-text:#302620;
   --white:#ffffff;
   --ground:var(--paper);
 
@@ -60,6 +62,7 @@
   --t-badge:clamp(11px,0.625vw,12px);      /* 12 / 1.2                  */
 
   --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-settle:cubic-bezier(.76,0,.24,1);
   color-scheme:light;
 }
 
@@ -137,47 +140,90 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
 .brand-txt{font-weight:700;font-size:var(--t-micro);line-height:18px;letter-spacing:.36px;color:var(--vind-text)}
 .brand-txt span{display:block;color:var(--vind-60)}
 .hdr-left{display:flex;align-items:center;gap:20px;flex-direction:row-reverse}
-.burger{width:46px;height:46px;border-radius:10px;background:var(--vind-light-b);
-  display:grid;align-content:center;justify-items:end;gap:5px;padding-inline-end:12px;
-  transition:background .22s var(--ease),border-radius .22s var(--ease)}
-.burger:hover{background:var(--vind-medium);border-radius:15px}
-.burger i{display:block;height:1.8px;background:var(--vind-dark);border-radius:2px;
-  transition:width .28s var(--ease),transform .28s var(--ease),opacity .18s var(--ease)}
-.burger i:nth-child(1){width:22px}
-.burger i:nth-child(2){width:15px}
-.burger i:nth-child(3){width:9px}
-.burger:hover i{width:22px}
-.burger[aria-expanded="true"]{justify-items:center;padding-inline-end:0;border-radius:15px}
-.burger[aria-expanded="true"] i{width:22px}
-.burger[aria-expanded="true"] i:nth-child(1){transform:translateY(6.8px) rotate(45deg)}
-.burger[aria-expanded="true"] i:nth-child(2){opacity:0;transform:scaleX(.2)}
-.burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-6.8px) rotate(-45deg)}
+/* A bare glyph, not a button: three 1px rules in a 20x13 box, drawn in
+   currentColor so the header's existing over-the-film logic keeps driving
+   it. The 44px pseudo-element is the tap target the visible mark is too
+   small to provide. */
+.burger{width:20px;height:13px;position:relative;background:none;border:0;padding:0;
+  color:var(--vind-text);cursor:pointer;
+  transition:opacity var(--ease) .2s}
+.burger:hover{opacity:.6}
+.burger:before{content:"";position:absolute;top:50%;left:50%;width:44px;height:44px;
+  transform:translate(-50%,-50%)}
+.burger i{position:absolute;left:0;width:100%;height:1px;background:currentColor;
+  transition:transform .4s var(--ease),opacity .3s var(--ease)}
+.burger i:nth-child(1){top:0}
+.burger i:nth-child(2){top:6px}
+.burger i:nth-child(3){top:12px}
+.burger[aria-expanded="true"] i:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.burger[aria-expanded="true"] i:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
 .lang{display:flex;align-items:center;gap:5px;color:var(--vind-80)}
 .lang button{padding-bottom:3px}
 .lang button[aria-pressed="true"]{color:var(--vind-text);border-bottom:1.5px solid var(--vind-dark);
   transition:color .5s var(--ease),border-color .5s var(--ease)}
 
 /* ---------- menu ---------- */
-.menu{position:fixed;inset:0;z-index:55;background:var(--ground);padding-top:91px;display:none;overflow:auto}
-.menu.open{display:block;animation:menuIn .28s var(--ease)}
-@keyframes menuIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-.menu-in{display:grid;grid-template-columns:minmax(0,1fr) clamp(260px,24vw,400px);gap:clamp(24px,4vw,80px);
-  padding-block:clamp(20px,3.4vw,56px) clamp(24px,4vw,64px);align-items:start}
-.menu nav{display:grid}
-.menu nav a{display:flex;align-items:center;justify-content:space-between;gap:24px;
-  font-weight:300;font-size:var(--t-display);line-height:1.2;letter-spacing:-.46px;color:var(--vind-text);
-  padding-block:clamp(8px,.7vw,14px);border-bottom:1px solid var(--vind-20);
-  transition:color .2s var(--ease),padding-inline .25s var(--ease);
+/* A drawer off the left edge rather than a full-screen takeover: a
+   translucent warm panel over a heavy backdrop blur, so the page stays
+   legible behind it. Left, not the reading side — it opens from under the
+   burger, which sits on the left in this header. */
+.menu-backdrop{position:fixed;inset:0;z-index:98;background:rgba(22,17,13,.15);
+  opacity:0;visibility:hidden;
+  transition:opacity .5s var(--ease-rv),visibility 0s .5s}
+.menu-backdrop.open{opacity:1;visibility:visible;
+  transition:opacity .5s var(--ease-rv),visibility 0s}
+
+.menu{position:fixed;top:0;bottom:0;left:0;z-index:99;
+  width:min(420px,86vw);padding:120px 56px 56px;
+  display:flex;flex-direction:column;
+  background:rgba(246,242,235,.5);
+  -webkit-backdrop-filter:blur(26px) saturate(125%) brightness(1.1);
+  backdrop-filter:blur(26px) saturate(125%) brightness(1.1);
+  color:var(--vind-text);
+  box-shadow:0 0 60px rgba(22,17,13,0);
+  transform:translateX(-100%);
+  transition:transform .6s var(--ease-settle),box-shadow .6s var(--ease-settle)}
+.menu.open{transform:translateX(0);box-shadow:0 0 60px rgba(22,17,13,.18)}
+/* without backdrop-filter the panel has to carry its own ground */
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  .menu{background:rgba(246,242,235,.94)}
+}
+.menu-label{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--walnut);margin:0 0 36px}
+.menu-in{display:flex;flex-direction:column;flex:1;min-height:0}
+.menu nav{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.menu nav a{position:relative;display:block;text-align:start;text-decoration:none;
+  font-family:var(--font-display,inherit);font-weight:300;
+  font-size:clamp(22px,2.6vw,28px);line-height:1.15;letter-spacing:-.01em;
+  color:var(--vind-text);padding-block:7px;
+  transition:opacity .4s var(--ease),transform .5s var(--ease-settle);
   animation:navIn .42s var(--ease) backwards;animation-delay:calc(var(--i) * 45ms)}
 @keyframes navIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.menu nav a .ar{width:30px;height:14px;flex:none;opacity:0;transform:translateX(14px);
-  transition:opacity .22s var(--ease),transform .22s var(--ease)}
-.menu nav a .ar svg{display:block;width:100%;height:100%}
-.menu nav a:hover,.menu nav a[aria-current="page"]{color:var(--vind-dark)}
-.menu nav a:hover{padding-inline-end:14px}
-.menu nav a:hover .ar,.menu nav a[aria-current="page"] .ar{opacity:1;transform:none}
-.menu nav a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--accent)}
-.menu-side{display:grid;gap:14px;animation:navIn .5s var(--ease) backwards;animation-delay:.2s}
+.menu nav a .ar{display:none}
+.menu nav a:hover{opacity:.6;transform:translateX(-8px)}
+.menu nav a[aria-current="page"]{opacity:1}
+/* the current page is marked by a rule in the margin, not a colour */
+.menu nav a[aria-current="page"]:before{content:"";position:absolute;top:50%;
+  inset-inline-start:-20px;width:10px;height:1px;background:var(--walnut)}
+.menu-side{margin-top:auto;padding-top:40px;display:flex;flex-direction:column;gap:6px;
+  animation:navIn .5s var(--ease) backwards;animation-delay:.2s}
+.menu-contact{display:flex;flex-direction:column;gap:6px}
+.menu-contact a{font-size:13px;font-weight:300;color:var(--vind-text);text-decoration:none;
+  width:fit-content;transition:color .4s var(--ease)}
+.menu-contact a:hover{color:var(--walnut)}
+.menu-contact span{font-size:11px;font-weight:300;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--walnut)}
+/* close control, mirroring the reference's two crossed rules */
+.menu-close{position:absolute;top:clamp(24px,4vh,40px);inset-inline-end:clamp(24px,5vw,40px);
+  width:32px;height:32px;background:none;border:0;cursor:pointer;z-index:1}
+.menu-close:before{content:"";position:absolute;top:50%;left:50%;width:44px;height:44px;
+  transform:translate(-50%,-50%)}
+.menu-close span{position:absolute;top:50%;left:6px;display:block;width:20px;height:1px;
+  background:var(--walnut);transform:rotate(45deg);transition:background .3s var(--ease)}
+.menu-close span:after{content:"";position:absolute;display:block;width:20px;height:1px;
+  background:var(--walnut);transform:rotate(-90deg)}
+.menu-close:hover span,.menu-close:hover span:after{background:var(--vind-text)}
 
 .menu-contact{display:grid;gap:6px;margin-top:18px;color:var(--vind-80)}
 .menu-contact a:hover{color:var(--vind-dark)}
@@ -206,8 +252,16 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
    -------------------------------------------------------------------- */
 .opener{position:sticky;top:0;height:100svh;margin-block-start:calc(-1 * var(--hdr-h));
   z-index:0;overflow:hidden;background:var(--ink)}
+/* The reference keeps its hero permanently in slow motion — 45s from
+   scale(1) to scale(1.2), linear, alternating, so it breathes in and back
+   out over a minute and a half and never settles. Ours plays a film that
+   then holds its closing frame, and this is what keeps that frame alive.
+   It sits on a wrapper because the film's own transform is written inline
+   by the parallax on every scroll frame. */
+.opener-zoom{position:absolute;inset:0;animation:opener-zoom 45s linear infinite alternate}
+@keyframes opener-zoom{from{transform:scale(1)}to{transform:scale(1.2)}}
 .opener-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  transform:scale(1.16);transform-origin:100% 100%}
+  transform:scale(1.16);transform-origin:100% 100%;will-change:transform}
 .opener-scrim{position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to top,rgba(16,15,13,.80) 0%,rgba(16,15,13,.46) 30%,rgba(16,15,13,.12) 58%,rgba(16,15,13,0) 78%),
              linear-gradient(to bottom,rgba(16,15,13,.52) 0%,rgba(16,15,13,.12) 16%,rgba(16,15,13,0) 30%)}
@@ -215,6 +269,32 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
   inset-block-end:calc(clamp(30px,5.4vh,74px) + env(safe-area-inset-bottom,0px));
   color:#fff;will-change:transform,opacity}
 .opener-claim{font-weight:300;font-size:var(--t-hero);line-height:1.02;color:#fff;margin:0}
+.opener-lede{min-width:0}
+/* the practice's name, set small over the film — the same wording the
+   header lockup carries, as type rather than the mark */
+.opener-kicker{font-weight:400;font-size:var(--t-micro);line-height:1.4;letter-spacing:.36px;
+  color:rgba(255,255,255,.72);margin:0 0 10px}
+
+/* the claim keeps the reading side, the scroll cue takes the empty left
+   corner. Source order puts the claim first so it still reads first; in
+   RTL flex that lands it on the right and the cue on the left. */
+.opener-row{display:flex;align-items:flex-end;justify-content:space-between;gap:28px}
+/* Three chevrons stacked on the same spot, each starting 300ms after the
+   last, so the cue reads as a run of arrows falling rather than one
+   blinking. overflow stays visible: the travel is longer than the box and
+   clipping it cuts the glyph in half at the end of each pass. */
+.opener-scroll{flex:none;position:relative;width:20px;height:40px;padding:0;border:0;
+  background:none;color:#fff;cursor:pointer;overflow:visible}
+.opener-scroll svg{position:absolute;inset-inline-start:0;top:0;display:block;
+  width:20px;height:15.2px;animation:opener-arrow 2s linear infinite}
+.opener-scroll svg:nth-of-type(2){animation-delay:.3s}
+.opener-scroll svg:nth-of-type(3){animation-delay:.6s}
+/* the chevron drifts down through its own box, fading in and back out */
+@keyframes opener-arrow{
+  0%  {opacity:0;transform:translateY(0);animation-timing-function:ease-in-out}
+  50% {opacity:1;animation-timing-function:ease-in-out}
+  100%{opacity:0;transform:translateY(40px);animation-timing-function:ease-in-out}
+}
 
 /* the layer that climbs over the film */
 .over{position:relative;z-index:1;background:var(--paper)}
@@ -224,9 +304,15 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
      side; at phone gutters the title runs straight into them */
   .opener-txt{inset-block-end:calc(118px + env(safe-area-inset-bottom,0px))}
 }
-@media (prefers-reduced-motion:reduce){ .opener-txt{transform:none!important;opacity:1!important} }
+@media (prefers-reduced-motion:reduce){
+  .opener-txt{transform:none!important;opacity:1!important}
+  .opener-scroll svg{animation:none;opacity:1}
+  .opener-zoom{animation:none}
+  .opener-film{transform:scale(1.16)!important}
+}
 .sec{padding-block:80px}
 .sec-head{display:grid;justify-items:start;gap:18px;margin-bottom:40px}
+.sec-head.mid{justify-items:center;text-align:center}
 .values{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;align-items:start}
 /* no illustration on these — the practice's own annotation instead:
    a measured rule opening across the column, with the survey mark
@@ -241,28 +327,41 @@ body.menu-open.hdr-clear .burger i{background:var(--vind-dark)}
 
 /* selected-projects carousel: right-aligned track that bleeds off the left page edge */
 .crsl{position:relative}
-.cbtn{position:absolute;transform:translateY(-50%);width:104px;height:104px;border-radius:50%;z-index:6;
-  background:radial-gradient(circle at 50% 50%,
-    rgba(0,0,0,.50) 0%, rgba(0,0,0,.38) 38%, rgba(0,0,0,.14) 68%, rgba(0,0,0,0) 100%);
-  color:#fff;display:grid;place-items:center;opacity:0;pointer-events:none;
-  transition:opacity .22s var(--ease),background .22s var(--ease),transform .18s var(--ease)}
-.cbtn svg{width:27px;height:17px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.55))}
+.cbtn{position:absolute;top:0;width:20%;z-index:6;border:0;background:none;
+  padding:0 30px;direction:ltr;
+  color:#fff;display:flex;align-items:center;
+  opacity:0;pointer-events:none;transition:opacity .3s ease-in-out}
+.cbtn svg{width:39px;height:21px;filter:drop-shadow(0 1.5px .75px rgba(0,0,0,.8))}
 .crsl:hover .cbtn,.cbtn:focus-visible{opacity:1;pointer-events:auto}
-.cbtn:hover{background:radial-gradient(circle at 50% 50%,
-  rgba(0,0,0,.66) 0%, rgba(0,0,0,.52) 38%, rgba(0,0,0,.2) 68%, rgba(0,0,0,0) 100%)}
 .cbtn[disabled]{opacity:0!important;pointer-events:none}
-.cbtn.prev{inset-inline-start:4px;transform:translateY(-50%) scaleX(-1)}
-.cbtn.next{inset-inline-end:4px}
+.cbtn.prev{right:calc(var(--gutter) * -1);justify-content:flex-end}
+.cbtn.prev svg{transform:scaleX(-1)}
+.cbtn.next{left:calc(var(--gutter) * -1);justify-content:flex-start}
 @media (hover:none){.cbtn{opacity:1;pointer-events:auto}}
-.carousel{display:flex;gap:30px;overflow-x:auto;overscroll-behavior-x:contain;
+/* One slide holds the middle of the frame with both neighbours showing at
+   the edges. The side padding is whatever is left over once the slide has
+   taken its share, so the first and last cards centre like the rest; the
+   numbers live in that margin, turned on their end, which is why what you
+   read in the peek zones are the neighbours' numbers. */
+/* The side padding and the slide width have to agree, and a percentage on
+   the slide would resolve against the box the padding just shrank. So the
+   padding alone sets the peek and the slide simply fills what is left:
+   10% either side leaves a slide 80% of the rail, the reference's ratio. */
+.crsl{--csl-peek:10%;--csl-gap:30px}
+.carousel{display:flex;gap:var(--csl-gap);overflow-x:auto;overscroll-behavior-x:contain;
   scroll-snap-type:x mandatory;scrollbar-width:none;cursor:grab;
-  margin-inline-end:calc(var(--gutter) * -1);padding-bottom:4px}
+  padding-inline:var(--csl-peek);padding-bottom:4px;
+  margin-inline:calc(var(--gutter) * -1)}
 .carousel::-webkit-scrollbar{display:none}
 .carousel.dragging{cursor:grabbing;scroll-snap-type:none}
-.cslide{flex:none;scroll-snap-align:start;display:block}
-.cslide.w1152{width:calc(var(--cw) * .66207)}
-.cslide.w1111{width:calc(var(--cw) * .63866)}
-.cslide .shot{overflow:hidden;background:var(--vind-20);height:calc(var(--cw) * .36954)}
+.crsl .cslide{flex:none;width:100%;scroll-snap-align:center;display:block;position:relative;
+  padding-inline:38px}
+.csl-num{position:absolute;inset-inline-start:2px;top:0;
+  font-size:16px;line-height:1;letter-spacing:.04em;color:var(--vind-80);
+  transform:rotate(90deg);transform-origin:50% 50%;white-space:nowrap;
+  transition:color .3s var(--ease)}
+.cslide .shot{overflow:hidden;background:var(--vind-20)}
+.crsl .shot{aspect-ratio:847/466}
 .cslide .shot img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
 .cslide:hover .shot img{transform:scale(1.03)}
 .cslide .meta{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:10px}
@@ -377,6 +476,41 @@ img.icoimg.big{width:32px;height:32px}
 
 /* list */
 .tablewrap{overflow:visible}
+
+/* ---- projects index ------------------------------------------------
+   Five columns on a shared grid so the header and every row share one
+   set of tracks. Rules are hairlines; the only hover feedback is the
+   row dimming and the picture that rides the cursor.
+   -------------------------------------------------------------------- */
+.windex{position:relative;margin-top:clamp(40px,6vh,64px)}
+.windex-head,.windex-row{display:grid;grid-template-columns:80px 1fr 1fr 140px 100px;gap:24px}
+.windex-head{padding:0 0 20px;border-bottom:.5px solid var(--sand)}
+.windex-head span{font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--walnut);text-align:start}
+.windex-head .sortable{cursor:pointer;transition:color .3s var(--ease)}
+.windex-head .sortable:hover{color:var(--vind-text)}
+.windex-row{padding:26px 0;border-bottom:.5px solid var(--sand);text-decoration:none;
+  color:inherit;transition:opacity .3s var(--ease)}
+.windex-row:hover{opacity:.7}
+.windex-row:focus-visible{outline:2px solid var(--vind-text);outline-offset:-2px}
+.wx-year{font-size:12px;font-weight:300;letter-spacing:.04em;color:var(--walnut)}
+.wx-title{font-size:13px;font-weight:400;letter-spacing:.02em;color:var(--vind-text)}
+.wx-place{font-size:12px;font-weight:300;letter-spacing:.02em;color:var(--vind-text)}
+.wx-type{font-size:11px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--walnut)}
+.wx-size{font-size:12px;font-weight:300;letter-spacing:.04em;color:var(--walnut);text-align:end}
+/* the preview rides the pointer; it is never in the way, so it takes no events */
+.windex-preview{position:absolute;top:0;left:0;z-index:10;width:280px;height:180px;
+  overflow:hidden;pointer-events:none;visibility:hidden;opacity:0;
+  transition:opacity .3s var(--ease)}
+.windex-preview.tall{width:203px;height:360px}
+.windex-preview.on{visibility:visible;opacity:1}
+.windex-preview img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:900px){
+  .windex-head,.windex-row{grid-template-columns:60px 1fr 1fr 120px;gap:16px}
+  .wx-size{display:none}
+  .windex-preview{display:none}
+}
+@media (prefers-reduced-motion:reduce){ .windex-preview{display:none} }
 table{width:100%;border-collapse:collapse;table-layout:auto}
 thead th{background:var(--vind-light);color:var(--vind-dark);font-weight:400;text-align:start;
   height:50px;padding:0 16px;white-space:nowrap;border-bottom:.5px solid var(--vind-dark);
@@ -806,6 +940,7 @@ td.go svg{width:17px;height:11px}
   .grid{grid-template-columns:repeat(3,1fr);row-gap:56px}
   .cslide.w1152,.cslide.w1111{width:min(78vw,760px)}
   .cslide .shot{height:min(43.5vw,424px)}
+  .crsl .shot{height:auto}
   .cslide.career{width:min(58vw,540px)}
   .cslide.career .shot{height:min(38.7vw,360px)}
 }
@@ -823,12 +958,15 @@ td.go svg{width:17px;height:11px}
   .values,.grid{grid-template-columns:1fr}
   .cslide.w1152,.cslide.w1111,.cslide.career{width:86vw}
   .cslide .shot,.cslide.career .shot{height:48vw}
+  .crsl .shot{height:auto}
   .tools{align-items:stretch}.tool-right,.views{width:100%}
 }
 </style>
 
 <svg class="sr" aria-hidden="true"><defs>
   <symbol id="i-arrow" viewBox="0 0 19 12"><path d="M18.5 6H1M6.5 1 1 6l5.5 5" fill="none" stroke="currentColor" stroke-width="1.1"/></symbol>
+  <symbol id="i-arrow-long" viewBox="0 0 39 21"><path d="M2.15108 8.15147C1.68245 8.6201 1.68245 9.3799 2.15108 9.84853L9.78784 17.4853C10.2565 17.9539 11.0163 17.9539 11.4849 17.4853C11.9535 17.0166 11.9535 16.2569 11.4849 15.7882L4.69667 9L11.4849 2.21177C11.9535 1.74314 11.9535 0.983346 11.4849 0.514716C11.0163 0.0460869 10.2565 0.0460869 9.78784 0.514716L2.15108 8.15147ZM36.5996 7.8L2.99961 7.8L2.99961 10.2L36.5996 10.2L36.5996 7.8Z" fill="currentColor"/></symbol>
+  <symbol id="i-scroll" viewBox="0 0 25 19"><path d="M2 1.365 12.24 16.31 23 1.365" fill="none" stroke="currentColor" stroke-width="2.31" stroke-linecap="round"/></symbol>
   <symbol id="i-all" viewBox="0 0 14 14"><g fill="currentColor"><rect y="0" width="3.4" height="3.4" rx=".5"/><rect x="5.3" width="3.4" height="3.4" rx=".5"/><rect x="10.6" width="3.4" height="3.4" rx=".5"/><rect y="5.3" width="3.4" height="3.4" rx=".5"/><rect x="5.3" y="5.3" width="3.4" height="3.4" rx=".5"/><rect x="10.6" y="5.3" width="3.4" height="3.4" rx=".5"/><rect y="10.6" width="3.4" height="3.4" rx=".5"/><rect x="5.3" y="10.6" width="3.4" height="3.4" rx=".5"/><rect x="10.6" y="10.6" width="3.4" height="3.4" rx=".5"/></g></symbol>
   <symbol id="i-master" viewBox="0 0 14 14"><path d="M10.3.9a1.3 1.3 0 0 1 1.9 0l.9.9a1.3 1.3 0 0 1 0 1.9l-7.4 7.4-3 .8.8-3z" fill="currentColor"/></symbol>
   <symbol id="i-detailed" viewBox="0 0 14 14"><g fill="currentColor"><rect width="14" height="14" rx="1.4" opacity=".2"/><rect x="1.6" y="1.6" width="4.4" height="3.2" rx=".5"/><rect x="7.6" y="1.6" width="4.8" height="3.2" rx=".5"/><rect x="1.6" y="6" width="4.4" height="2.2" rx=".5"/><rect x="7.6" y="6" width="4.8" height="2.2" rx=".5"/><rect x="1.6" y="9.4" width="10.8" height="3" rx=".5"/></g></symbol>
@@ -880,7 +1018,8 @@ td.go svg{width:17px;height:11px}
   </div>
 </header>
 
-<div class="menu" id="menu" hidden></div>
+<div class="menu-backdrop" id="menu-backdrop" hidden></div>
+<aside class="menu" id="menu" aria-label="תפריט" hidden></aside>
 
 <div class="veil" id="veil" aria-hidden="true">
   <span class="veil-rule" id="veil-bar"></span>
@@ -1121,19 +1260,23 @@ const CAROUSEL = [
 function homeHTML(){
   return `
   <div class="opener" id="opener">
-    <video class="opener-film" id="hero-film" poster="assets/hero.jpg" muted playsinline
+    <div class="opener-zoom" aria-hidden="true"><video class="opener-film" id="hero-film" poster="assets/hero.jpg" muted playsinline
       preload="auto" disablepictureinpicture aria-label="הדמיית רחוב עירוני צפוף, מגובה הולך רגל"
-      ><source src="assets/hero.hevc.mp4" type='video/mp4; codecs="hvc1"'><source src="assets/hero.mp4" type="video/mp4"></video>
+      ><source src="assets/hero.hevc.mp4" type='video/mp4; codecs="hvc1"'><source src="assets/hero.mp4" type="video/mp4"></video></div>
     <div class="opener-scrim" aria-hidden="true"></div>
-    <div class="opener-txt" id="opener-txt"><div class="wrap">
-      <p class="opener-claim">תכנון רגיש למקום, מחויב לחברה</p>
+    <div class="opener-txt" id="opener-txt"><div class="wrap opener-row">
+      <div class="opener-lede">
+        <p class="opener-kicker">כהן וינד ושות׳ · אדריכלות ותכנון ערים</p>
+        <p class="opener-claim">תכנון רגיש למקום, מחויב לחברה</p>
+      </div>
+      <button class="opener-scroll" id="opener-scroll" type="button" aria-label="גלילה למטה">${icon('i-scroll')}${icon('i-scroll')}${icon('i-scroll')}</button>
     </div></div>
   </div>
 
   <div class="over">
   <section class="wrap intro rv">
     <p class="t-display meas">משרד כהן וינד ושות׳ אדריכלות ובינוי ערים פועל בירושלים משנת 1996. המשרד עוסק במגוון פרויקטים עירוניים, אזוריים וארציים ברחבי הארץ. לקוחותינו הינם גופים עירוניים וממשלתיים לצד חברות פרטיות, המייצגים יחדיו קשת רחבה של נושאים וקבוצות בחברה הישראלית.</p>
-    <a class="link-btn t-ui" href="#/projects" data-nav="projects">${icon('i-arrow')}<span>כל הפרוייקטים</span></a>
+    <a class="link-btn t-ui" href="#/about" data-nav="about">${icon('i-arrow')}<span>אודות המשרד</span></a>
   </section>
 
   <section class="wrap sec">
@@ -1154,13 +1297,14 @@ function homeHTML(){
   <div class="wrap"><div class="rule"></div></div>
 
   <section class="wrap sec">
-    <div class="sec-head rv">
+    <div class="sec-head mid rv">
       <h2 class="t-display">פרויקטים נבחרים</h2>
       <a class="link-btn t-ui" href="#/projects" data-nav="projects">${icon('i-arrow')}<span>כל הפרוייקטים</span></a>
     </div>
     <div class="crsl" data-crsl>
       <div class="carousel">
-        ${CAROUSEL.map(c=>`<a class="cslide rv ${c.w}" href="#/project" data-project="${c.p.id}">
+        ${CAROUSEL.map((c,i)=>`<a class="cslide rv" href="#/project" data-project="${c.p.id}">
+          <span class="csl-num" aria-hidden="true">${i+1}/${CAROUSEL.length}</span>
           <div class="shot rv-img"><img src="${c.img}" alt="${esc(c.p.title)}" loading="lazy" draggable="false"></div>
           <div class="meta">
             ${attrs(c.p,['plan','size','domain'])}
@@ -1171,8 +1315,8 @@ function homeHTML(){
           </div>
         </a>`).join('')}
       </div>
-      <button class="cbtn prev" data-step="1" aria-label="הקודם">${icon('i-arrow')}</button>
-      <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-arrow')}</button>
+      <button class="cbtn prev" data-step="1" aria-label="הקודם">${icon('i-arrow-long')}</button>
+      <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-arrow-long')}</button>
     </div>
   </section>
 
@@ -1288,23 +1432,24 @@ function gridHTML(items){
     </a>`).join('')}</div>`;
 }
 
+/* An index rather than a data table: five columns, hairline rules, and
+   the picture carried by the cursor instead of a thumbnail in every row.
+   The nine-column version with a tooltip on each cell asked the reader to
+   work; this asks them to scan. Sorting still hangs off data-col. */
 function listHTML(items){
-  const cols=[['year','שנה'],['title','פרויקט'],['plan','סוג'],['domain','תחום'],['size','קנה מידה'],
-              ['units','גודל'],['client','לקוח'],['status','סטטוס'],['','']];
-  return `<div class="tablewrap rv"><table>
-    <thead><tr>${cols.map(c=>c[0]?`<th class="sortable" data-col="${c[0]}">${c[1]}</th>`:'<th></th>').join('')}</tr></thead>
-    <tbody>${items.map((p,ri)=>`<tr style="--ri:${ri}" data-project="${p.id}" tabindex="0"
-      role="link" aria-label="${esc(p.title)}, ${esc(p.place)}">
-      <td class="year">${p.year}</td>
-      <td>${esc(p.title)}</td>
-      <td><span class="tt" data-tt="${PLAN[p.plan].label}" tabindex="0">${av(p.plan)}</span></td>
-      <td><span class="tt" data-tt="${DOMAIN[p.domain].label}" tabindex="0">${av(p.domain)}</span></td>
-      <td><span class="tt" data-tt="${SIZE[p.size].label}" tabindex="0">${av(null,p.size)}</span></td>
-      <td class="units">${p.units?p.units.toLocaleString('he-IL')+' יח״ד':'—'}</td>
-      <td class="client">${esc(p.client)}</td>
-      <td>${STATUS[p.status].label}</td>
-      <td class="go"><span>${icon('i-arrow')}<span>לפרויקט</span></span></td>
-    </tr>`).join('')}</tbody></table></div>`;
+  const cols=[['year','שנה'],['title','פרויקט'],['place','מיקום'],['plan','סוג'],['size','קנה מידה']];
+  return `<div class="windex rv" id="windex">
+    <div class="windex-head">${cols.map(c=>`<span class="sortable" data-col="${c[0]}">${c[1]}</span>`).join('')}</div>
+    ${items.map((p,ri)=>`<a class="windex-row" style="--ri:${ri}" href="#/projects" data-project="${p.id}"
+        data-shot="${p.img}" data-tall="${p.tall?'1':''}" aria-label="${esc(p.title)}, ${esc(p.place)}">
+      <span class="wx-year">${p.year}</span>
+      <span class="wx-title">${esc(p.title)}</span>
+      <span class="wx-place">${esc(p.place)}</span>
+      <span class="wx-type">${PLAN[p.plan].label}</span>
+      <span class="wx-size">${SIZE[p.size].label}</span>
+    </a>`).join('')}
+    <span class="windex-preview" id="windex-preview" aria-hidden="true"><img alt=""></span>
+  </div>`;
 }
 
 /* map pins are the exported Figma components, used as-is */
@@ -1779,7 +1924,7 @@ function projectHTML(){
   <div class="wrap"><div class="rule"></div></div>
 
   <section class="wrap sec" style="padding-top:0">
-    <div class="sec-head rv">
+    <div class="sec-head mid rv">
       <h2 class="t-display">פרויקטים נבחרים</h2>
       <a class="link-btn t-ui" href="#/projects" data-nav="projects">${icon('i-arrow')}<span>כל הפרוייקטים</span></a>
     </div>
@@ -1793,8 +1938,8 @@ function projectHTML(){
           </div>
         </a>`).join('')}
       </div>
-      <button class="cbtn prev" data-step="1" aria-label="הקודם">${icon('i-arrow')}</button>
-      <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-arrow')}</button>
+      <button class="cbtn prev" data-step="1" aria-label="הקודם">${icon('i-arrow-long')}</button>
+      <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-arrow-long')}</button>
     </div>
   </section>`;
 }
@@ -1808,20 +1953,23 @@ const VIEWS = {home:homeHTML, projects:projectsHTML, project:projectHTML, vision
                team:teamHTML, about:aboutHTML, join:joinHTML, job:jobHTML, article:articleHTML};
 function renderMenu(){
   document.getElementById('menu').innerHTML = `
-    <div class="wrap menu-in">
+    <button class="menu-close" id="menu-close" type="button" aria-label="סגירת תפריט"><span></span></button>
+    <p class="menu-label">תפריט</p>
+    <div class="menu-in">
       <nav>
         ${NAV.map(([label,page],i)=>`<a href="#/${page==='projects'?'projects':''}" ${page?`data-nav="${page}"`:'data-soon'}
-            style="--i:${i}" ${page===state.page?'aria-current="page"':''}>
-          <span>${label}</span><span class="ar">${icon('i-arrow')}</span></a>`).join('')}
+            style="--i:${i}" ${page===state.page?'aria-current="page"':''}>${label}</a>`).join('')}
       </nav>
-      <aside class="menu-side">
-        <div class="menu-contact t-ui">
-          <span>זבולון 2, תל אביב 4685002</span>
-          <a href="#/">074-7015130</a>
+      <div class="menu-side">
+        <div class="menu-contact">
           <a href="#/">onyx@onyxgroup.co.il</a>
+          <a href="#/">074-7015130</a>
+          <span>זבולון 2, תל אביב 4685002</span>
         </div>
-      </aside>
+      </div>
     </div>`;
+  const x=document.getElementById('menu-close');
+  if(x) x.addEventListener('click',closeMenu);
 }
 
 /* ============================================================
@@ -1945,6 +2093,7 @@ function setView(v){
   void holder.offsetWidth;
   holder.classList.add('fade');
   wireMap();
+  wireIndexPreview();
   initReveal(holder);
 }
 
@@ -1970,7 +2119,7 @@ const app = document.getElementById('app');
 function render(reveal=true){
   app.innerHTML = (VIEWS[state.page] || homeHTML)();
   renderMenu();
-  wireMap(); wireCarousels(); wireFilm(); wireOpener();
+  wireMap(); wireCarousels(); wireFilm(); wireOpener(); wireIndexPreview();
   if(reveal) initReveal();
 }
 
@@ -1991,6 +2140,14 @@ function wireOpener(){
   if(openerTick){ removeEventListener('scroll',openerTick); removeEventListener('resize',openerTick); openerTick=null }
   const over=document.querySelector('.over'), txt=document.getElementById('opener-txt');
   if(!over){ openerWantClear=false; applyHdrClear(); return }
+  const film=document.getElementById('hero-film');
+
+  /* The film is scaled past its frame with the bottom-right corner pinned,
+     so all the slack sits above the top edge — it can be pushed DOWN by up
+     to (SCALE-1) of the frame height before the top edge would show. Drift
+     a fraction of that and the film lags the scroll without ever exposing
+     its edge. */
+  const SCALE=1.16, DRIFT=0.09, ZOOM=0.012;
 
   const HDR=110;                       /* the bar's own height, plus a little */
   const step=()=>{
@@ -1999,12 +2156,22 @@ function wireOpener(){
        its own box never moves and would report nothing */
     openerWantClear = over.getBoundingClientRect().top > HDR;
     applyHdrClear();
+    const p=Math.min(1,Math.max(0,scrollY/(innerHeight||1)));
     if(txt && !REDUCED){
-      const p=Math.min(1,Math.max(0,scrollY/(innerHeight||1)));
       txt.style.transform=`translateY(${-p*90}px)`;
       txt.style.opacity=String(1-Math.min(1,p*1.45));
     }
+    if(film && !REDUCED){
+      film.style.transform=
+        `translate3d(0,${(p*DRIFT*innerHeight).toFixed(1)}px,0) scale(${(SCALE+p*ZOOM).toFixed(4)})`;
+    }
   };
+  const cue=document.getElementById('opener-scroll');
+  if(cue) cue.addEventListener('click',()=>{
+    scrollTo({top:innerHeight-(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr-h'))||0),
+      behavior:REDUCED?'auto':'smooth'});
+  });
+
   openerTick=()=>{ if(!openerRAF) openerRAF=requestAnimationFrame(step) };
   addEventListener('scroll',openerTick,{passive:true});
   addEventListener('resize',openerTick,{passive:true});
@@ -2023,8 +2190,23 @@ function go(page){
 
 /* ---------- menu ---------- */
 const menu=document.getElementById('menu'), burger=document.getElementById('burger');
-const openMenu =()=>{renderMenu();menu.hidden=false;menu.classList.add('open');document.body.classList.add('menu-open');burger.setAttribute('aria-expanded','true');burger.setAttribute('aria-label','סגירת תפריט')};
-const closeMenu=()=>{menu.classList.remove('open');menu.hidden=true;document.body.classList.remove('menu-open');burger.setAttribute('aria-expanded','false');burger.setAttribute('aria-label','פתיחת תפריט')};
+const scrim=document.getElementById('menu-backdrop');
+const openMenu =()=>{
+  renderMenu();
+  menu.hidden=false; scrim.hidden=false;
+  requestAnimationFrame(()=>{menu.classList.add('open');scrim.classList.add('open')});
+  document.body.classList.add('menu-open');
+  burger.setAttribute('aria-expanded','true');burger.setAttribute('aria-label','סגירת תפריט');
+};
+const closeMenu=()=>{
+  menu.classList.remove('open'); scrim.classList.remove('open');
+  document.body.classList.remove('menu-open');
+  burger.setAttribute('aria-expanded','false');burger.setAttribute('aria-label','פתיחת תפריט');
+  /* wait out the slide before pulling it from the tree */
+  setTimeout(()=>{ if(!menu.classList.contains('open')){menu.hidden=true;scrim.hidden=true} },620);
+};
+if(scrim) scrim.addEventListener('click',closeMenu);
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&menu.classList.contains('open')) closeMenu(); });
 burger.addEventListener('click',()=> burger.getAttribute('aria-expanded')==='true'?closeMenu():openMenu());
 
 const closePops = except => document.querySelectorAll('.pop.open').forEach(p=>{if(p!==except)p.classList.remove('open')});
@@ -2060,14 +2242,54 @@ function wireCarousels(){
     /* park the arrows on the middle of the image, not the whole card */
     const place=()=>{
       const shot=el.querySelector('.shot');
-      if(shot) wrap.querySelectorAll('.cbtn').forEach(b=>b.style.top=(shot.offsetHeight/2)+'px');
+      if(shot) wrap.querySelectorAll('.cbtn').forEach(b=>b.style.height=shot.offsetHeight+'px');
     };
     place(); addEventListener('resize',place,{passive:true});
+
+    /* Loop. The reference rotates its slides so there is always a card
+       either side of the middle one — at rest it shows 106px of image on
+       the left, 847 in the middle and 106 on the right. Ours ran out at
+       the first card and showed white. A clone of the last card sits
+       before the first and a clone of the first after the last; settling
+       on a clone silently re-centres its twin, which is invisible because
+       the twin is the same picture. */
+    const cards=[...el.querySelectorAll('.cslide')];
+    let looped=false;
+    if(cards.length>1 && !el.querySelector('[data-clone]')){
+      const head=cards[0].cloneNode(true), tail=cards[cards.length-1].cloneNode(true);
+      head.dataset.clone='first'; tail.dataset.clone='last';
+      [head,tail].forEach(c=>{
+        c.classList.remove('rv');
+        c.querySelectorAll('.rv,.rv-img').forEach(x=>x.classList.remove('rv','rv-img'));
+        c.removeAttribute('style');
+      });
+      el.insertBefore(tail, cards[0]);
+      el.appendChild(head);
+      looped=true;
+      const home=()=>cards[0].scrollIntoView({inline:'center',block:'nearest',behavior:'auto'});
+      requestAnimationFrame(home); addEventListener('resize',home,{passive:true});
+    }
+
+    const mid=()=>{const b=el.getBoundingClientRect();return b.left+b.width/2};
+    const atMiddle=()=>[...el.querySelectorAll('.cslide')]
+      .find(x=>{const r=x.getBoundingClientRect();return Math.abs((r.left+r.width/2)-mid())<r.width*0.5});
+    let settle;
+    if(looped) el.addEventListener('scroll',()=>{
+      clearTimeout(settle);
+      settle=setTimeout(()=>{
+        const here=atMiddle();
+        if(!here || !here.dataset.clone) return;
+        const reals=[...el.querySelectorAll('.cslide:not([data-clone])')];
+        const twin = here.dataset.clone==='first' ? reals[0] : reals[reals.length-1];
+        twin.scrollIntoView({inline:'center',block:'nearest',behavior:'auto'});
+      },140);
+    },{passive:true});
 
     /* RTL scrollLeft runs 0 → -max; normalise to a 0 → max progress */
     const maxScroll=()=>el.scrollWidth-el.clientWidth;
     const pos=()=>Math.abs(el.scrollLeft);
     const sync=()=>{
+      if(looped){ if(prev) prev.disabled=false; if(next) next.disabled=false; return }
       const m=maxScroll();
       if(prev) prev.disabled = pos()<=2 || m<2;      /* already at the first card */
       if(next) next.disabled = pos()>=m-2 || m<2;    /* nothing further along the track */
@@ -2075,12 +2297,26 @@ function wireCarousels(){
     el.addEventListener('scroll',sync,{passive:true});
     setTimeout(sync,60); addEventListener('resize',sync,{passive:true});
 
+    const gap=()=>parseFloat(getComputedStyle(el).columnGap)||30;
     wrap.querySelectorAll('.cbtn').forEach(btn=>btn.addEventListener('click',e=>{
       e.preventDefault(); e.stopPropagation();
       const card=el.querySelector('.cslide');
-      const step=(card?card.offsetWidth:el.clientWidth*.6)+30;
+      const step=(card?card.offsetWidth:el.clientWidth*.6)+gap();
       el.scrollBy({left:Number(btn.dataset.step)*step,behavior:'smooth'});
     }));
+
+    /* a half-visible neighbour is a target, not a link: the first click
+       brings it to the middle, only a click on the centred card opens it */
+    const centred=card=>{
+      const c=el.getBoundingClientRect(), r=card.getBoundingClientRect();
+      return Math.abs((r.left+r.width/2)-(c.left+c.width/2)) < r.width*0.25;
+    };
+    el.addEventListener('click',e=>{
+      const card=e.target.closest('.cslide');
+      if(!card || centred(card)) return;
+      e.preventDefault(); e.stopPropagation();
+      card.scrollIntoView({inline:'center',block:'nearest',behavior:REDUCED?'auto':'smooth'});
+    },true);
 
     let down=false,x0=0,s0=0,moved=0;
     el.addEventListener('pointerdown',e=>{
@@ -2092,6 +2328,41 @@ function wireCarousels(){
     el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up);
     el.addEventListener('click',e=>{ if(moved>6){e.preventDefault();e.stopPropagation();} },true);
   });
+}
+
+/* ---------- projects index: the preview rides the pointer ----------
+   One element reused by every row rather than a thumbnail in each: it
+   follows the cursor inside the index and swaps its picture to whichever
+   row is under it. Clamped to the index box so it never hangs off-page.
+   ------------------------------------------------------------------- */
+function wireIndexPreview(){
+  const wrap=document.getElementById('windex'); if(!wrap || REDUCED) return;
+  const pv=document.getElementById('windex-preview'); if(!pv) return;
+  const img=pv.querySelector('img');
+  let raf=0, x=0, y=0, on=false;
+
+  const draw=()=>{
+    raf=0;
+    const b=wrap.getBoundingClientRect();
+    const w=pv.offsetWidth, h=pv.offsetHeight;
+    /* inside the index, and clear of the pointer itself */
+    const nx=Math.min(Math.max(x-b.left+24, 0), Math.max(0, b.width  - w));
+    const ny=Math.min(Math.max(y-b.top-h/2, 0), Math.max(0, b.height - h));
+    pv.style.transform=`translate3d(${nx.toFixed(1)}px,${ny.toFixed(1)}px,0)`;
+  };
+
+  wrap.addEventListener('pointermove',e=>{
+    const row=e.target.closest('.windex-row');
+    if(!row){ if(on){ on=false; pv.classList.remove('on') } return }
+    if(img.getAttribute('src')!==row.dataset.shot){
+      img.src=row.dataset.shot;
+      pv.classList.toggle('tall', !!row.dataset.tall);
+    }
+    if(!on){ on=true; pv.classList.add('on') }
+    x=e.clientX; y=e.clientY;
+    if(!raf) raf=requestAnimationFrame(draw);
+  },{passive:true});
+  wrap.addEventListener('pointerleave',()=>{ on=false; pv.classList.remove('on') },{passive:true});
 }
 
 /* ---------- map: real Google map when a key is present, raster otherwise ---------- */

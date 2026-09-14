@@ -1,18 +1,18 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Icon Avatar">
 <g id="Property 1=all, active=no">
-<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" fill="#CFCCC4"/>
+<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" fill="#D4C9B4"/>
 <rect x="0.5" y="0.5" width="31" height="31" rx="15.5" stroke="#B3B3AF"/>
 <g id="Layer_1" clip-path="url(#clip0_65_1793)">
-<path id="Vector" d="M8 8H12.5668V12.5668H8V8Z" fill="#72726F"/>
-<path id="Vector_2" d="M19.4219 8H23.9887V12.5668H19.4219V8Z" fill="#72726F"/>
-<path id="Vector_3" d="M13.7109 8H18.2777V12.5668H13.7109V8Z" fill="#72726F"/>
-<path id="Vector_4" d="M8 19.4229H12.5668V23.9897H8V19.4229Z" fill="#72726F"/>
-<path id="Vector_5" d="M19.4219 19.4229H23.9887V23.9897H19.4219V19.4229Z" fill="#72726F"/>
-<path id="Vector_6" d="M13.7109 19.4229H18.2777V23.9897H13.7109V19.4229Z" fill="#72726F"/>
-<path id="Vector_7" d="M8 13.7109H12.5668V18.2777H8V13.7109Z" fill="#72726F"/>
-<path id="Vector_8" d="M19.4219 13.7109H23.9887V18.2777H19.4219V13.7109Z" fill="#72726F"/>
-<path id="Vector_9" d="M13.7109 13.7109H18.2777V18.2777H13.7109V13.7109Z" fill="#72726F"/>
+<path id="Vector" d="M8 8H12.5668V12.5668H8V8Z" fill="#6B5A48"/>
+<path id="Vector_2" d="M19.4219 8H23.9887V12.5668H19.4219V8Z" fill="#6B5A48"/>
+<path id="Vector_3" d="M13.7109 8H18.2777V12.5668H13.7109V8Z" fill="#6B5A48"/>
+<path id="Vector_4" d="M8 19.4229H12.5668V23.9897H8V19.4229Z" fill="#6B5A48"/>
+<path id="Vector_5" d="M19.4219 19.4229H23.9887V23.9897H19.4219V19.4229Z" fill="#6B5A48"/>
+<path id="Vector_6" d="M13.7109 19.4229H18.2777V23.9897H13.7109V19.4229Z" fill="#6B5A48"/>
+<path id="Vector_7" d="M8 13.7109H12.5668V18.2777H8V13.7109Z" fill="#6B5A48"/>
+<path id="Vector_8" d="M19.4219 13.7109H23.9887V18.2777H19.4219V13.7109Z" fill="#6B5A48"/>
+<path id="Vector_9" d="M13.7109 13.7109H18.2777V18.2777H13.7109V13.7109Z" fill="#6B5A48"/>
 </g>
 </g>
 </g>
