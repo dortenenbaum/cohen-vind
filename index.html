@@ -423,7 +423,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 
 /* selected-projects carousel: right-aligned track that bleeds off the left page edge */
 .crsl{position:relative}
-.cbtn{position:absolute;top:0;width:calc(var(--vw,100vw) * .1);z-index:6;border:0;background:none;
+.cbtn{position:absolute;top:0;width:calc((var(--vw,100vw) - var(--csl-w)) / 2);z-index:6;border:0;background:none;
   padding:0 30px;direction:ltr;
   color:#fff;display:flex;align-items:center;
   opacity:0;pointer-events:none;transition:opacity .3s ease-in-out}
@@ -443,7 +443,11 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    the slide would resolve against the box the padding just shrank. So the
    padding alone sets the peek and the slide simply fills what is left:
    10% either side leaves a slide 80% of the rail, the reference's ratio. */
-.crsl{--csl-peek:10%;--csl-gap:30px}
+/* The reference keeps the rail edge to edge and the card a fixed size:
+   a wider screen shows more of the neighbours rather than a bigger
+   card. Ours had made the card a share of the rail, so once the rail
+   reached the glass the card grew with the window. */
+.crsl{--csl-gap:30px;--csl-w:min(84vw,1120px)}
 /* The rail runs to both edges of the window at every width, the way the
    reference does. Negating the gutter was not enough: .wrap caps at
    --maxw and centres, so a wide screen still left the auto margin on
@@ -452,11 +456,11 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    document's own width, which is what keeps the scrollbar out of it. */
 .carousel{display:flex;gap:var(--csl-gap);overflow-x:auto;overscroll-behavior-x:contain;
   scroll-snap-type:x mandatory;scrollbar-width:none;cursor:grab;
-  padding-inline:var(--csl-peek);padding-bottom:4px;
+  padding-inline:max(0px,calc((var(--vw,100vw) - var(--csl-w)) / 2));padding-bottom:4px;
   margin-inline:calc(50% - var(--vw,100vw) / 2)}
 .carousel::-webkit-scrollbar{display:none}
 .carousel.dragging{cursor:grabbing;scroll-snap-type:none}
-.crsl .cslide{flex:none;width:100%;scroll-snap-align:center;display:block;position:relative;
+.crsl .cslide{flex:none;width:var(--csl-w);scroll-snap-align:center;display:block;position:relative;
   padding-inline:38px}
 .csl-num{position:absolute;inset-inline-start:4px;top:2px;bottom:auto;height:auto;
   writing-mode:vertical-rl;direction:ltr;font-size:16px;line-height:1;letter-spacing:.04em;
@@ -1346,7 +1350,7 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 @media (max-width:1280px){
   .values{grid-template-columns:repeat(2,1fr);row-gap:48px}
   .grid{grid-template-columns:repeat(3,1fr);row-gap:56px}
-  .cslide.w1152,.cslide.w1111{width:min(78vw,760px)}
+  .crsl{--csl-w:min(84vw,760px)}
   .cslide .shot{height:min(43.5vw,424px)}
   .crsl .shot{height:auto}
   .cslide.career{width:min(58vw,540px)}
@@ -1364,7 +1368,8 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 }
 @media (max-width:620px){
   .values,.grid{grid-template-columns:1fr}
-  .cslide.w1152,.cslide.w1111,.cslide.career{width:86vw}
+  .crsl{--csl-w:86vw}
+  .cslide.career{width:86vw}
   .cslide .shot,.cslide.career .shot{height:48vw}
   .crsl .shot{height:auto}
   .tools{align-items:stretch}.tool-right,.views{width:100%}
