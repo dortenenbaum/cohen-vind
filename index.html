@@ -317,7 +317,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   min-height:100svh;display:grid;align-content:center;
   padding-block:clamp(40px,7vh,90px);
   opacity:.16;transition:opacity .55s var(--ease)}
-.prin.on,.prin.open{opacity:1}
+.prin.on{opacity:1}
 .prin .pkick{color:var(--vind-80)}
 
 /* Each principle is something the practice says, so it is set as speech.
@@ -335,17 +335,18 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    hang four lines of one, and five of those turned the margin into a second
    column. It takes the accent instead, above the text and on one line —
    a different mark for a different job, and the only orange on the page. */
-.prin-label{display:flex;align-items:baseline;gap:12px;margin:0 0 clamp(20px,2.4vw,42px);
-  font-size:var(--t-micro);font-weight:400;letter-spacing:.04em;line-height:1.3;
-  color:var(--accent)}
-.prin-label .pn{font:400 clamp(10px,.62vw,12px)/1 var(--mono);letter-spacing:.14em;
-  opacity:.7;flex:none}
+/* These carry the argument, so they are sized like headings rather than
+   like labels — --t-title against the claim's --t-hero, which is a clear
+   step down without becoming a caption. */
+.prin-label{margin:0 0 clamp(20px,2.4vw,44px);
+  font-size:var(--t-title);font-weight:300;letter-spacing:-.01em;line-height:1.16;
+  color:var(--accent);max-width:22ch}
 
 @media (max-width:900px){ .prin{min-height:0;opacity:1} }
 @media (prefers-reduced-motion:reduce){ .prin{opacity:1;transition:none} }
 
 /* the way in to the examples: the same plus the page already uses */
-.prin-more{display:inline-flex;align-items:center;gap:14px;flex-direction:row-reverse;
+.prin-more{display:inline-flex;align-items:center;gap:14px;justify-self:start;
   margin-top:clamp(26px,3.2vw,56px);padding:0;border:0;background:none;cursor:pointer;
   font-family:inherit;font-size:var(--t-micro);color:var(--walnut);
   transition:color .25s var(--ease)}
@@ -357,41 +358,74 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   transition:transform .35s var(--ease)}
 .prin-more .pm::before{width:13px;height:1.2px}
 .prin-more .pm::after{width:1.2px;height:13px}
-.prin.open .prin-more .pm::before,
-.prin.open .prin-more .pm::after{transform:translate(-50%,-50%) rotate(45deg)}
 
 .prin-wrap{display:grid;grid-template-rows:0fr;
   transition:grid-template-rows .55s var(--ease)}
 .prin.open .prin-wrap{grid-template-rows:1fr}
-.prin-list{overflow:hidden;display:grid;gap:clamp(28px,3.4vw,60px)}
-.prin.open .prin-list{padding-top:clamp(26px,3vw,52px)}
+/* ---------- the examples, as a gallery -------------------------------
+   A drawer under a point that has just been given a whole screen either
+   pushed the point off the top or ran off the bottom. The examples take a
+   screen of their own instead, one project at a time, with the value they
+   belong to held at the top — without it a picture of a scheme is just a
+   picture, and the whole reason it is here is the claim it stands for. */
+.pgal{position:fixed;inset:0;z-index:120;background:var(--paper);
+  display:grid;grid-template-rows:auto 1fr;
+  opacity:0;transition:opacity .4s var(--ease)}
+.pgal.on{opacity:1}
+.pgal[hidden]{display:none}
 
-/* a case: the picture, then why this project belongs to this principle —
-   set below the claim's size, because it is evidence for the claim and
-   not another claim */
-.pcase{display:grid;grid-template-columns:minmax(0,300px) 1fr;
-  gap:clamp(20px,2.4vw,44px);align-items:start;
-  padding-top:clamp(22px,2.6vw,40px);border-top:1px solid var(--vind-20)}
-.pcase:first-child{border-top:0;padding-top:0}
-.pcase-shot{display:block;overflow:hidden;background:var(--vind-20);aspect-ratio:3/2}
-.pcase-shot img{width:100%;height:100%;object-fit:cover;display:block;
-  transition:transform .8s var(--ease)}
-.pcase-shot:hover img{transform:scale(1.04)}
-.pcase-t{display:grid;gap:9px;justify-items:start;max-width:56ch}
-.pcase-t h3{margin:0;font-weight:400;font-size:var(--t-title);line-height:1.2;
-  letter-spacing:-.01em;color:var(--vind-text)}
-.pcase-pl{font-size:var(--t-micro);color:var(--walnut);letter-spacing:.04em}
-.pcase-t p{margin:6px 0 0;font-size:var(--t-body);line-height:1.68;color:var(--vind-80)}
-.pcase-t .link-btn{margin-top:14px}
+.pgal-bar{display:flex;align-items:center;gap:clamp(14px,2vw,32px);
+  padding:clamp(18px,2.4vh,34px) var(--gutter);border-bottom:1px solid var(--vind-20)}
+.pgal-val{font-size:var(--t-ui);letter-spacing:-.01em;color:var(--accent);
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pgal-n{margin-inline-start:auto;flex:none;
+  font:400 clamp(10px,.62vw,12px)/1 var(--mono);letter-spacing:.14em;color:var(--vind-60)}
+.pgal-x{flex:none;width:26px;height:26px;padding:0;border:0;background:none;
+  cursor:pointer;position:relative;color:var(--vind-text)}
+.pgal-x::before,.pgal-x::after{content:"";position:absolute;left:50%;top:50%;
+  width:15px;height:1.2px;background:currentColor;
+  transform:translate(-50%,-50%) rotate(45deg)}
+.pgal-x::after{transform:translate(-50%,-50%) rotate(-45deg)}
+
+.pgal-stage{min-height:0;display:grid;align-content:center;
+  grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+  gap:clamp(24px,4vw,80px);padding:clamp(24px,4vh,56px) clamp(56px,7vw,120px)}
+.pgal-shot{margin:0;min-height:0;overflow:hidden;background:var(--vind-20);
+  aspect-ratio:3/2;max-height:72svh}
+.pgal-shot img{width:100%;height:100%;object-fit:cover;display:block}
+.pgal-t{display:grid;gap:8px;justify-items:start;align-content:center;max-width:46ch}
+.pgal-t h3{margin:0;font-weight:300;font-size:var(--t-display);line-height:1.14;
+  letter-spacing:-.02em;color:var(--vind-text)}
+.pgal-pl{font-size:var(--t-micro);color:var(--walnut);letter-spacing:.04em}
+.pgal-t p{margin:clamp(12px,1.4vw,22px) 0 0;font-size:var(--t-body);line-height:1.7;
+  color:var(--vind-80)}
+.pgal-t .link-btn{margin-top:clamp(14px,1.6vw,26px)}
+
+.pgal-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+  width:clamp(40px,4vw,62px);height:clamp(40px,4vw,62px);padding:0;border:0;
+  background:none;cursor:pointer;color:var(--vind-text);
+  display:grid;place-items:center;transition:color .2s var(--ease),transform .2s var(--ease)}
+.pgal-arrow svg{width:13px;height:22px}
+.pgal-arrow.prev{inset-inline-start:clamp(8px,1.4vw,26px)}
+.pgal-arrow.next{inset-inline-end:clamp(8px,1.4vw,26px);transform:translateY(-50%) scaleX(-1)}
+.pgal-arrow:hover{color:var(--accent)}
+.pgal-arrow[disabled]{opacity:.22;pointer-events:none}
+
+@media (max-width:900px){
+  .pgal-stage{grid-template-columns:1fr;align-content:start;overflow-y:auto;
+    padding-inline:var(--gutter);gap:18px}
+  .pgal-shot{aspect-ratio:4/3;max-height:none}
+  .pgal-arrow{top:auto;bottom:14px;transform:none}
+  .pgal-arrow.next{transform:scaleX(-1)}
+}
+@media (prefers-reduced-motion:reduce){ .pgal{transition:none} }
 
 @media (max-width:900px){
   .prins{grid-template-columns:1fr;row-gap:clamp(64px,10vh,130px)}
   .prin{grid-column:1 / -1}
-  .pcase{grid-template-columns:1fr;gap:18px}
-  .pcase-shot{max-width:420px}
 }
 @media (prefers-reduced-motion:reduce){
-  .prin-wrap,.prin-more .pm::before,.prin-more .pm::after,.pcase-shot img{transition:none}
+  .prin-more .pm::before,.prin-more .pm::after{transition:none}
 }
 
 /* ---------- the opening claim ---------------------------------------
@@ -2412,24 +2446,22 @@ function visionHTML(){
 
   <section class="wrap prins">
     ${PRINCIPLES.map(([t,k,b],i)=>`<article class="prin rv" style="--c1:${PRIN_COL[i][0]};--cn:${PRIN_COL[i][1]}">
-      <h2 class="prin-label"><span class="pn">${String(i+1).padStart(2,'0')}</span>${esc(t)}</h2>
+      <h2 class="prin-label">${esc(t)}</h2>
       <p class="lede-body">${k?`<span class="pkick">${esc(k)} </span>`:''}${esc(b)}</p>
-      <button class="prin-more" data-ex type="button"><span class="pm"></span><span>פרויקטים לדוגמא</span></button>
-      <div class="prin-wrap"><div class="prin-list">
-        ${PRIN_EX[i].map((j,n)=>{ const x=P[j]; return `<article class="pcase">
-          <a class="pcase-shot rv-img" href="#/project" data-project="${x.id}" aria-label="${esc(x.title)}">
-            <img src="${x.img}" alt="" loading="lazy" draggable="false">
-          </a>
-          <div class="pcase-t">
-            <h3>${esc(x.title)}</h3>
-            <div class="pcase-pl">${esc(x.place)}</div>
-            <p>${esc(PRIN_CASE[i][n])}</p>
-            <a class="link-btn t-ui" href="#/project" data-project="${x.id}">${icon('i-arrow')}<span>לעמוד הפרויקט</span></a>
-          </div>
-        </article>`; }).join('')}
-      </div></div>
+      <button class="prin-more" data-gal="${i}" type="button"><span class="pm"></span><span>פרויקטים לדוגמא</span></button>
     </article>`).join('')}
-  </section>`;
+  </section>
+
+  <div class="pgal" id="pgal" hidden>
+    <div class="pgal-bar">
+      <span class="pgal-val" id="pgal-val"></span>
+      <span class="pgal-n" id="pgal-n"></span>
+      <button class="pgal-x" id="pgal-x" type="button" aria-label="סגירה"></button>
+    </div>
+    <div class="pgal-stage" id="pgal-stage"></div>
+    <button class="pgal-arrow prev" id="pgal-prev" type="button" aria-label="הקודם">${icon('i-chevron')}</button>
+    <button class="pgal-arrow next" id="pgal-next" type="button" aria-label="הבא">${icon('i-chevron')}</button>
+  </div>`;
 }
 
 /* [name, role, portrait] — add a third entry per person and the tile
@@ -3114,7 +3146,7 @@ function render(reveal=true){
   app.innerHTML = (VIEWS[state.page] || homeHTML)();
   renderMenu();
   wireMap(); wireCarousels(); wireFilm(); wireOpener(); wireIndexPreview(); wireParallax();
-  wireHeroNotes(); wirePrinciples();
+  wireHeroNotes(); wirePrinciples(); wireGallery();
   wireRules(); wireTicker();
   if(reveal) initReveal();
 }
@@ -3342,6 +3374,77 @@ function wirePrinciples(){
     es.forEach(e=>e.target.classList.toggle('on', e.isIntersecting));
   },{rootMargin:'-45% 0px -45% 0px'});
   blocks.forEach(b=>prinIO.observe(b));
+}
+
+/* ---------- the examples gallery ------------------------------------
+   One project to a screen, paged with the arrows or the keyboard, and the
+   value it belongs to held at the top throughout. Built from the data on
+   open rather than rendered five times into the page, and torn down with
+   the rest on every re-render. */
+let galTeardown=null;
+function wireGallery(){
+  if(galTeardown){ galTeardown(); galTeardown=null }
+  const gal=document.getElementById('pgal');
+  if(!gal) return;
+  const stage=document.getElementById('pgal-stage');
+  const valEl=document.getElementById('pgal-val'), nEl=document.getElementById('pgal-n');
+  const prev=document.getElementById('pgal-prev'), next=document.getElementById('pgal-next');
+  let pi=0, n=0, lastFocus=null;
+
+  const paint=()=>{
+    const ids=PRIN_EX[pi], x=P[ids[n]];
+    valEl.textContent=PRINCIPLES[pi][0];
+    nEl.textContent=`${String(n+1).padStart(2,'0')} / ${String(ids.length).padStart(2,'0')}`;
+    stage.innerHTML=`<figure class="pgal-shot"><img src="${x.img}" alt="" draggable="false"></figure>
+      <div class="pgal-t">
+        <h3>${esc(x.title)}</h3>
+        <div class="pgal-pl">${esc(x.place)}</div>
+        <p>${esc(PRIN_CASE[pi][n])}</p>
+        <a class="link-btn t-ui" href="#/project" data-project="${x.id}">${icon('i-arrow')}<span>לעמוד הפרויקט</span></a>
+      </div>`;
+    prev.disabled = n===0;
+    next.disabled = n===ids.length-1;
+  };
+  const open=i=>{
+    pi=i; n=0; lastFocus=document.activeElement;
+    gal.hidden=false; paint();
+    requestAnimationFrame(()=>gal.classList.add('on'));
+    document.body.style.overflow='hidden';
+    document.getElementById('pgal-x').focus();
+  };
+  const close=()=>{
+    gal.classList.remove('on');
+    document.body.style.overflow='';
+    setTimeout(()=>{ gal.hidden=true; stage.innerHTML=''; }, 380);
+    lastFocus?.focus?.();
+  };
+  const step=d=>{ const len=PRIN_EX[pi].length; n=Math.max(0,Math.min(len-1,n+d)); paint(); };
+
+  const onDocClick=e=>{
+    const b=e.target.closest('[data-gal]');
+    if(b){ e.preventDefault(); open(Number(b.dataset.gal)); return }
+    if(gal.hidden) return;
+    if(e.target.closest('#pgal-x')){ close(); return }
+    if(e.target.closest('#pgal-prev')){ step(-1); return }
+    if(e.target.closest('#pgal-next')){ step(1); return }
+    /* a link out of the gallery should leave it behind */
+    if(e.target.closest('#pgal [data-project]')) close();
+  };
+  const onKey=e=>{
+    if(gal.hidden) return;
+    if(e.key==='Escape'){ close(); return }
+    /* the page reads right to left, so the arrows do too */
+    if(e.key==='ArrowRight'){ step(-1); return }
+    if(e.key==='ArrowLeft'){ step(1); return }
+  };
+  document.addEventListener('click', onDocClick);
+  addEventListener('keydown', onKey);
+
+  galTeardown=()=>{
+    document.removeEventListener('click', onDocClick);
+    removeEventListener('keydown', onKey);
+    document.body.style.overflow='';
+  };
 }
 
 function wireOpener(){
