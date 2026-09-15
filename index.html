@@ -615,20 +615,37 @@ img.icoimg.big{width:var(--ico-sz-lg);height:var(--ico-sz-lg)}
 /* gallery — 4 columns of 412.5, 30px column gap, 80px row gap, top aligned */
 /* the three views open at the same height — the index set the spacing
    and the other two were starting right under the toolbar */
-.grid{display:grid;grid-template-columns:repeat(4,1fr);column-gap:30px;row-gap:80px;align-items:start;
+/* Justified rows, after the reference: every card in a row shares one
+   height and the widths fall out of each photograph's own proportion, so
+   rows end ragged instead of marching in four identical columns. Both the
+   growth and the basis are proportional to the aspect ratio, which makes
+   every card in a row scale by the same factor — that shared factor is
+   what gives them a common height, with no measuring in JS. --gh is the
+   height a row settles near; the flex pass moves it either way to fill. */
+.grid{--gap:20px;--rowgap:clamp(52px,5.2vw,92px);--gh:clamp(225px,24vw,408px);
+  display:flex;flex-wrap:wrap;gap:var(--rowgap) var(--gap);align-items:flex-start;
   margin-top:clamp(40px,6vh,64px)}
 .view-map{margin-top:clamp(40px,6vh,64px)}
-.card{display:block}
-.card .shot{overflow:hidden;background:var(--vind-20)}
-.card .shot img{width:100%;object-fit:cover;transition:transform .6s var(--ease)}
-.card .shot img.wide{aspect-ratio:412/274}
-.card .shot img.tall{aspect-ratio:413/548}
+.card{display:block;min-width:0;
+  flex:var(--ar,1.6) 1 calc(var(--ar,1.6) * var(--gh))}
+.card .shot{overflow:hidden;background:var(--vind-20);aspect-ratio:var(--ar,1.6)}
+.card .shot img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
 .card:hover .shot img{transform:scale(1.04)}
-.card .meta{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:10px}
-.card h3{margin:0}
-.card .place{font-weight:300;font-size:var(--t-title);line-height:1.06;letter-spacing:.74px;color:var(--vind-80)}
-.card .titles h3{line-height:1.06}
-.card .titles .ln{padding-bottom:.12em;margin-bottom:-.12em}
+
+/* The caption is a whisper under the picture, not a second headline: the
+   name, then one quiet line carrying the kind of plan, the year and the
+   place. The three icon chips said the same thing louder and three times
+   over — the map pins already carry scale and plan. */
+.card .meta{display:flex;flex-direction:column;align-items:flex-start;gap:5px;margin-top:14px}
+.card h3{margin:0;font-weight:400;line-height:1.25;letter-spacing:.2px;
+  font-size:clamp(15px,1.12vw,21px)}
+.card .cap{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px;
+  font-size:clamp(12px,.86vw,16px);line-height:1.4;letter-spacing:.2px}
+.card .cap b{font-weight:400;color:var(--vind-text)}
+.card .cap span{font-weight:300;color:var(--vind-80)}
+.card .cap i{font-style:normal;color:var(--vind-60)}
+.card .attrs{margin-top:4px;gap:5px 13px}
+.card .attrs .attr{font-size:clamp(11px,.78vw,14px);color:var(--vind-80)}
 .card:hover h3{color:var(--vind-dark)}
 
 /* list */
@@ -1349,7 +1366,7 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 /* ---------- responsive ---------- */
 @media (max-width:1280px){
   .values{grid-template-columns:repeat(2,1fr);row-gap:48px}
-  .grid{grid-template-columns:repeat(3,1fr);row-gap:56px}
+  .grid{--gh:clamp(190px,26vw,320px)}
   .crsl{--csl-w:min(84vw,760px)}
   .cslide .shot{height:min(43.5vw,424px)}
   .crsl .shot{height:auto}
@@ -1357,7 +1374,7 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
   .cslide.career .shot{height:min(38.7vw,360px)}
 }
 @media (max-width:900px){
-  .grid{grid-template-columns:repeat(2,1fr)}
+  .grid{--gh:clamp(170px,30vw,260px);--gap:16px}
   .cbtn{width:78px;height:78px}
   .cbtn svg{width:15px;height:25px}
   .tablewrap{overflow-x:auto}          /* only a phone needs to pan the table */
@@ -1367,7 +1384,9 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
   .intro{padding-block:48px 28px}.sec{padding-block:48px}
 }
 @media (max-width:620px){
-  .values,.grid{grid-template-columns:1fr}
+  .values{grid-template-columns:1fr}
+  .grid{--gap:14px}
+  .grid .card{flex:1 1 100%}
   .crsl{--csl-w:86vw}
   .cslide.career{width:86vw}
   .cslide .shot,.cslide.career .shot{height:48vw}
@@ -1520,6 +1539,24 @@ const DESC = {
   renewal:'התוכנית בוחנת את פוטנציאל ההתחדשות של המתחם מול יכולת הנשיאה של התשתיות והמרחב הציבורי. ההליך כלל עשרות מפגשים עם התושבים, ותוצריו מגדירים מדרג צפיפויות והתחייבות למרחב ציבורי חדש לצד כל תוספת בינוי.'
 };
 const IMGS = ['assets/pr5.jpg','assets/pr3.jpg','assets/pr4.jpg','assets/pr2.jpg','assets/pr1.jpg','assets/pr6.jpg'];
+
+/* Natural proportion of each plate, read off the files. The gallery lays its
+   rows out from these, so nothing reflows as the pictures arrive. */
+const IMG_AR = {
+  'assets/pr1.jpg':1.792, 'assets/pr2.jpg':1.729, 'assets/pr3.jpg':1.502,
+  'assets/pr4.jpg':1.283, 'assets/pr5.jpg':1.557, 'assets/pr6.jpg':1.627
+};
+
+/* The reference's rhythm comes from portraits sitting between landscapes —
+   that mix is what keeps its rows ragged. Every plate we hold is a wide
+   render, so a grid driven only by the files lays out two-up and perfectly
+   regular, which is the thing we were trying to get away from. Until the
+   practice sends its own photography the card's proportion follows a fixed
+   pattern instead, keyed to the project so it never moves between renders;
+   the wide steps are the files' real ratios and the upright ones crop into
+   the same plate. When the photographs arrive, return this to IMG_AR. */
+const AR_RHYTHM = [1.502, 0.66, 0.70, 1.792, 1.283, 0.68, 1.627, 1.729, 0.66];
+const cardAR = p => AR_RHYTHM[p.id % AR_RHYTHM.length];
 
 /* [year,title,place,plan,domain,size,units,client,status,region,img,lat,lng,tall] */
 const RAW = [
@@ -1914,14 +1951,12 @@ function resultsHTML(){
 
 function gridHTML(items){
   return `<div class="grid">${items.map(p=>`
-    <a class="card rv" href="#/projects" data-project="${p.id}">
-      <div class="shot rv-img"><img class="${p.tall?'tall':'wide'}" src="${p.img}" alt="${esc(p.title)}" loading="lazy"></div>
+    <a class="card rv" href="#/projects" data-project="${p.id}" style="--ar:${cardAR(p)}">
+      <div class="shot rv-img"><img src="${p.img}" alt="${esc(p.title)}" loading="lazy"></div>
       <div class="meta">
-        <div class="titles">
-          <h3 class="t-title">${esc(p.title)}</h3>
-          <div class="place">${esc(p.place)}</div>
-        </div>
-        ${attrs(p,['size','domain','plan'])}
+        <h3>${esc(p.title)}</h3>
+        <div class="cap"><b>${p.year}</b><i>·</i><span>${esc(p.place)}</span></div>
+        ${attrs(p,['plan','size','domain'])}
       </div>
     </a>`).join('')}</div>`;
 }
