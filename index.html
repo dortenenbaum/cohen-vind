@@ -22,6 +22,7 @@
      surface.
      ------------------------------------------------------------------ */
   --paper:#f6f2eb;          /* wool   — was #f2f0ea */
+  --paper-hi:#ffffff;      /* the clean band between the warm ones */
   --paper-2:#ede6d8;        /* linen  — was #e9e6de */
   --ink:#302620;            /* slate  — was #282828 */
   --accent:#c9512e;         /* PRIMARY — buttons, links, live state */
@@ -124,9 +125,7 @@ body.hdr-clear .brand-txt span{color:rgba(255,255,255,.72)}
 body.hdr-clear .lang button{color:rgba(255,255,255,.72)}
 body.hdr-clear .lang button[aria-pressed="true"]{color:#fff;border-bottom-color:#fff}
 body.hdr-clear .lang span{color:rgba(255,255,255,.45)}
-body.hdr-clear .burger{background:transparent;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
-body.hdr-clear .burger i{background:#fff}
-body.hdr-clear .burger:hover{background:rgba(255,255,255,.16)}
+body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 /* an open menu always needs its own ground */
 /* the drawer brings its own ground, so the bar stays as the film left
    it — lighting it up mid-open was a flash of the wrong colour */
@@ -140,20 +139,21 @@ body.hdr-clear .burger:hover{background:rgba(255,255,255,.16)}
    currentColor so the header's existing over-the-film logic keeps driving
    it. The 44px pseudo-element is the tap target the visible mark is too
    small to provide. */
-.burger{width:20px;height:13px;position:relative;background:none;border:0;padding:0;
+.burger{width:26px;height:17px;position:relative;background:none;border:0;padding:0;
   color:var(--vind-text);cursor:pointer;
   transition:opacity var(--ease) .2s}
 .burger:hover{opacity:.6}
 .burger:before{content:"";position:absolute;top:50%;left:50%;width:44px;height:44px;
   transform:translate(-50%,-50%)}
-.burger i{position:absolute;left:0;width:100%;height:1px;background:currentColor;
-  transition:transform .4s var(--ease),opacity .3s var(--ease)}
+.burger i{position:absolute;left:0;width:100%;height:2px;border-radius:2px;background:currentColor;
+  transition:transform .4s var(--ease),opacity .25s var(--ease),width .3s var(--ease)}
 .burger i:nth-child(1){top:0}
-.burger i:nth-child(2){top:6px}
-.burger i:nth-child(3){top:12px}
-.burger[aria-expanded="true"] i:nth-child(1){transform:translateY(6px) rotate(45deg)}
-.burger[aria-expanded="true"] i:nth-child(2){opacity:0}
-.burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.burger i:nth-child(2){top:7.5px;width:68%}
+.burger i:nth-child(3){top:15px}
+.burger:hover i:nth-child(2){width:100%}
+.burger[aria-expanded="true"] i:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.burger[aria-expanded="true"] i:nth-child(2){opacity:0;width:0}
+.burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
 .lang{display:flex;align-items:center;gap:5px;color:var(--vind-80)}
 .lang button{padding-bottom:3px}
 .lang button[aria-pressed="true"]{color:var(--vind-text);border-bottom:1.5px solid var(--vind-dark);
@@ -215,10 +215,10 @@ body.hdr-clear .burger:hover{background:rgba(255,255,255,.16)}
   width:32px;height:32px;background:none;border:0;cursor:pointer;z-index:1}
 .menu-close:before{content:"";position:absolute;top:50%;left:50%;width:44px;height:44px;
   transform:translate(-50%,-50%)}
-.menu-close span{position:absolute;top:50%;left:6px;display:block;width:20px;height:1px;
-  background:var(--walnut);transform:rotate(45deg);transition:background .3s var(--ease)}
-.menu-close span:after{content:"";position:absolute;display:block;width:20px;height:1px;
-  background:var(--walnut);transform:rotate(-90deg)}
+.menu-close span{position:absolute;top:50%;left:3px;display:block;width:26px;height:2px;
+  border-radius:2px;background:var(--ink);transform:rotate(45deg);transition:background .3s var(--ease)}
+.menu-close span:after{content:"";position:absolute;display:block;width:26px;height:2px;
+  border-radius:2px;background:var(--ink);transform:rotate(-90deg)}
 .menu-close:hover span,.menu-close:hover span:after{background:var(--vind-text)}
 
 .menu-contact{display:grid;gap:6px;margin-top:18px;color:var(--vind-80)}
@@ -309,15 +309,80 @@ body.hdr-clear .burger:hover{background:rgba(255,255,255,.16)}
 .sec{padding-block:80px}
 .sec-head{display:grid;justify-items:start;gap:18px;margin-bottom:40px}
 .sec-head.mid{justify-items:center;text-align:center}
-.values{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;align-items:start}
-/* no illustration on these — the practice's own annotation instead:
-   a measured rule opening across the column, with the survey mark
-   sitting on its head */
-.value-rule{position:relative;height:1px;background:var(--vind-60);
-  transform-origin:100% 50%}
-.value-rule::before{content:"";position:absolute;inset-block-start:-3.5px;
-  inset-inline-start:0;width:8px;height:8px;background:var(--accent)}
-.value h3{margin:clamp(22px,2.2vw,34px) 0 10px}
+/* ---- bands ----------------------------------------------------------
+   The page alternates between the warm ground and a clean white, so the
+   beige reads as a choice rather than as the only option there is.
+   Bands are full-bleed: .wrap caps at --maxw, and a background on it
+   alone would leave the ground showing down both margins on a wide
+   screen.
+   --------------------------------------------------------------------- */
+.strip{position:relative}
+.strip-hi{background:var(--paper-hi)}
+
+/* the office, between what the practice says and what it believes */
+.shopfront{position:relative;width:100%;
+  height:clamp(300px,42vw,760px);overflow:hidden;background:var(--vind-20)}
+.shopfront img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ---- the vision set -------------------------------------------------
+   Read as a sheet of drawings rather than three cards: each cell is
+   ruled off top and bottom, labelled and numbered like a detail on a
+   plan, and carries an isometric study of what the words claim. The
+   millimetre grid and the corner registration marks come up under the
+   cell you are reading.
+   --------------------------------------------------------------------- */
+.values{display:grid;grid-template-columns:repeat(3,1fr);align-items:stretch;
+  border-top:1px dashed var(--sand);margin-top:clamp(28px,3.4vh,50px)}
+.vcell{display:flex;flex-direction:column;position:relative;
+  border-inline-start:1px dashed var(--sand);padding:0}
+.vcell:first-child{border-inline-start:0}
+
+.vcell-head{display:flex;align-items:center;justify-content:space-between;
+  padding:14px clamp(14px,1.3vw,22px);border-bottom:1px dashed var(--sand)}
+.vcell-tag{display:inline-flex;align-items:center;gap:8px;
+  font-size:clamp(11px,.677vw,13px);letter-spacing:.12em;color:var(--walnut)}
+.vcell-tag i{width:7px;height:7px;background:var(--accent);flex:none;
+  opacity:0;transform:scale(.4);transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.vcell-n{font:400 clamp(10px,.625vw,12px)/1 var(--mono);letter-spacing:.1em;
+  color:var(--sand);direction:ltr;font-variant-numeric:tabular-nums}
+
+.vcell-art{position:relative;aspect-ratio:1/.94;overflow:hidden;
+  border-bottom:1px dashed var(--sand);display:grid;place-items:center}
+.vcell-grid{position:absolute;inset:0;opacity:0;transition:opacity .45s var(--ease);
+  background-image:linear-gradient(to right,var(--sand) 1px,transparent 1px),
+                   linear-gradient(to bottom,var(--sand) 1px,transparent 1px);
+  background-size:clamp(26px,2.4vw,40px) clamp(26px,2.4vw,40px);
+  background-position:center center}
+.vx{position:absolute;width:11px;height:11px;opacity:0;transition:opacity .45s var(--ease)}
+.vx::before,.vx::after{content:"";position:absolute;background:var(--walnut)}
+.vx::before{inset-block:0;inset-inline-start:5px;width:1px}
+.vx::after{inset-inline:0;inset-block-start:5px;height:1px}
+.vx.tl{top:14px;left:14px} .vx.tr{top:14px;right:14px}
+.vx.bl{bottom:14px;left:14px} .vx.br{bottom:14px;right:14px}
+
+.iso{position:relative;z-index:1;width:78%;height:auto;display:block;overflow:visible}
+.iso path{fill:none;vector-effect:non-scaling-stroke}
+.iso .g-plane{stroke:var(--sand);stroke-width:1}
+.iso .g-ghost{stroke:var(--sand);stroke-width:1;stroke-dasharray:7 3 1.5 3}
+.iso .g-edge {stroke:var(--walnut);stroke-width:1.1;stroke-linejoin:round}
+.iso .g-ring {stroke:var(--ink);stroke-width:1}
+.iso .g-mark {fill:var(--accent);stroke:none;opacity:0;transition:opacity .35s var(--ease)}
+
+.vcell:hover .vcell-grid{opacity:.5}
+.vcell:hover .vx{opacity:.85}
+.vcell:hover .vcell-tag i{opacity:1;transform:none}
+.vcell:hover .iso .g-mark{opacity:1}
+.vcell:hover .iso .g-edge{stroke:var(--ink)}
+.iso .g-edge{transition:stroke .4s var(--ease)}
+
+.vcell-body{padding:clamp(20px,2vw,30px) clamp(14px,1.3vw,22px) 0}
+.vcell-body h3{margin:0 0 .5em}
+
+@media (max-width:900px){
+  .values{grid-template-columns:1fr}
+  .vcell{border-inline-start:0;border-bottom:1px dashed var(--sand)}
+  .vcell-art{aspect-ratio:1/.6}
+}
 /* the practice draws plans — so do its icons: one stroke weight, one accent */
 .rule{height:1px;background:var(--vind-20)}
 
@@ -352,8 +417,8 @@ body.hdr-clear .burger:hover{background:rgba(255,255,255,.16)}
 .carousel.dragging{cursor:grabbing;scroll-snap-type:none}
 .crsl .cslide{flex:none;width:100%;scroll-snap-align:center;display:block;position:relative;
   padding-inline:38px}
-.csl-num{position:absolute;inset-inline-start:4px;top:2px;
-  writing-mode:vertical-rl;font-size:16px;line-height:1;letter-spacing:.04em;
+.csl-num{position:absolute;inset-inline-start:4px;top:2px;bottom:auto;height:auto;
+  writing-mode:vertical-rl;direction:ltr;font-size:16px;line-height:1;letter-spacing:.04em;
   color:var(--sand);white-space:nowrap;transition:color .35s var(--ease)}
 .cslide:hover .csl-num{color:var(--accent)}
 .cslide .shot{overflow:hidden;background:var(--vind-20);position:relative}
@@ -1267,10 +1332,54 @@ function attrs(p,order){
 const VALUE_TXT = 'הפרויקט מציע פיתוח של מרחב אורבני חדש בצפון העיר אור-יהודה, באזור המהווה עתודת הקרקע';
 
 const VALUES = [
-  ['renewal','ראייה חדשנית ומחדשת (מובילה?)'],
-  ['parcels','תכנון אחראי והוגן'],
-  ['contour','זיהוי הצרכים הייחודים לסביבת התכנון']
+  ['renewal','התחדשות','ראייה חדשנית ומחדשת'],
+  ['parcels','הוגנות','תכנון אחראי והוגן'],
+  ['contour','הקשר','זיהוי הצרכים הייחודיים לסביבת התכנון']
 ];
+
+/* The drawings are isometric wireframes, projected in code rather than
+   drawn by hand so the axes stay true: construction lines dash-dot,
+   built edges solid, and one survey mark in the primary. */
+const VISO = {
+  renewal: `<svg class="iso" viewBox="0 0 260 260" aria-hidden="true">
+      <path class="g-plane" d="M130.0 138.0 L202.7 180.0 L130.0 222.0 L57.3 180.0 Z"/>
+      <path class="g-ghost" d="M130.0 130.0 L182.0 160.0 L130.0 190.0 L78.0 160.0 Z"/>
+      <path class="g-ghost" d="M130.0 150.0 L182.0 180.0 L130.0 210.0 L78.0 180.0 Z"/>
+      <path class="g-ghost" d="M130.0 150.0 L130.0 130.0 M182.0 180.0 L182.0 160.0 M130.0 210.0 L130.0 190.0 M78.0 180.0 L78.0 160.0"/>
+      <path class="g-edge" d="M130.0 100.0 L157.7 116.0 L130.0 132.0 L102.3 116.0 Z"/>
+      <path class="g-edge" d="M130.0 164.0 L157.7 180.0 L130.0 196.0 L102.3 180.0 Z"/>
+      <path class="g-edge" d="M130.0 164.0 L130.0 100.0 M157.7 180.0 L157.7 116.0 M130.0 196.0 L130.0 132.0 M102.3 180.0 L102.3 116.0"/>
+      <path class="g-mark" d="M126.0 112.0 h8 v8 h-8 Z"/>
+    </svg>`,
+  parcels: `<svg class="iso" viewBox="0 0 260 260" aria-hidden="true">
+      <path class="g-plane" d="M130.0 150.0 L192.4 186.0 L130.0 222.0 L67.6 186.0 Z"/>
+      <path class="g-ghost" d="M150.8 162.0 L88.4 198.0"/>
+      <path class="g-ghost" d="M109.2 162.0 L171.6 198.0"/>
+      <path class="g-ghost" d="M171.6 174.0 L109.2 210.0"/>
+      <path class="g-ghost" d="M88.4 174.0 L150.8 210.0"/>
+      <path class="g-edge" d="M130.0 135.0 L145.6 144.0 L130.0 153.0 L114.4 144.0 Z"/>
+      <path class="g-edge" d="M130.0 153.0 L145.6 162.0 L130.0 171.0 L114.4 162.0 Z"/>
+      <path class="g-edge" d="M130.0 153.0 L130.0 135.0 M145.6 162.0 L145.6 144.0 M130.0 171.0 L130.0 153.0 M114.4 162.0 L114.4 144.0"/>
+      <path class="g-edge" d="M130.0 159.0 L145.6 168.0 L130.0 177.0 L114.4 168.0 Z"/>
+      <path class="g-edge" d="M130.0 177.0 L145.6 186.0 L130.0 195.0 L114.4 186.0 Z"/>
+      <path class="g-edge" d="M130.0 177.0 L130.0 159.0 M145.6 186.0 L145.6 168.0 M130.0 195.0 L130.0 177.0 M114.4 186.0 L114.4 168.0"/>
+      <path class="g-edge" d="M130.0 183.0 L145.6 192.0 L130.0 201.0 L114.4 192.0 Z"/>
+      <path class="g-edge" d="M130.0 201.0 L145.6 210.0 L130.0 219.0 L114.4 210.0 Z"/>
+      <path class="g-edge" d="M130.0 201.0 L130.0 183.0 M145.6 210.0 L145.6 192.0 M130.0 219.0 L130.0 201.0 M114.4 210.0 L114.4 192.0"/>
+      <path class="g-mark" d="M126.0 161.0 h8 v8 h-8 Z"/>
+    </svg>`,
+  contour: `<svg class="iso" viewBox="0 0 260 260" aria-hidden="true">
+      <path class="g-ghost" d="M130.0 136.0 L216.6 186.0 L130.0 236.0 L43.4 186.0 Z"/>
+      <path class="g-ghost" d="M130.0 143.0 L192.4 179.0 L130.0 215.0 L67.6 179.0 Z"/>
+      <path class="g-ghost" d="M130.0 150.0 L168.1 172.0 L130.0 194.0 L91.9 172.0 Z"/>
+      <path class="g-edge" d="M130.0 136.0 L154.2 150.0 L130.0 164.0 L105.8 150.0 Z"/>
+      <path class="g-edge" d="M130.0 174.0 L154.2 188.0 L130.0 202.0 L105.8 188.0 Z"/>
+      <path class="g-edge" d="M130.0 174.0 L130.0 136.0 M154.2 188.0 L154.2 150.0 M130.0 202.0 L130.0 164.0 M105.8 188.0 L105.8 150.0"/>
+      <path class="g-ring" d="M42 132 a88 88 0 1 0 176 0 a88 88 0 1 0 -176 0"/>
+      <path class="g-mark" d="M126.0 146.0 h8 v8 h-8 Z"/>
+    </svg>`
+};
+
 const CAREERS = [
   ['assets/c2.jpg','צוות התכנון במשרד בתל אביב','50% 50%'],
   ['assets/c3.jpg','ישיבת תיאום על תוכנית מפורטת','50% 45%'],
@@ -1302,10 +1411,16 @@ function homeHTML(){
   </div>
 
   <div class="over">
+  <div class="strip strip-hi">
   <section class="wrap intro rv">
     <p class="t-display meas">משרד כהן וינד ושות׳ אדריכלות ובינוי ערים פועל בירושלים משנת 1996. המשרד עוסק במגוון פרויקטים עירוניים, אזוריים וארציים ברחבי הארץ. לקוחותינו הינם גופים עירוניים וממשלתיים לצד חברות פרטיות, המייצגים יחדיו קשת רחבה של נושאים וקבוצות בחברה הישראלית.</p>
     <a class="link-btn t-ui" href="#/about" data-nav="about">${icon('i-arrow')}<span>אודות המשרד</span></a>
   </section>
+  </div>
+
+  <figure class="shopfront rv rv-img">
+    <img src="assets/c2.jpg" alt="חלל העבודה של המשרד" loading="lazy" draggable="false">
+  </figure>
 
   <section class="wrap sec">
     <div class="sec-head rv">
@@ -1314,16 +1429,25 @@ function homeHTML(){
       <a class="link-btn t-ui" href="#/vision" data-nav="vision">${icon('i-arrow')}<span>חזון וערכים</span></a>
     </div>
     <div class="values">
-      ${VALUES.map(v=>`<article class="value rv">
-        <div class="value-rule" aria-hidden="true"></div>
-        <h3 class="t-title">${esc(v[1])}</h3>
-        <p class="t-body dim">${esc(VALUE_TXT)}</p>
+      ${VALUES.map((v,i)=>`<article class="vcell rv">
+        <header class="vcell-head">
+          <span class="vcell-tag"><i aria-hidden="true"></i>${esc(v[1])}</span>
+          <span class="vcell-n">[0${i+1}]</span>
+        </header>
+        <div class="vcell-art">
+          <span class="vcell-grid" aria-hidden="true"></span>
+          <b class="vx tl"></b><b class="vx tr"></b><b class="vx bl"></b><b class="vx br"></b>
+          ${VISO[v[0]]}
+        </div>
+        <div class="vcell-body">
+          <h3 class="t-title">${esc(v[2])}</h3>
+          <p class="t-body dim">${esc(VALUE_TXT)}</p>
+        </div>
       </article>`).join('')}
     </div>
   </section>
 
-  <div class="wrap"><div class="rule"></div></div>
-
+  <div class="strip strip-hi">
   <section class="wrap sec">
     <div class="sec-head mid rv">
       <h2 class="t-display">פרויקטים נבחרים</h2>
@@ -1348,6 +1472,7 @@ function homeHTML(){
       <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-arrow-long')}</button>
     </div>
   </section>
+  </div>
 
   <div class="wrap"><div class="rule"></div></div>
 
