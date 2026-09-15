@@ -2813,9 +2813,14 @@ function wireMap(){
   apply();
   stage.addEventListener('pointerdown',e=>{
     if(e.target.closest('.pin,.mapcard')) return;
-    down=true;x0=e.clientX;y0=e.clientY;px=tx;py=ty;stage.classList.add('dragging');stage.setPointerCapture(e.pointerId);
+    down=true;x0=e.clientX;y0=e.clientY;px=tx;py=ty;stage._moved=false;
+    stage.classList.add('dragging');stage.setPointerCapture(e.pointerId);
   });
-  stage.addEventListener('pointermove',e=>{ if(!down)return; tx=px+e.clientX-x0; ty=py+e.clientY-y0; apply(); });
+  stage.addEventListener('pointermove',e=>{ if(!down)return;
+    /* a pan ends in a click too — remember whether this one travelled,
+       so letting go of a drag does not read as a tap on the map */
+    if(Math.abs(e.clientX-x0)+Math.abs(e.clientY-y0)>6) stage._moved=true;
+    tx=px+e.clientX-x0; ty=py+e.clientY-y0; apply(); });
   const up=()=>{down=false;stage.classList.remove('dragging')};
   stage.addEventListener('pointerup',up); stage.addEventListener('pointercancel',up);
   box.addEventListener('wheel',e=>{
@@ -2945,6 +2950,15 @@ document.addEventListener('click',e=>{
   if(col){const m={year:'recent',title:'alpha',units:'scale'};state.sort=m[col.dataset.col]||(state.sort==='recent'?'oldest':'recent');refresh();return}
 
   if(t.closest('[data-pin-close]')){ selectProject(null); return }
+
+  /* a tap on the map with the drawer open puts it away — but not a tap
+     on a pin, the drawer itself, or any of the map's own controls, and
+     not the click that ends a pan */
+  if(state.selected && t.closest('#mapbox') &&
+     !t.closest('.mappanel,[data-pin],[data-cluster],.mapzoom,.mapsearch,.mapfull-btn,.mapfull-out,.mapnote,.maphint')){
+    const st=document.getElementById('mapstage');
+    if(!(st && st._moved)){ selectProject(null); return }
+  }
   const pin=t.closest('[data-pin]'); if(pin){ selectProject(Number(pin.dataset.pin)); return }
 
   const cluster=t.closest('[data-cluster]');
