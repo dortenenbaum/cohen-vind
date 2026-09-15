@@ -189,53 +189,53 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .menu{position:fixed;top:0;bottom:0;left:0;z-index:99;
   width:min(420px,86vw);padding:120px 56px 56px;
   display:flex;flex-direction:column;
-  background:rgba(10,10,10,.66);
-  -webkit-backdrop-filter:blur(30px) saturate(110%) brightness(.58);
-  backdrop-filter:blur(30px) saturate(110%) brightness(.58);
-  color:#fff;
+  background:rgba(229,84,41,.88);
+  -webkit-backdrop-filter:blur(30px) saturate(118%);
+  backdrop-filter:blur(30px) saturate(118%);
+  color:#141414;
   box-shadow:0 0 60px rgba(22,17,13,0);
   transform:translateX(-100%);
   transition:transform .6s var(--ease-settle),box-shadow .6s var(--ease-settle)}
 .menu.open{transform:translateX(0);box-shadow:0 0 60px rgba(22,17,13,.18)}
 /* without backdrop-filter the panel has to carry its own ground */
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
-  .menu{background:rgba(8,8,8,.97)}
+  .menu{background:var(--accent)}
 }
 .menu-label{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(255,255,255,.55);margin:0 0 36px}
+  color:rgba(20,20,20,.58);margin:0 0 36px}
 .menu-in{display:flex;flex-direction:column;flex:1;min-height:0}
 .menu nav{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 .menu nav a{position:relative;display:block;text-align:start;text-decoration:none;
   font-family:var(--font-display,inherit);font-weight:300;
   font-size:clamp(22px,2.6vw,28px);line-height:1.15;letter-spacing:-.01em;
-  color:#fff;padding-block:7px;
+  color:#141414;padding-block:7px;
   transition:opacity .4s var(--ease),color .3s var(--ease),transform .5s var(--ease-settle);
   animation:navIn .42s var(--ease) backwards;animation-delay:calc(var(--i) * 45ms)}
 @keyframes navIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .menu nav a .ar{display:none}
-.menu nav a:hover{opacity:1;color:var(--accent);transform:translateX(-8px)}
+.menu nav a:hover{opacity:1;color:#000;transform:translateX(-8px)}
 .menu nav a[aria-current="page"]{opacity:1}
 /* the current page is marked by a rule in the margin, not a colour */
 .menu nav a[aria-current="page"]:before{content:"";position:absolute;top:50%;
-  inset-inline-start:-20px;width:10px;height:1px;background:var(--accent)}
+  inset-inline-start:-20px;width:10px;height:1px;background:#000}
 .menu-side{margin-top:auto;padding-top:40px;display:flex;flex-direction:column;gap:6px;
   animation:navIn .5s var(--ease) backwards;animation-delay:.2s}
 .menu-contact{display:flex;flex-direction:column;gap:6px}
-.menu-contact a{font-size:13px;font-weight:300;color:rgba(255,255,255,.88);text-decoration:none;
+.menu-contact a{font-size:13px;font-weight:300;color:rgba(20,20,20,.88);text-decoration:none;
   width:fit-content;transition:color .4s var(--ease)}
-.menu-contact a:hover{color:#fff}
+.menu-contact a:hover{color:#000}
 .menu-contact span{font-size:11px;font-weight:300;letter-spacing:.08em;
-  text-transform:uppercase;color:rgba(255,255,255,.5)}
+  text-transform:uppercase;color:rgba(20,20,20,.55)}
 /* close control, mirroring the reference's two crossed rules */
 .menu-close{position:absolute;top:clamp(24px,4vh,40px);inset-inline-end:clamp(24px,5vw,40px);
   width:32px;height:32px;background:none;border:0;cursor:pointer;z-index:1}
 .menu-close:before{content:"";position:absolute;top:50%;left:50%;width:44px;height:44px;
   transform:translate(-50%,-50%)}
 .menu-close span{position:absolute;top:50%;left:3px;display:block;width:26px;height:2px;
-  border-radius:2px;background:#fff;transform:rotate(45deg);transition:background .3s var(--ease)}
+  border-radius:2px;background:#141414;transform:rotate(45deg);transition:background .3s var(--ease)}
 .menu-close span:after{content:"";position:absolute;display:block;width:26px;height:2px;
-  border-radius:2px;background:#fff;transform:rotate(-90deg)}
-.menu-close:hover span,.menu-close:hover span:after{background:rgba(255,255,255,.7)}
+  border-radius:2px;background:#141414;transform:rotate(-90deg)}
+.menu-close:hover span,.menu-close:hover span:after{background:#000}
 
 .menu-contact{display:grid;gap:6px;margin-top:18px;color:var(--vind-80)}
 .menu-contact a:hover{color:var(--vind-dark)}
@@ -962,7 +962,7 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
    away from it — so a page change reads as one sweep across the frame
    in the direction the eye already travels.
    -------------------------------------------------------------------- */
-.curtain{position:fixed;inset:0;z-index:110;background:var(--ink);
+.curtain{position:fixed;inset:0;z-index:110;background:var(--accent);
   pointer-events:none;clip-path:inset(0 0 0 100%)}
 .curtain.in{pointer-events:auto;clip-path:inset(0 0 0 0);
   transition:clip-path .5s var(--ease-rv)}
