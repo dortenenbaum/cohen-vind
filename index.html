@@ -301,10 +301,27 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    list however large the type is; staggered, the page has a rhythm you
    follow rather than a column you scan. --c1 is the start, --cn the span. */
 .prins{display:grid;grid-template-columns:repeat(12,1fr);
-  column-gap:clamp(12px,1.4vw,28px);row-gap:clamp(90px,15vh,220px);
+  column-gap:clamp(12px,1.4vw,28px);row-gap:0;
   padding-block:clamp(40px,7vh,110px) clamp(80px,11vh,180px)}
-.prin{grid-column:var(--c1) / span var(--cn);--lede-lab:clamp(118px,13vw,230px)}
+/* A screen each. The point is centred in its own viewport height, so the
+   one before it and the one after are a full screen away and neither is on
+   the page with it. The rest is the fade: during the scroll between two
+   points both would be on screen at once, so everything but the one at the
+   centre drops back — you read one thing at a time, which is the whole
+   reason for giving each of them a screen.
+
+   Done with a class rather than a scroll-driven animation because this
+   page drives its own inertial scroll; anything reading scroll position
+   per frame would be fighting that loop for the same pixels. */
+.prin{grid-column:var(--c1) / span var(--cn);--lede-lab:clamp(118px,13vw,230px);
+  min-height:100svh;display:grid;align-content:center;
+  padding-block:clamp(40px,7vh,90px);
+  opacity:.16;transition:opacity .55s var(--ease)}
+.prin.on,.prin.open{opacity:1}
 .prin .pkick{color:var(--vind-80)}
+
+@media (max-width:900px){ .prin{min-height:0;opacity:1} }
+@media (prefers-reduced-motion:reduce){ .prin{opacity:1;transition:none} }
 
 /* the way in to the examples: the same plus the page already uses */
 .prin-more{display:inline-flex;align-items:center;gap:14px;flex-direction:row-reverse;
@@ -2339,8 +2356,11 @@ const PRIN_CASE = [
 ];
 
 /* Each paragraph takes its own width and its own start on the twelve
-   columns, so the five do not stack into one left edge. Start, span. */
-const PRIN_COL = [[1,12],[1,9],[3,10],[2,8],[4,9]];
+   columns, so the five do not stack into one left edge. Start, span — every
+   span different, and none of them twelve: at full width the first point
+   was the same shape as the claim above it, which read as one paragraph
+   that had simply carried on. */
+const PRIN_COL = [[2,10],[1,8],[2,11],[4,9],[6,7]];
 
 /* Two example projects per principle, and a different pair each time —
    all five drawers used to open on the same three, which said the same
@@ -3071,7 +3091,7 @@ function render(reveal=true){
   app.innerHTML = (VIEWS[state.page] || homeHTML)();
   renderMenu();
   wireMap(); wireCarousels(); wireFilm(); wireOpener(); wireIndexPreview(); wireParallax();
-  wireHeroNotes();
+  wireHeroNotes(); wirePrinciples();
   wireRules(); wireTicker();
   if(reveal) initReveal();
 }
@@ -3279,6 +3299,26 @@ function wireHeroNotes(){
     wrap.removeEventListener('click', onClick);
     removeEventListener('keydown', onKey);
   };
+}
+
+/* ---------- vision: one point at a time -----------------------------
+   Whichever point is crossing the middle of the screen is the one that is
+   lit; the others sit back. A thin band at the centre is all the observer
+   watches, so it fires twice per point rather than continuously, and the
+   page pays nothing for this while you are anywhere else on it. */
+let prinIO=null;
+function wirePrinciples(){
+  if(prinIO){ prinIO.disconnect(); prinIO=null }
+  const blocks=[...document.querySelectorAll('.prin')];
+  if(!blocks.length) return;
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches || innerWidth<=900){
+    blocks.forEach(b=>b.classList.add('on'));
+    return;
+  }
+  prinIO=new IntersectionObserver(es=>{
+    es.forEach(e=>e.target.classList.toggle('on', e.isIntersecting));
+  },{rootMargin:'-45% 0px -45% 0px'});
+  blocks.forEach(b=>prinIO.observe(b));
 }
 
 function wireOpener(){
