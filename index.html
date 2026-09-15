@@ -135,7 +135,7 @@ a{color:inherit;text-decoration:none}
   transition:color .5s var(--ease),background .5s var(--ease),box-shadow .5s var(--ease)}
 
 body.hdr-clear .hdr{background:transparent}
-body.hdr-clear .brand-mark{opacity:.88;filter:drop-shadow(0 1px 4px rgba(0,0,0,.4))}
+body.hdr-clear .brand-mark{opacity:.88}
 body.hdr-clear .brand-txt{color:#fff}
 body.hdr-clear .brand-txt span{color:rgba(255,255,255,.72)}
 body.hdr-clear .lang button{color:rgba(255,255,255,.72)}
@@ -474,13 +474,14 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .shot-tags .ico{background:var(--marker-tint);border:1px solid var(--marker);color:var(--marker);
   font-size:calc(26px * .56)}
 .crsl .shot{aspect-ratio:847/466}
+.crsl .cslide .shot>img{will-change:transform}
 /* Only the transform moves. A filter on the picture has to re-raster the
    whole image on every frame, which is what made the first pass stutter,
    so the wash it used to carry is now a sheet of its own whose opacity
    fades — opacity and transform are both handed straight to the
    compositor and neither touches the pixels. */
 .cslide .shot>img{width:100%;height:100%;object-fit:cover;transform:scale(1.001);
-  will-change:transform;backface-visibility:hidden;
+  backface-visibility:hidden;
   transition:transform .65s var(--ease)}
 .cslide:hover .shot>img{transform:scale(1.04)}
 .cslide .shot::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
@@ -497,6 +498,9 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 /* careers runs as an ambient ticker — full-bleed, no controls, nothing clickable */
 .ticker{overflow:hidden;margin-inline:calc(var(--gutter) * -1);pointer-events:none;direction:ltr}
 .ticker-track{display:flex;gap:30px;width:max-content;animation:tick 56s linear infinite}
+/* an endless marquee off the bottom of the page still costs a frame
+   every frame; it only runs while it is on screen */
+.ticker.idle .ticker-track{animation-play-state:paused}
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media (prefers-reduced-motion:reduce){.ticker-track{animation:none}}
 .ticker .cslide{direction:rtl;margin:0}
@@ -952,6 +956,19 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 
 @media (prefers-reduced-motion:reduce){ .veil{transition:none} }
 
+/* ---- rules that draw themselves -------------------------------------
+   The reference grows a hairline from nothing to the full width of its
+   column over two seconds, on an ease that starts and ends at rest.
+   Ours does the same, from the reading edge.
+
+   The element keeps its own border declaration and only holds it
+   transparent while the bar does the drawing, so nothing shifts by a
+   pixel and any rule the script never reaches still has its line.
+   -------------------------------------------------------------------- */
+.rl{position:absolute;inset-inline-start:0;width:0;pointer-events:none;
+  transition:width 2s cubic-bezier(.76,0,.24,1)}
+.rl.on{width:100%}
+
 /* ---- selection -------------------------------------------------------
    Dragging over the text paints it in the primary with black on top —
    the reference's own rule, and the whole reason the orange was lifted
@@ -1371,7 +1388,7 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 
 <footer class="ft">
   <div class="wrap rv">
-    <p class="ft-say">רוצים לדבר על תוכנית? נשמח לשמוע מכם.</p>
+    <p class="ft-say">רוצים לדבר על תוכנית?<br>נשמח לשמוע מכם.</p>
 
     <div class="ft-cells">
       <a class="ft-cell" href="#/">צרו קשר</a>
@@ -2598,7 +2615,73 @@ function render(reveal=true){
   app.innerHTML = (VIEWS[state.page] || homeHTML)();
   renderMenu();
   wireMap(); wireCarousels(); wireFilm(); wireOpener(); wireIndexPreview(); wireParallax();
+  wireRules(); wireTicker();
   if(reveal) initReveal();
+}
+
+/* ---------- rules that draw themselves -------------------------------
+   Only the lines that divide content, not the ones that underline a
+   control — a form field whose rule sweeps in as you scroll past reads
+   as a glitch, not as craft.
+   --------------------------------------------------------------------- */
+const RULE_SEL='.prow,.pxrow,.values,.vcell-art,.cv-top,.cv-block,.cv-row,.jobrow,.ft-cells';
+let ruleIO=null;
+/* the marquee rests unless it is on screen */
+let tickIO=null;
+function wireTicker(){
+  tickIO?.disconnect();
+  const t=document.querySelector('.ticker');
+  if(!t) return;
+  t.classList.add('idle');
+  tickIO=new IntersectionObserver(es=>es.forEach(e=>
+    e.target.classList.toggle('idle',!e.isIntersecting)),{rootMargin:'200px 0px'});
+  tickIO.observe(t);
+}
+
+/* The footer and the header outlive every render, so their bars are built
+   once and then skipped — but each render replaces the observer, and an
+   element that is only ever visited on the pass that built it would sit
+   there with a transparent border and a line that never arrives. Anything
+   still holding an undrawn bar gets handed to the new observer. */
+function reobserve(el){
+  const bars=[...el.querySelectorAll(':scope > .rl')];
+  if(bars.length && bars.some(b=>!b.classList.contains('on'))) ruleIO.observe(el);
+}
+function wireRules(){
+  if(REDUCED) return;
+  ruleIO?.disconnect();
+  /* the row is what gets watched, not the bar — a bar starts at zero
+     width, and a target with no area never reports an intersection */
+  ruleIO=new IntersectionObserver(es=>es.forEach(e=>{
+    if(!e.isIntersecting) return;
+    e.target.querySelectorAll(':scope > .rl').forEach(b=>b.classList.add('on'));
+    ruleIO.unobserve(e.target);
+  }),{rootMargin:'0px 0px -6% 0px'});
+
+  for(const el of document.querySelectorAll(RULE_SEL)){
+    if(el.dataset.ruled){ reobserve(el); continue; }
+    const cs=getComputedStyle(el);
+    if(cs.position==='static') el.style.position='relative';
+    /* a bar per side that actually carries a line — border-block gives
+       an element two, and .cv-row's first sibling has none at all */
+    for(const side of ['Top','Bottom']){
+      const w=parseFloat(cs['border'+side+'Width'])||0;
+      const c=cs['border'+side+'Color'];
+      if(!w || c==='transparent' || /rgba\(.*,\s*0\)$/.test(c)) continue;
+      el.style['border'+side+'Color']='transparent';
+      const bar=document.createElement('i');
+      bar.className='rl';
+      bar.style.height=w+'px';
+      bar.style.background=c;
+      /* the bar belongs on the border, one step outside the padding box —
+         except where the element clips, which would swallow it there */
+      const clipped=cs.overflow!=='visible';
+      bar.style[side.toLowerCase()]=clipped?'0':(-w)+'px';
+      el.appendChild(bar);
+    }
+    el.dataset.ruled='1';
+    reobserve(el);
+  }
 }
 
 /* ---------- parallax -------------------------------------------------
@@ -2614,16 +2697,20 @@ function parCollect(){
     el, amt:Number(el.dataset.par)||6
   }));
 }
+/* Every rectangle is measured before anything is written. Interleaving
+   the two made the browser settle layout again on each item, which is
+   what turned a long page into a stutter once enough of them were on
+   screen at once. */
 function parFrame(){
   parRaf=0;
-  const h=innerHeight||1;
+  const h=innerHeight||1, out=[];
   for(const it of parItems){
     const r=it.el.getBoundingClientRect();
     if(r.bottom<-240 || r.top>h+240) continue;
     /* -1 a screen below the fold, +1 a screen above it */
-    const p=((r.top+r.height/2)-h/2)/((h+r.height)/2);
-    it.el.style.transform=`translate3d(0,${(p*it.amt).toFixed(2)}%,0) scale(1.22)`;
+    out.push([it.el,((r.top+r.height/2)-h/2)/((h+r.height)/2)*it.amt]);
   }
+  for(const [el,y] of out) el.style.transform=`translate3d(0,${y.toFixed(2)}%,0) scale(1.22)`;
 }
 const parTick=()=>{ if(!parRaf) parRaf=requestAnimationFrame(parFrame) };
 function wireParallax(){
@@ -2661,6 +2748,7 @@ function wireOpener(){
   const over=document.querySelector('.over'), txt=document.getElementById('opener-txt');
   if(!over){ openerWantClear=false; applyHdrClear(); return }
   const film=document.getElementById('hero-film');
+  const zoom=document.querySelector('.opener-zoom');
 
   /* The film is scaled past its frame with the bottom-right corner pinned,
      so all the slack sits above the top edge — it can be pushed DOWN by up
@@ -2681,7 +2769,11 @@ function wireOpener(){
       txt.style.transform=`translateY(${-p*90}px)`;
       txt.style.opacity=String(1-Math.min(1,p*1.45));
     }
-    if(film && !REDUCED){
+    /* once the page has closed over the film there is nothing to see:
+       stop writing its transform and let the slow zoom rest */
+    const covered = over.getBoundingClientRect().top <= 0;
+    if(zoom) zoom.style.animationPlayState = covered ? 'paused' : 'running';
+    if(film && !REDUCED && !covered){
       film.style.transform=
         `translate3d(0,${(p*DRIFT*innerHeight).toFixed(1)}px,0) scale(${(SCALE+p*ZOOM).toFixed(4)})`;
     }
