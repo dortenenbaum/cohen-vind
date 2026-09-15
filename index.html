@@ -332,14 +332,16 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    cell you are reading.
    --------------------------------------------------------------------- */
 .values{display:grid;grid-template-columns:repeat(3,1fr);align-items:stretch;
-  border-top:1px dashed var(--sand);margin-top:clamp(28px,3.4vh,50px)}
+  border-block-start:1px solid var(--sand);
+  border-inline:1px solid var(--sand);        /* the frame was open at both ends */
+  margin-top:clamp(28px,3.4vh,50px)}
 .vcell{display:flex;flex-direction:column;position:relative;
-  border-inline-start:1px dashed var(--sand);padding:0}
+  border-inline-start:1px solid var(--sand);padding:0}
 .vcell:first-child{border-inline-start:0}
 
 
 .vcell-art{position:relative;aspect-ratio:1/.94;overflow:hidden;
-  border-bottom:1px dashed var(--sand);display:grid;place-items:center}
+  border-block-end:1px solid var(--sand);display:grid;place-items:center}
 .vcell-grid{position:absolute;inset:0;opacity:0;transition:opacity .45s var(--ease);
   background-image:linear-gradient(to right,var(--sand) 1px,transparent 1px),
                    linear-gradient(to bottom,var(--sand) 1px,transparent 1px);
@@ -355,7 +357,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .iso{position:relative;z-index:1;width:82%;height:auto;display:block;overflow:visible}
 .iso path{fill:none;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round}
 .iso .g-ground{stroke:var(--vind-40);stroke-width:1}
-.iso .g-ghost {stroke:var(--vind-60);stroke-width:1;stroke-dasharray:8 4}
+.iso .g-ghost {stroke:var(--vind-60);stroke-width:1}
 .iso .g-edge  {stroke:var(--ink);stroke-width:1.4}
 .iso .g-ring  {stroke:var(--vind-60);stroke-width:1}
 .iso .g-mark  {fill:var(--accent);stroke:none;opacity:0;transition:opacity .35s var(--ease)}
@@ -372,7 +374,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 
 @media (max-width:900px){
   .values{grid-template-columns:1fr}
-  .vcell{border-inline-start:0;border-bottom:1px dashed var(--sand)}
+  .vcell{border-inline-start:0;border-block-end:1px solid var(--sand)}
   .vcell-art{aspect-ratio:1/.6}
 }
 /* the practice draws plans — so do its icons: one stroke weight, one accent */
@@ -864,17 +866,46 @@ td.go svg{width:17px;height:11px}
 }
 
 /* people grid (team) */
-.people{display:grid;grid-template-columns:repeat(4,1fr);gap:30px 30px}
-.person{display:block}
-.person .ph{width:100%;aspect-ratio:1/1;background:var(--vind-20);overflow:hidden;position:relative}
-.person .ph img{width:100%;height:100%;object-fit:cover}
-.person h3{margin:16px 0 0;font-weight:400;font-size:var(--t-body);letter-spacing:.36px;color:var(--vind-text)}
-.person .role{font-size:var(--t-body);color:var(--vind-80);letter-spacing:.36px}
-.person .bio{position:absolute;inset:0;background:var(--vind-20);padding:clamp(12px,1.2vw,22px);
+/* ---- the studio ----------------------------------------------------
+   Five across, three to four, edge to edge with no gutter at all, and
+   the whole run full-bleed — the portraits make the grid rather than
+   sitting inside one. Name and role live over the picture and come up
+   on hover, so at rest the page is only faces.
+   --------------------------------------------------------------------- */
+.people{display:grid;grid-template-columns:repeat(5,1fr);gap:0;
+  width:100vw;margin-inline:calc(50% - 50vw)}
+.person{display:block;position:relative;overflow:hidden}
+/* until the portraits arrive the tiles are empty, and an empty tile on a
+   white ground is invisible — give the placeholder a tone and a hairline
+   so the grid reads. A photo covers both. */
+.person .ph{width:100%;aspect-ratio:3/4;background:var(--vind-20);overflow:hidden;position:relative;
+  box-shadow:inset 0 0 0 1px var(--paper)}
+.person .ph::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--vind-20) 0%,var(--vind-40) 100%)}
+.person .ph:has(img)::after{display:none}
+.person .ph img{width:100%;height:100%;object-fit:cover;filter:grayscale(1);
+  transition:transform 1s var(--ease),filter .6s var(--ease)}
+.person:hover .ph img{transform:scale(1.04);filter:grayscale(0)}
+
+.person .cap{position:absolute;inset-inline:0;inset-block-end:0;z-index:2;pointer-events:none;
+  padding:clamp(30px,3vw,56px) clamp(12px,1vw,20px) clamp(12px,1vw,18px);
+  background:linear-gradient(to top,rgba(20,20,20,.78) 0%,rgba(20,20,20,.3) 55%,rgba(20,20,20,0) 100%);
+  opacity:0;transform:translateY(8px);
+  transition:opacity .4s var(--ease),transform .5s var(--ease)}
+.person:hover .cap,.person:focus-within .cap{opacity:1;transform:none}
+.person h3{margin:0;font-weight:400;font-size:var(--t-body);letter-spacing:.36px;color:#fff}
+.person .role{font-size:clamp(11px,.72vw,13px);color:rgba(255,255,255,.78);letter-spacing:.36px}
+
+.person .bio{position:absolute;inset:0;z-index:3;background:var(--paper);
+  padding:clamp(14px,1.3vw,24px);
   display:flex;flex-direction:column;justify-content:flex-end;gap:8px;
-  opacity:0;transition:opacity .3s var(--ease);font-size:clamp(11px,.72vw,13px);line-height:1.45;color:var(--vind-text)}
-.person:hover .bio,.person:focus-within .bio{opacity:1}
+  opacity:0;transition:opacity .35s var(--ease);
+  font-size:clamp(11px,.72vw,13px);line-height:1.45;color:var(--vind-text)}
+.person:hover .bio,.person:focus-within .bio{opacity:0}
 .person .bio b{font-weight:700}
+
+@media (max-width:1100px){ .people{grid-template-columns:repeat(3,1fr)} }
+@media (max-width:640px){ .people{grid-template-columns:repeat(2,1fr)} }
 
 /* card grids (about) */
 .cards4{display:grid;grid-template-columns:repeat(4,1fr);gap:30px 30px;align-items:start}
@@ -1730,6 +1761,8 @@ function visionHTML(){
   </section>`;
 }
 
+/* [name, role, portrait] — add a third entry per person and the tile
+   swaps its placeholder for the photograph, no other change needed. */
 const TEAM_ROLES = [
   ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
   ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
@@ -1750,18 +1783,14 @@ function teamHTML(){
     <p class="t-body dim" style="max-width:66ch">מי אנחנו. איך אנחנו עובדים. במה אנחנו מאמינים. כהן וינד אדריכלים ב־6 עקרונות.</p>
   </section>
 
-  <section class="wrap sec" style="padding-top:clamp(20px,2vw,36px)">
+  <section class="sec" style="padding-top:clamp(20px,2vw,36px)">
     <div class="people">
-      ${TEAM_ROLES.map(([n,r],i)=>`<article class="person rv">
-        <div class="ph">
-          <div class="bio">
-            <b>${esc(n)}</b>
-            <span>תואר ראשון תואר ראשון תואר ראשון תואר ראשון תואר ראשון</span>
-            <span>תואר שני תואר שני תואר שני תואר שני</span>
-          </div>
+      ${TEAM_ROLES.map(([n,r,img])=>`<article class="person rv" tabindex="0">
+        <div class="ph">${img?`<img src="${img}" alt="${esc(n)}" loading="lazy" draggable="false">`:''}</div>
+        <div class="cap">
+          <h3>${esc(n)}</h3>
+          <div class="role">${esc(r)}</div>
         </div>
-        <h3>${esc(n)}</h3>
-        <div class="role">${esc(r)}</div>
       </article>`).join('')}
     </div>
   </section>
