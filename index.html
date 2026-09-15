@@ -1287,9 +1287,18 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 .pj-specs dd{margin:0;font-size:var(--t-body);letter-spacing:.54px;color:var(--vind-text);
   display:flex;align-items:center;gap:8px}
 .pj-map{position:relative;width:100%;aspect-ratio:1040/620;overflow:hidden;background:var(--vind-20)}
-.pj-map>img.base{position:absolute;width:340%;height:289.75%;max-width:none}
+.pj-stage{position:absolute;inset:0;transform-origin:50% 50%;
+  transition:transform .46s cubic-bezier(.4,0,.2,1)}
+.pj-map img.base{position:absolute;width:340%;height:289.75%;max-width:none}
 .pj-map .pin{z-index:3}
-.pj-map .pin{--pz:1}
+/* the pin holds its drawn size whatever the stage is scaled to */
+.pj-map .pin{--pz:var(--pjz,1)}
+.pj-map .mapfull-out{display:none}
+.pj-map.full{position:fixed;inset:0;z-index:200;width:100vw;height:100dvh;
+  aspect-ratio:auto;max-width:none}
+.pj-map.full .mapfull-btn{display:none}
+.pj-map.full .mapfull-out{display:grid}
+.pj-map .mapfull-btn{top:14px;right:14px}
 .pj-credits{font-size:clamp(11px,.72vw,13px);line-height:1.6;color:var(--vind-80);letter-spacing:.2px}
 .pj-credits b{font-weight:700;color:var(--vind-text)}
 
@@ -2343,11 +2352,22 @@ const PJ_ZX = 3.4;
 const PJ_ZY = PJ_ZX * (MAPFIT.h/MAPFIT.w) / (620/1040);
 function pjMap(p){
   const c=toPx(p);
-  return `<div class="pj-map">
-    <img class="base" src="assets/map_base.jpg" alt="" loading="lazy"
-      style="left:${(50-c.x*PJ_ZX).toFixed(2)}%;top:${(50-c.y*PJ_ZY).toFixed(2)}%">
-    <button class="pin" style="left:50%;top:50%"
-      aria-label="${esc(p.title)}, ${esc(p.place)}"><img src="${pinSrc(p)}" alt=""></button>
+  /* the same three controls the big map carries, on a frame that holds one
+     pin: the stage scales about its centre, which is where the pin is, so
+     closing in on the project never moves it off the middle */
+  return `<div class="pj-map" id="pj-map">
+    <div class="pj-stage">
+      <img class="base" src="assets/map_base.jpg" alt="" loading="lazy"
+        style="left:${(50-c.x*PJ_ZX).toFixed(2)}%;top:${(50-c.y*PJ_ZY).toFixed(2)}%">
+      <button class="pin" style="left:50%;top:50%"
+        aria-label="${esc(p.title)}, ${esc(p.place)}"><img src="${pinSrc(p)}" alt=""></button>
+    </div>
+    <div class="mapzoom">
+      <button data-pjzoom="1" aria-label="התקרבות">+</button>
+      <button data-pjzoom="-1" aria-label="התרחקות">−</button>
+    </div>
+    <button class="mapfull-btn" data-pjfull aria-label="הגדלת המפה למסך מלא">${icon('i-expand')}</button>
+    <button class="mapfull-out" data-pjfull aria-label="יציאה ממסך מלא"><span></span></button>
   </div>`;
 }
 
@@ -2639,6 +2659,28 @@ function selectProject(id){
   if(p) box.querySelector('#mapstage').insertAdjacentHTML('afterend', panel(p));
 }
 
+/* ---------- the map on a project page --------------------------------
+   One pin, so there is nothing to pan to: the frame only closes in and
+   opens out, and can take the whole screen. It borrows the big map's
+   controls and its full-screen body class, which is what hides the bar.
+   --------------------------------------------------------------------- */
+let pjZ=1;
+function pjApply(){
+  const st=document.querySelector('#pj-map .pj-stage'); if(!st) return;
+  st.style.transform=`scale(${pjZ})`;
+  st.style.setProperty('--pjz',(1/pjZ).toFixed(4));
+}
+function pjZoom(d){
+  pjZ=Math.min(4,Math.max(1,+(pjZ+d*0.6).toFixed(2)));
+  pjApply();
+}
+function pjFull(on){
+  const box=document.getElementById('pj-map'); if(!box) return;
+  if(on===undefined) on=!box.classList.contains('full');
+  box.classList.toggle('full',on);
+  document.body.classList.toggle('map-full',on);
+}
+
 /* ---------- render / routing ---------- */
 const app = document.getElementById('app');
 function render(reveal=true){
@@ -2750,6 +2792,8 @@ function wireParallax(){
 if(!REDUCED){
   addEventListener('keydown',e=>{
   if(e.key!=='Escape') return;
+  const pj=document.getElementById('pj-map');
+  if(pj && pj.classList.contains('full')){ pjFull(false); return; }
   const box=document.getElementById('mapbox');
   if(box && box.classList.contains('full')){
     box.classList.remove('full'); document.body.classList.remove('map-full');
@@ -2840,6 +2884,7 @@ function go(page){
   closeMenu();
   behindCurtain(()=>{
     state.page=page; state.selected=null;
+    pjZ=1; document.body.classList.remove('map-full');
     if(page==='projects'){                  /* always arrive at the whole set, as a gallery */
       state.view='grid'; state.plan='all'; state.sort='recent'; state.recent=false;
       state.f={status:[],size:[],domain:[],region:[]};
@@ -3207,6 +3252,10 @@ document.addEventListener('click',e=>{
   }
   const job=t.closest('[data-job]');
   if(job){ state.job=Number(job.dataset.job); go('job'); return }
+
+  const pz=t.closest('[data-pjzoom]');
+  if(pz){ pjZoom(Number(pz.dataset.pjzoom)); return }
+  if(t.closest('[data-pjfull]')){ pjFull(); return }
 
   const ex=t.closest('[data-ex]');
   if(ex){ ex.closest('.prow')?.classList.toggle('open'); return }
