@@ -799,12 +799,28 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 .pclose{position:absolute;top:0;right:0;width:40px;height:40px;z-index:4;background:var(--accent);color:#fff;
   display:grid;place-items:center;font-size:19px;line-height:1;z-index:2;transition:background .18s var(--ease)}
 .pclose:hover{background:var(--accent-900)}
+/* The black does not replace the orange, it is swept over it — a sheet
+   drawn in from the reading edge and, when the cursor leaves, carried out
+   the far side rather than pulled back the way it came. Same gesture as
+   the sheet between pages, on the same ease. */
 .pcta{display:inline-flex;align-items:center;gap:50px;flex-direction:row-reverse;height:41px;padding:4px 14px;
+  position:relative;isolation:isolate;
   background:var(--accent);border-bottom:1px solid var(--accent);color:#fff;
   font-size:var(--pp);line-height:1.2;letter-spacing:-.22px;margin-top:8px;
-  transition:background .18s var(--ease),border-color .18s var(--ease)}
-.pcta:hover{background:var(--accent-900);border-color:var(--accent-900);color:#fff}
-.pcta svg{width:19px;height:12px;flex:none}
+  transition:border-color .45s var(--ex-e)}
+.pcta::before{content:"";position:absolute;inset:0;z-index:-1;background:#000;
+  transform:scaleX(0);transform-origin:100% 50%;
+  transition:transform .45s var(--ex-e)}
+/* at rest the origin sits at the far edge, so the next retreat leaves
+   that way instead of rewinding */
+.pcta:not(:hover)::before{transform-origin:0 50%}
+.pcta:hover::before,.pcta:focus-visible::before{transform:scaleX(1)}
+.pcta:hover{border-color:#000;color:#fff}
+.pcta svg{width:19px;height:12px;flex:none;transition:transform .45s var(--ex-e)}
+.pcta:hover svg{transform:translateX(-6px)}
+@media (prefers-reduced-motion:reduce){
+  .pcta::before,.pcta svg{transition:none}
+}
 @media (max-width:900px){
   .mappanel{width:100%;max-width:none;min-width:0;background:rgba(254,250,248,.97)}
   .pinner{padding:52px 20px 24px}
