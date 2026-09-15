@@ -1,9 +1,9 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Icon Avatar">
 <g id="Property 1=living, active=yes">
-<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" fill="#E8DBD1"/>
-<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" stroke="#7A3A20"/>
-<path id="Vector" d="M8 14.4103V24H24V14.4103L16 8L8 14.4103Z" fill="#7A3A20"/>
+<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" fill="#F7E6DF"/>
+<rect x="0.5" y="0.5" width="31" height="31" rx="15.5" stroke="#C9512E"/>
+<path id="Vector" d="M8 14.4103V24H24V14.4103L16 8L8 14.4103Z" fill="#C9512E"/>
 </g>
 </g>
 </svg>

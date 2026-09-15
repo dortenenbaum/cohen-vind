@@ -25,10 +25,18 @@
   --paper-hi:#ffffff;       /* kept as a name; the page is one sheet */
   --paper-2:#f2f2f1;        /* a raised surface on the ground        */
   --ink:#242424;            /* text and drawn edges                  */
-  --accent:#c9512e;         /* PRIMARY — buttons, links, live state  */
-  --accent-tint:#f7e6df;    /* its wash                              */
-  --marker:#7a3a20;         /* clay — map pins and the icon avatars  */
-  --marker-tint:#e8dbd1;    /* matches the exported SVG assets       */
+  /* One colour on the whole site, and its scale. Anything that is not
+     on this ramp is neutral — ink, paper and the greys between them.
+     Colour means marked; grey means not. */
+  --accent-900:#5e2413;
+  --accent-700:#95391f;
+  --accent:#c9512e;         /* PRIMARY — buttons, links, marks, pins */
+  --accent-300:#e0936f;
+  --accent-100:#f7e6df;
+  --accent-050:#fdf4f0;
+  --accent-tint:var(--accent-100);
+  --marker:var(--accent);       /* the map and the icon avatars are on */
+  --marker-tint:var(--accent-100);  /* the same ramp as everything else */
   --accent-ink:#ffffff;
   --walnut:#6b6b6b;         /* secondary text and small labels       */
   --sand:#dededc;           /* hairlines                             */
@@ -648,7 +656,7 @@ td.go svg{width:17px;height:11px}
 .tt:hover::after,.tt:focus-visible::after{opacity:1;transform:translateX(50%) translateY(0)}
 
 /* ---------- map ---------- */
-.mapbox{position:relative;overflow:hidden;background:#e9ecef;touch-action:none;
+.mapbox{position:relative;overflow:hidden;background:#ededec;touch-action:none;
   aspect-ratio:1738/1080;display:flex;align-items:center}
 
 /* ---- the map, full screen ------------------------------------------
@@ -698,7 +706,7 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 @keyframes pinPop{from{opacity:0}to{opacity:1}}
 .pin .cpin{display:block;height:clamp(26px,calc(var(--cw) * .02474),43px);width:auto;
   filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
-.pin .cpin text{font-family:"SimplerPro_V3",sans-serif;font-weight:700;fill:#7A3A20}
+.pin .cpin text{font-family:"SimplerPro_V3",sans-serif;font-weight:700;fill:#C9512E}
 .pin img{height:clamp(26px,calc(var(--cw) * .02474),43px);width:auto;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
 .pin:hover,.pin.sel{z-index:6;transform:translate(-50%,-100%) scale(calc(var(--pz,1) * 1.16))}
 .mapzoom{position:absolute;bottom:16px;right:16px;display:flex;gap:8px;z-index:8}
@@ -773,7 +781,7 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 
 .floats{position:fixed;inset-inline-start:14px;inset-block-end:22px;z-index:50;display:grid;gap:10px}
 .floats button{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--white);box-shadow:0 4px 14px -6px rgba(0,0,0,.4)}
-.floats button.wa{color:#25d366}
+.floats button.wa{color:var(--accent)}
 .floats svg{width:19px;height:19px}
 
 /* ============================================================
@@ -1755,8 +1763,8 @@ function marker(g){
     return `<button class="pin cluster" data-cluster="${x},${y}" data-ids="${g.items.map(p=>p.id).join(',')}"
       style="left:${x}%;top:${y}%" aria-label="${n} פרויקטים באזור הזה — לחצו כדי להתקרב">
       <svg class="cpin" viewBox="0 0 29 38" aria-hidden="true">
-        <circle cx="14.0008" cy="14.2361" r="11.2" fill="#E8DBD1"/>
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.1271 0C21.9284 0 28.2542 6.38858 28.2542 14.2736C28.2542 16.8217 27.3804 19.5948 25.9938 22.3679C24.6125 25.1305 22.7603 27.8251 20.8924 30.2058C19.0245 32.5812 17.1565 34.6166 15.7491 36.0554C15.0846 36.7356 14.5247 37.285 14.1218 37.6722C13.719 37.285 13.1591 36.7356 12.4946 36.0554C11.0924 34.6113 9.21923 32.576 7.35131 30.2058C5.4834 27.8251 3.63118 25.1305 2.24987 22.3679C0.873786 19.5948 0 16.8165 0 14.2736C0 6.38858 6.32579 0 14.1271 0ZM14.1271 5.81303C9.50177 5.81303 5.75548 9.60118 5.75548 14.2683C5.75548 18.9355 9.50177 22.7237 14.1271 22.7237C18.7524 22.7237 22.4987 18.9407 22.4987 14.2683C22.4987 9.59595 18.7524 5.81303 14.1271 5.81303Z" fill="#7A3A20"/>
+        <circle cx="14.0008" cy="14.2361" r="11.2" fill="#F7E6DF"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.1271 0C21.9284 0 28.2542 6.38858 28.2542 14.2736C28.2542 16.8217 27.3804 19.5948 25.9938 22.3679C24.6125 25.1305 22.7603 27.8251 20.8924 30.2058C19.0245 32.5812 17.1565 34.6166 15.7491 36.0554C15.0846 36.7356 14.5247 37.285 14.1218 37.6722C13.719 37.285 13.1591 36.7356 12.4946 36.0554C11.0924 34.6113 9.21923 32.576 7.35131 30.2058C5.4834 27.8251 3.63118 25.1305 2.24987 22.3679C0.873786 19.5948 0 16.8165 0 14.2736C0 6.38858 6.32579 0 14.1271 0ZM14.1271 5.81303C9.50177 5.81303 5.75548 9.60118 5.75548 14.2683C5.75548 18.9355 9.50177 22.7237 14.1271 22.7237C18.7524 22.7237 22.4987 18.9407 22.4987 14.2683C22.4987 9.59595 18.7524 5.81303 14.1271 5.81303Z" fill="#C9512E"/>
         <text x="14.1" y="14.6" text-anchor="middle" dominant-baseline="middle" font-size="${fs}">${n}</text>
       </svg></button>`;
   }
@@ -2809,7 +2817,7 @@ function mountGoogle(box){
         {featureType:'poi',stylers:[{visibility:'off'}]},
         {featureType:'transit',stylers:[{visibility:'off'}]},
         {elementType:'geometry',stylers:[{saturation:-90},{lightness:10}]},
-        {featureType:'water',elementType:'geometry',stylers:[{color:'#e8ecef'}]},
+        {featureType:'water',elementType:'geometry',stylers:[{color:'#ededec'}]},
         {featureType:'road',elementType:'geometry',stylers:[{color:'#ffffff'}]}
       ]
     });
@@ -2823,9 +2831,9 @@ function mountGoogle(box){
       m.addListener('click',()=>{
         info.setContent(
           `<div style="direction:rtl;text-align:right;font-family:SimplerPro_V3,sans-serif;max-width:270px;padding:2px 4px 6px">
-             <div style="font:300 21px/1.25 SimplerPro_V3,sans-serif;color:#302620;letter-spacing:.2px">${esc(p.title)}</div>
-             <div style="font-size:15px;color:#6B5A48;margin-top:2px">${esc(p.place)}</div>
-             <div style="font-size:13px;color:#7A3A20;margin-top:8px">${PLAN[p.plan].label} · ${DOMAIN[p.domain].label} · ${SIZE[p.size].label}</div>
+             <div style="font:300 21px/1.25 SimplerPro_V3,sans-serif;color:#242424;letter-spacing:.2px">${esc(p.title)}</div>
+             <div style="font-size:15px;color:#6b6b6b;margin-top:2px">${esc(p.place)}</div>
+             <div style="font-size:13px;color:#C9512E;margin-top:8px">${PLAN[p.plan].label} · ${DOMAIN[p.domain].label} · ${SIZE[p.size].label}</div>
            </div>`);
         info.open({anchor:m,map});
       });
