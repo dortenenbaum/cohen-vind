@@ -259,10 +259,11 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 /* ---------- home ---------- */
 /* the statement that meets you off the film — centred, and at the
    largest size the page owns */
-.intro{padding-block:clamp(90px,13vh,190px) clamp(60px,8vh,120px);
-  display:grid;gap:clamp(28px,3.4vh,48px);justify-items:center;text-align:center}
-.intro .meas{max-width:32ch;font-size:var(--t-hero);line-height:1.08;font-weight:300;
-  text-wrap:balance}
+/* The paragraph the page lands on after the film. It used to be centred
+   and capped at 32ch with the about link as a button underneath; it now
+   takes the same shape as the vision page's claim — the label hangs in the
+   margin and carries the link itself, so the button has nothing left to do. */
+.intro{padding-block:clamp(90px,13vh,190px) clamp(60px,8vh,120px)}
 /* ---- the opener ----------------------------------------------------
    The film fills the first screen and then stays exactly where it is.
    Everything after it is opaque and sits one layer up, so scrolling
@@ -285,27 +286,42 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .opener-scrim{position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to top,rgba(16,15,13,.80) 0%,rgba(16,15,13,.46) 30%,rgba(16,15,13,.12) 58%,rgba(16,15,13,0) 78%),
              linear-gradient(to bottom,rgba(16,15,13,.52) 0%,rgba(16,15,13,.12) 16%,rgba(16,15,13,0) 30%)}
-/* ---------- vision: the opening claim -------------------------------
-   After the reference: a small label hanging in the margin, level with the
-   first line, and the claim itself set at the size the home page opens on.
+/* ---------- the opening claim ---------------------------------------
+   A small label hanging in the margin, level with the first line, and the
+   claim itself at --t-hero. Used by the vision page and by the paragraph
+   the home page lands on after the film.
    The first line is indented past the label, so the two share a top edge
    without a rule or a column between them — the label reads as a note in
    the margin rather than as a heading the paragraph hangs under. */
-:root{--vlab:clamp(96px,10vw,180px)}
-.vlede{position:relative;padding-block:clamp(70px,11vh,150px) clamp(50px,7vh,110px)}
-.vlede-label{position:absolute;inset-inline-start:var(--gutter);top:clamp(70px,11vh,150px);
-  width:var(--vlab);margin:0;
+:root{--lede-lab:clamp(96px,10vw,180px)}
+.lede{padding-block:clamp(70px,11vh,150px) clamp(50px,7vh,110px)}
+/* the wrapper's top edge is the paragraph's, so the label needs no arithmetic
+   to land on the first line — it inherits the line-height and sits in it */
+.lede-in{position:relative}
+.lede-label{position:absolute;inset-inline-start:0;top:0;
+  width:var(--lede-lab);margin:0;
   font-size:var(--t-micro);font-weight:400;letter-spacing:.06em;color:var(--walnut);
-  /* one line-box of the claim tall, so it centres on its first line */
-  line-height:calc(var(--t-hero) * 1.08)}
-.vlede-body{margin:0;font-weight:300;font-size:var(--t-hero);line-height:1.08;
+  line-height:inherit}
+/* a length, not a ratio: a unitless line-height inherits as the number, so
+   the 13px label was building a 14px line box instead of the paragraph's */
+.lede-in{font-size:var(--t-hero);line-height:calc(var(--t-hero) * 1.08)}
+.lede-body{margin:0;font-weight:300;font-size:inherit;line-height:inherit;
   letter-spacing:-.01em;color:var(--vind-text);
-  text-indent:calc(var(--vlab) + clamp(24px,2.4vw,56px))}
+  text-indent:calc(var(--lede-lab) + clamp(24px,2.4vw,56px))}
+
+a.lede-label{text-decoration:none;color:var(--walnut);
+  transition:color .25s var(--ease)}
+a.lede-label:hover,a.lede-label:focus-visible{color:var(--vind-text)}
+.lede-label .u{background-image:linear-gradient(currentColor,currentColor);
+  background-repeat:no-repeat;background-position:100% 100%;background-size:0 1px;
+  padding-bottom:3px;transition:background-size .34s var(--ease)}
+a.lede-label:hover .u,a.lede-label:focus-visible .u{background-size:100% 1px}
+@media (prefers-reduced-motion:reduce){ .lede-label .u{transition:none} }
 
 /* below the labelled measure there is no margin to hang in */
 @media (max-width:820px){
-  .vlede-label{position:static;width:auto;line-height:1.4;margin-bottom:6px}
-  .vlede-body{text-indent:0}
+  .lede-label{position:static;width:auto;line-height:1.4;margin-bottom:6px}
+  .lede-body{text-indent:0}
 }
 
 /* ---------- hero notes ----------------------------------------------
@@ -1951,9 +1967,11 @@ function homeHTML(){
 
   <div class="over">
   <div class="strip strip-hi">
-  <section class="wrap intro rv">
-    <p class="t-display meas">משרד כהן וינד ושות׳ אדריכלות ובינוי ערים פועל בירושלים משנת 1996. המשרד עוסק במגוון פרויקטים עירוניים, אזוריים וארציים ברחבי הארץ. לקוחותינו הינם גופים עירוניים וממשלתיים לצד חברות פרטיות, המייצגים יחדיו קשת רחבה של נושאים וקבוצות בחברה הישראלית.</p>
-    <a class="link-btn t-ui" href="#/about" data-nav="about">${icon('i-arrow')}<span>אודות המשרד</span></a>
+  <section class="wrap intro lede rv">
+    <div class="lede-in">
+      <a class="lede-label" href="#/about" data-nav="about"><span class="u">אודות המשרד</span></a>
+      <p class="lede-body">משרד כהן וינד ושות׳ אדריכלות ובינוי ערים פועל בירושלים משנת 1996. המשרד עוסק במגוון פרויקטים עירוניים, אזוריים וארציים ברחבי הארץ. לקוחותינו הינם גופים עירוניים וממשלתיים לצד חברות פרטיות, המייצגים יחדיו קשת רחבה של נושאים וקבוצות בחברה הישראלית.</p>
+    </div>
   </section>
   </div>
 
@@ -2238,9 +2256,11 @@ function visionHTML(){
       </div>
     </div>`;
   return `
-  <section class="wrap vlede rv">
-    <h1 class="vlede-label">החזון שלנו</h1>
-    <p class="vlede-body">אנו פועלים מתוך מחויבות להיטיב עם הסביבה הפיזית - מרחבית, הפוליטית והחברתית באמצעות תכנון מוכוון תפישת עולם. בכל סביבת תכנון בה נתערב, נשאף לזיהוי המהות והצרכים הייחודיים לה. מתווה דרכינו מתאפיין באחריות, הוגנות, אהבה ותשוקה לתכנון, חדשנות, התבוננות ולמידה, סובלנות ושקיפות. סביבת העבודה שאנו מטפחים מהווה מקור גאווה לעובדיה, מייצרת צמיחה אורגנית יציבה ומנוהלת בדרך נעימה ויעילה</p>
+  <section class="wrap lede rv">
+    <div class="lede-in">
+      <h1 class="lede-label">החזון שלנו</h1>
+      <p class="lede-body">אנו פועלים מתוך מחויבות להיטיב עם הסביבה הפיזית - מרחבית, הפוליטית והחברתית באמצעות תכנון מוכוון תפישת עולם. בכל סביבת תכנון בה נתערב, נשאף לזיהוי המהות והצרכים הייחודיים לה. מתווה דרכינו מתאפיין באחריות, הוגנות, אהבה ותשוקה לתכנון, חדשנות, התבוננות ולמידה, סובלנות ושקיפות. סביבת העבודה שאנו מטפחים מהווה מקור גאווה לעובדיה, מייצרת צמיחה אורגנית יציבה ומנוהלת בדרך נעימה ויעילה</p>
+    </div>
   </section>
 
   <section class="wrap" style="padding-bottom:clamp(30px,3.4vw,64px)">
