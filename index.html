@@ -347,16 +347,17 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    after it rather than pinned to it — the lag is what makes it read as an
    instrument being moved across a drawing instead of a second cursor. */
 .hcross{position:absolute;left:0;top:0;z-index:1;pointer-events:none;
-  opacity:0;transition:opacity .4s var(--ease);will-change:transform}
+  opacity:0;transition:opacity .4s var(--ease);will-change:transform;
+  /* white over a photograph that runs from bright sky to dark ground needs
+     something under it, or it disappears on the top half of the frame */
+  filter:drop-shadow(0 1px 2px rgba(16,15,13,.5))}
 .hcross.on{opacity:1}
-.hcross i{position:absolute;background:var(--accent);display:block}
+.hcross i{position:absolute;background:#fff;display:block}
 .hcross .hcx{left:-7px;top:0;width:15px;height:1px}
 .hcross .hcy{left:0;top:-7px;width:1px;height:15px}
-/* the readout takes the accent, not white — the hero runs from bright sky
-   to dark ground and white only held on half of it */
 .hcross b{position:absolute;inset-inline-start:14px;top:9px;white-space:nowrap;
   direction:ltr;font:400 clamp(9px,.56vw,11px)/1 var(--mono);letter-spacing:.06em;
-  color:var(--accent)}
+  color:#fff}
 
 /* the leaders, clipped by the opener's own overflow */
 .hnote::before,.hnote::after{content:"";position:absolute;left:50%;top:50%;
