@@ -292,21 +292,20 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    without a rule or a column between them — the label reads as a note in
    the margin rather than as a heading the paragraph hangs under. */
 :root{--vlab:clamp(96px,10vw,180px)}
-.vlede{position:relative;padding-block:clamp(70px,11vh,150px) clamp(50px,7vh,110px);
-  display:grid;gap:clamp(20px,2.4vh,38px);justify-items:start}
+.vlede{position:relative;padding-block:clamp(70px,11vh,150px) clamp(50px,7vh,110px)}
 .vlede-label{position:absolute;inset-inline-start:var(--gutter);top:clamp(70px,11vh,150px);
   width:var(--vlab);margin:0;
   font-size:var(--t-micro);font-weight:400;letter-spacing:.06em;color:var(--walnut);
   /* one line-box of the claim tall, so it centres on its first line */
   line-height:calc(var(--t-hero) * 1.08)}
 .vlede-body{margin:0;font-weight:300;font-size:var(--t-hero);line-height:1.08;
-  letter-spacing:-.01em;color:var(--vind-text)}
-.vlede-body:first-of-type{text-indent:calc(var(--vlab) + clamp(24px,2.4vw,56px))}
+  letter-spacing:-.01em;color:var(--vind-text);
+  text-indent:calc(var(--vlab) + clamp(24px,2.4vw,56px))}
 
 /* below the labelled measure there is no margin to hang in */
 @media (max-width:820px){
   .vlede-label{position:static;width:auto;line-height:1.4;margin-bottom:6px}
-  .vlede-body:first-of-type{text-indent:0}
+  .vlede-body{text-indent:0}
 }
 
 /* ---------- hero notes ----------------------------------------------
@@ -2241,8 +2240,7 @@ function visionHTML(){
   return `
   <section class="wrap vlede rv">
     <h1 class="vlede-label">החזון שלנו</h1>
-    <p class="vlede-body">אנו פועלים מתוך מחויבות להיטיב עם הסביבה הפיזית - מרחבית, הפוליטית והחברתית באמצעות תכנון מוכוון תפישת עולם. בכל סביבת תכנון בה נתערב, נשאף לזיהוי המהות והצרכים הייחודיים לה. מתווה דרכינו מתאפיין באחריות, הוגנות, אהבה ותשוקה לתכנון, חדשנות, התבוננות ולמידה, סובלנות ושקיפות.</p>
-    <p class="vlede-body">סביבת העבודה שאנו מטפחים מהווה מקור גאווה לעובדיה, מייצרת צמיחה אורגנית יציבה ומנוהלת בדרך נעימה ויעילה</p>
+    <p class="vlede-body">אנו פועלים מתוך מחויבות להיטיב עם הסביבה הפיזית - מרחבית, הפוליטית והחברתית באמצעות תכנון מוכוון תפישת עולם. בכל סביבת תכנון בה נתערב, נשאף לזיהוי המהות והצרכים הייחודיים לה. מתווה דרכינו מתאפיין באחריות, הוגנות, אהבה ותשוקה לתכנון, חדשנות, התבוננות ולמידה, סובלנות ושקיפות. סביבת העבודה שאנו מטפחים מהווה מקור גאווה לעובדיה, מייצרת צמיחה אורגנית יציבה ומנוהלת בדרך נעימה ויעילה</p>
   </section>
 
   <section class="wrap" style="padding-bottom:clamp(30px,3.4vw,64px)">
