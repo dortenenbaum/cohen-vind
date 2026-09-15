@@ -110,8 +110,16 @@ a{color:inherit;text-decoration:none}
 .meas{max-width:1149px}
 
 /* ---------- header ---------- */
+/* The bar is not a shelf you carry with you: it leaves when you go down the
+   page and comes back the moment you turn around. Sticky is kept rather
+   than fixed, so its space in the flow stays where it always was and the
+   opener's negative top margin still reckons with it — only the transform
+   moves, which costs a composite and no layout. */
 .hdr{position:sticky;top:0;z-index:60;background:var(--ground);
-  transition:background .5s var(--ease)}
+  transition:background .5s var(--ease),transform .42s var(--ease);
+  will-change:transform}
+body.hdr-away .hdr{transform:translateY(-100%)}
+@media (prefers-reduced-motion:reduce){ .hdr{transition:background .5s var(--ease)} }
 
 /* ---- header over the film ------------------------------------------
    While the opener is still uncovered the bar has no ground of its own
@@ -3525,7 +3533,7 @@ function go(page){
       state.f={status:[],size:[],domain:[],region:[]};
       state.zoom=1; state.pan={x:0,y:0};
     }
-    render(); scrollTo(0,0);
+    render(); scrollTo(0,0); document.body.classList.remove('hdr-away');
   });
 }
 
@@ -3537,6 +3545,7 @@ const openMenu =()=>{
   menu.hidden=false; scrim.hidden=false;
   requestAnimationFrame(()=>{menu.classList.add('open');scrim.classList.add('open')});
   document.body.classList.add('menu-open');
+  document.body.classList.remove('hdr-away');
   burger.setAttribute('aria-expanded','true');burger.setAttribute('aria-label','סגירת תפריט');
 };
 const closeMenu=()=>{
@@ -4055,6 +4064,31 @@ addEventListener('resize',()=>{
   clearTimeout(resplit);
   resplit=setTimeout(()=>document.querySelectorAll('[data-split]').forEach(splitLines),180);
 },{passive:true});
+
+/* ---------- the bar leaves on the way down ---------------------------
+   Hidden while you scroll away from the top, back on the first movement
+   upward — the reference's behaviour, and the reason to prefer it to a
+   permanent bar is that a full-screen picture or a point that has been
+   given a whole screen should get the whole screen.
+
+   Wired once: the bar lives in the shell and survives every re-render.
+   The threshold swallows the jitter a trackpad produces at rest, and the
+   top of the page is always free — there is nothing to reveal there. */
+(function(){
+  const TH=7, FREE=140;
+  let last=scrollY, away=false;
+  const set=v=>{ if(v===away) return; away=v; document.body.classList.toggle('hdr-away',v); };
+  addEventListener('scroll',()=>{
+    const y=Math.max(0,scrollY), d=y-last;
+    if(Math.abs(d)<TH) return;
+    last=y;
+    /* an open menu, or an open gallery, owns the screen and keeps its way out */
+    if(document.body.classList.contains('menu-open')){ set(false); return }
+    set(y>FREE && d>0);
+  },{passive:true});
+  /* going to another page starts at the top again */
+  addEventListener('hashchange',()=>{ last=0; set(false); });
+})();
 
 /* ---------- inertial scroll -----------------------------------------
    The wheel sets a destination rather than a position, and the page
