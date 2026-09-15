@@ -22,7 +22,7 @@
      markers are drawn in.
      ------------------------------------------------------------------ */
   --paper:#ffffff;          /* the ground                            */
-  --paper-hi:#f7f7f6;       /* the quieter band between white ones   */
+  --paper-hi:#ffffff;       /* kept as a name; the page is one sheet */
   --paper-2:#f2f2f1;        /* a raised surface on the ground        */
   --ink:#242424;            /* text and drawn edges                  */
   --accent:#c9512e;         /* PRIMARY — buttons, links, live state  */
@@ -231,6 +231,10 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .link-btn svg{width:19px;height:12px;flex:none;transition:transform .25s var(--ease)}
 .link-btn:hover{color:var(--accent);border-color:var(--accent);gap:20px}
 .link-btn:hover svg{transform:translateX(-4px)}
+/* going back runs against the reading direction, so the arrow turns
+   and leans the other way */
+.link-btn.back svg{transform:scaleX(-1)}
+.link-btn.back:hover svg{transform:scaleX(-1) translateX(-4px)}
 
 /* ---------- home ---------- */
 /* the statement that meets you off the film — centred, and at the
@@ -384,7 +388,16 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   .vcell-art{aspect-ratio:1/.6}
 }
 /* the practice draws plans — so do its icons: one stroke weight, one accent */
-.rule{height:1px;background:var(--vind-20)}
+/* Sections are divided by a rule that draws itself across as it comes
+   into view, the way the reference does it — a hairline arriving is a
+   quieter division than two shades of white meeting. */
+.rule{height:1px;background:var(--sand);transform-origin:100% 50%}
+@media (prefers-reduced-motion:no-preference){
+  .rv-pre .rule,.rule.rv-pre{transform:scaleX(0)}
+  .rv-in .rule,.rule.rv-in{transform:scaleX(1);
+    transition:transform 1.3s cubic-bezier(.16,1,.3,1)}
+}
+.rule-wrap{padding-block:clamp(10px,1.4vh,22px)}
 
 /* selected-projects carousel: right-aligned track that bleeds off the left page edge */
 .crsl{position:relative}
@@ -921,15 +934,17 @@ td.go svg{width:17px;height:11px}
   background:linear-gradient(135deg,var(--vind-20) 0%,var(--vind-40) 100%)}
 .person .ph:has(img)::after{display:none}
 
-.person .cap{display:flex;align-items:flex-start;justify-content:space-between;
-  gap:12px;padding-block-start:clamp(10px,.9vw,16px)}
+.person .cap{display:flex;flex-direction:column;align-items:flex-start;
+  gap:2px;padding-block-start:clamp(10px,.9vw,16px)}
 .person h3{margin:0;font-weight:400;font-size:var(--t-body);letter-spacing:.36px;color:var(--vind-text)}
 .person .role{font-size:clamp(11px,.72vw,13px);color:var(--vind-80);letter-spacing:.36px}
-.person .pill{flex:none;font-size:clamp(10px,.64vw,12px);letter-spacing:.06em;
-  padding:3px 11px;border-radius:999px;background:var(--vind-20);color:var(--vind-80);
-  transition:background .25s var(--ease),color .25s var(--ease)}
+/* the way in sits under the role as a small link, not as a control */
+.person .cv-link{margin-block-start:6px;font-size:clamp(10px,.64vw,12px);
+  letter-spacing:.04em;color:var(--walnut);
+  border-block-end:1px solid var(--sand);padding-block-end:2px;
+  transition:color .25s var(--ease),border-color .25s var(--ease)}
 .person.has-profile{cursor:pointer}
-.person.has-profile:hover .pill{background:var(--accent);color:#fff}
+.person.has-profile:hover .cv-link{color:var(--accent);border-color:var(--accent)}
 
 @media (max-width:1100px){ .people{grid-template-columns:repeat(3,1fr)} }
 @media (max-width:640px){ .people{grid-template-columns:repeat(2,1fr)} }
@@ -1475,6 +1490,7 @@ function homeHTML(){
     <p class="t-display meas">משרד כהן וינד ושות׳ אדריכלות ובינוי ערים פועל בירושלים משנת 1996. המשרד עוסק במגוון פרויקטים עירוניים, אזוריים וארציים ברחבי הארץ. לקוחותינו הינם גופים עירוניים וממשלתיים לצד חברות פרטיות, המייצגים יחדיו קשת רחבה של נושאים וקבוצות בחברה הישראלית.</p>
     <a class="link-btn t-ui" href="#/about" data-nav="about">${icon('i-arrow')}<span>אודות המשרד</span></a>
   </section>
+  <div class="wrap rule-wrap rv"><div class="rule"></div></div>
   </div>
 
   <figure class="shopfront rv rv-img">
@@ -1837,8 +1853,9 @@ function teamHTML(){
         return `<${cv?'a':'article'} class="person rv${cv?' has-profile':''}"${cv?` href="#/cv" data-person="${i}"`:' tabindex="0"'}>
         <div class="ph">${img?`<img src="${img}" alt="${esc(n)}" loading="lazy" draggable="false">`:''}</div>
         <div class="cap">
-          <div><h3>${esc(n)}</h3><div class="role">${esc(r)}</div></div>
-          ${cv?`<span class="pill">קורות חיים</span>`:''}
+          <h3>${esc(n)}</h3>
+          <div class="role">${esc(r)}</div>
+          ${cv?`<span class="cv-link">קורות חיים</span>`:''}
         </div>
       </${cv?'a':'article'}>`}).join('')}
     </div>
@@ -2153,7 +2170,7 @@ function projectHTML(){
     ${row('r83',[A[3],A[4]])}
   </section>
 
-  <div class="wrap"><div class="rule"></div></div>
+  <div class="wrap rule-wrap rv"><div class="rule"></div></div>
 
   <section class="wrap sec" style="padding-top:0">
     <div class="sec-head mid rv">
@@ -2188,7 +2205,7 @@ function cvHTML(){
   const bio = BIOS[i];
   return `
   <section class="wrap cv">
-    <a class="link-btn t-ui cv-back" href="#/team" data-nav="team">${icon('i-arrow')}<span>לצוות המשרד</span></a>
+    <a class="link-btn t-ui cv-back back" href="#/team" data-nav="team">${icon('i-arrow')}<span>לצוות המשרד</span></a>
 
     <div class="cv-top rv">
       <div class="cv-shot rv-img">${img?`<img src="${img}" alt="${esc(name)}">`:''}</div>
