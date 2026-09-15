@@ -666,8 +666,21 @@ a.lede-label:hover .u,a.lede-label:focus-visible .u{background-size:100% 1px}
 /* the office, between what the practice says and what it believes */
 /* a <figure> carries `margin: 1em 40px` from the browser; unreset it
    put a white rule above the picture and a white strip down each side */
-.shopfront{position:relative;width:100%;margin:0;
+/* The studio photograph arrives edge to edge and draws itself into the
+   page's own measure as you come to it — full bleed while it is still
+   below the fold, the container's width by the time it has settled. --sf
+   is the progress, written once a frame by the parallax loop that is
+   already reading scroll for this same picture; with motion reduced it
+   simply starts where it ends. */
+/* The margins close rather than the width shrinking: subtracting one
+   percentage from another inside `width` collapsed the box to zero at the
+   end of the travel in Chromium, where the same arithmetic in a margin
+   resolves cleanly. A block with auto width fills whatever the margins
+   leave it, which is the same result by a road the engine likes. */
+.shopfront{--sf:0;position:relative;
+  margin-inline:calc((100% - var(--cw)) / 2 * var(--sf));
   height:clamp(300px,42vw,760px);overflow:hidden;background:var(--vind-20)}
+@media (prefers-reduced-motion:reduce){ .shopfront{--sf:1} }
 .shopfront img{width:100%;height:100%;object-fit:cover;display:block;will-change:transform}
 
 /* ---- the vision set -------------------------------------------------
@@ -2118,6 +2131,18 @@ const CAROUSEL = [
   {p:P[7], img:'assets/pr5.jpg', w:'w1152'}    /* דרום מערב כסיפה */
 ];
 
+/* The practice's claim, in sentences, so the home page can open on its
+   first half and the vision page carry all of it — one piece of copy with
+   two views of it rather than two copies drifting apart. */
+const VISION_SENT = [
+  'אנו פועלים מתוך מחויבות להיטיב עם הסביבה הפיזית - מרחבית, הפוליטית והחברתית באמצעות תכנון מוכוון תפישת עולם.',
+  'בכל סביבת תכנון בה נתערב, נשאף לזיהוי המהות והצרכים הייחודיים לה.',
+  'מתווה דרכינו מתאפיין באחריות, הוגנות, אהבה ותשוקה לתכנון, חדשנות, התבוננות ולמידה, סובלנות ושקיפות.',
+  'סביבת העבודה שאנו מטפחים מהווה מקור גאווה לעובדיה, מייצרת צמיחה אורגנית יציבה ומנוהלת בדרך נעימה ויעילה.'
+];
+const VISION_OPEN = VISION_SENT.slice(0,2).join(' ');
+const VISION_ALL  = VISION_SENT.join(' ');
+
 function homeHTML(){
   return `
   <div class="opener" id="opener">
@@ -2148,26 +2173,10 @@ function homeHTML(){
     <img src="assets/studio.jpg" alt="צוות המשרד" loading="lazy" draggable="false" data-par="9">
   </figure>
 
-  <section class="wrap sec">
-    <div class="sec-head mid rv">
-      <h2 class="t-display meas">החזון שלנו</h2>
-      <p class="t-body" style="max-width:855px">${esc(FIELD_TXT)}</p>
-    </div>
-    <div class="values">
-      ${VALUES.map(v=>`<article class="vcell rv">
-        <div class="vcell-art">
-          <span class="vcell-grid" aria-hidden="true"></span>
-          <b class="vx tl"></b><b class="vx tr"></b><b class="vx bl"></b><b class="vx br"></b>
-          ${VISO[v[0]]}
-        </div>
-        <div class="vcell-body">
-          <h3 class="t-title">${esc(v[2])}</h3>
-          <p class="t-body dim">${esc(VALUE_TXT)}</p>
-        </div>
-      </article>`).join('')}
-    </div>
-    <div class="sec-foot rv">
-      <a class="link-btn t-ui" href="#/vision" data-nav="vision">${icon('i-arrow')}<span>חזון וערכים</span></a>
+  <section class="wrap lede rv">
+    <div class="lede-in">
+      <a class="lede-label" href="#/vision" data-nav="vision"><span class="u">חזון וערכים</span></a>
+      <p class="lede-body">${esc(VISION_OPEN)}</p>
     </div>
   </section>
 
@@ -2457,7 +2466,7 @@ function visionHTML(){
   <section class="wrap lede rv">
     <div class="lede-in">
       <h1 class="lede-label">החזון שלנו</h1>
-      <p class="lede-body">אנו פועלים מתוך מחויבות להיטיב עם הסביבה הפיזית - מרחבית, הפוליטית והחברתית באמצעות תכנון מוכוון תפישת עולם. בכל סביבת תכנון בה נתערב, נשאף לזיהוי המהות והצרכים הייחודיים לה. מתווה דרכינו מתאפיין באחריות, הוגנות, אהבה ותשוקה לתכנון, חדשנות, התבוננות ולמידה, סובלנות ושקיפות. סביבת העבודה שאנו מטפחים מהווה מקור גאווה לעובדיה, מייצרת צמיחה אורגנית יציבה ומנוהלת בדרך נעימה ויעילה</p>
+      <p class="lede-body">${esc(VISION_ALL)}</p>
     </div>
   </section>
 
@@ -3241,10 +3250,12 @@ function wireRules(){
    screen is written to.
    --------------------------------------------------------------------- */
 let parItems=[], parRaf=0;
+let parDraw=null;
 function parCollect(){
   parItems=[...document.querySelectorAll('[data-par]')].map(el=>({
     el, amt:Number(el.dataset.par)||6
   }));
+  parDraw=document.querySelector('.shopfront');
 }
 /* Every rectangle is measured before anything is written. Interleaving
    the two made the browser settle layout again on each item, which is
@@ -3260,6 +3271,16 @@ function parFrame(){
     out.push([it.el,((r.top+r.height/2)-h/2)/((h+r.height)/2)*it.amt]);
   }
   for(const [el,y] of out) el.style.transform=`translate3d(0,${y.toFixed(2)}%,0) scale(1.22)`;
+
+  /* the studio plate closing on the page's measure — nothing to read that
+     the loop above has not already read */
+  if(parDraw){
+    const r=parDraw.getBoundingClientRect();
+    if(r.bottom>-240 && r.top<h+240){
+      const pgs=(h-r.top)/(h*0.85);
+      parDraw.style.setProperty('--sf', Math.max(0,Math.min(1,pgs)).toFixed(3));
+    }
+  }
 }
 const parTick=()=>{ if(!parRaf) parRaf=requestAnimationFrame(parFrame) };
 function wireParallax(){
