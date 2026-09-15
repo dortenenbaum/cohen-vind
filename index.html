@@ -124,8 +124,11 @@ a{color:inherit;text-decoration:none}
    reads over film. Cross-fading them beats filtering one into the
    other — five tones of terrain do not survive being flattened. */
 .brand-lockup{position:relative;width:63px;height:63px;flex:none}
-.brand-mark,.brand-neg{position:absolute;inset:0;width:100%;height:100%;display:block;
-  transition:opacity .42s var(--ease)}
+/* only the header stacks the two marks on each other; anywhere else the
+   positive stands alone and needs a box of its own, which this rule was
+   taking away from it — the footer's logo had no size at all */
+.brand-lockup .brand-mark,.brand-lockup .brand-neg{position:absolute;inset:0;
+  width:100%;height:100%;display:block;transition:opacity .42s var(--ease)}
 /* the knockout has to hold over a pale sky as well as a dark facade */
 .brand-neg{opacity:0;filter:drop-shadow(0 1px 3px rgba(0,0,0,.45))}
 .brand-txt,.lang button,.burger,.burger i{
@@ -778,9 +781,9 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 .pspecs div{border-bottom:1px solid var(--vind-dark);font-size:var(--pb);line-height:24px;color:var(--vind-dark);text-align:right;padding-bottom:2px}
 .pspecs b{font-weight:700}
 .pdesc{margin:0;font-size:var(--pb);line-height:20px;color:var(--vind-dark);text-align:right;width:100%}
-.pclose{position:absolute;top:0;right:0;width:40px;height:40px;z-index:4;background:var(--vind-dark);color:var(--vind-light);
+.pclose{position:absolute;top:0;right:0;width:40px;height:40px;z-index:4;background:var(--accent);color:#fff;
   display:grid;place-items:center;font-size:19px;line-height:1;z-index:2;transition:background .18s var(--ease)}
-.pclose:hover{background:var(--accent)}
+.pclose:hover{background:var(--accent-700)}
 .pcta{display:inline-flex;align-items:center;gap:50px;flex-direction:row-reverse;height:41px;padding:4px 14px;
   background:var(--accent);border-bottom:1px solid var(--accent);color:#fff;
   font-size:var(--pp);line-height:1.2;letter-spacing:-.22px;margin-top:8px;
@@ -800,7 +803,13 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 
 /* ---------- footer ---------- */
 .ft-in{display:flex;flex-wrap:wrap-reverse;align-items:center;justify-content:space-between;gap:18px 32px;padding-block:22px}
-.ft-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;line-height:26px}
+/* every item in the row sits on one line, icons included — the socials
+   were riding four pixels low against the text beside them */
+.ft-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;line-height:1}
+.ft-meta>*{display:inline-flex;align-items:center}
+.ft-meta .socials{gap:14px}
+.ft-meta .socials a{display:inline-flex;align-items:center}
+.ft-meta .socials svg{display:block}
 .ft-meta a:hover{color:var(--vind-dark)}
 .socials{display:flex;gap:12px}
 .socials svg{width:18px;height:18px}
@@ -2665,7 +2674,13 @@ function wireCarousels(){
       el.insertBefore(tail, cards[0]);
       el.appendChild(head);
       looped=true;
-      const home=()=>cards[0].scrollIntoView({inline:'center',block:'nearest',behavior:'auto'});
+      /* scrollIntoView with block:'nearest' still scrolls the page when
+         the rail is off screen entirely — and it is, every time a page
+         renders at the top. Centre it horizontally, then put the page's
+         own scroll back where it was. */
+      const home=()=>{ const y=scrollY;
+        cards[0].scrollIntoView({inline:'center',block:'nearest',behavior:'auto'});
+        if(scrollY!==y) scrollTo(0,y); };
       requestAnimationFrame(home); addEventListener('resize',home,{passive:true});
     }
 
@@ -2680,7 +2695,9 @@ function wireCarousels(){
         if(!here || !here.dataset.clone) return;
         const reals=[...el.querySelectorAll('.cslide:not([data-clone])')];
         const twin = here.dataset.clone==='first' ? reals[0] : reals[reals.length-1];
+        const y=scrollY;
         twin.scrollIntoView({inline:'center',block:'nearest',behavior:'auto'});
+        if(scrollY!==y) scrollTo(0,y);
       },140);
     },{passive:true});
 
