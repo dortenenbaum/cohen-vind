@@ -454,9 +454,15 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   opacity:0;transform:translateY(10px);
   transition:opacity .45s var(--ease),transform .55s var(--ease)}
 .cslide:hover .shot-tags,.cslide:focus-visible .shot-tags{opacity:1;transform:none}
+/* Over a photograph the markers need their own ground — the exported
+   icon's pale disc is not a reliable one against an image that could be
+   any tone, so each sits on white with the accent glyph on top. The row
+   centres on the picture rather than ranging to the reading edge. */
 .shot-tags .attr{color:#fff}
-.shot-tags img.icoimg,.shot-tags .ico{width:26px;height:26px;flex:none}
-.shot-tags .attrs{gap:6px clamp(12px,1.2vw,20px)}
+.shot-tags .attrs{gap:8px clamp(12px,1.2vw,20px);justify-content:center}
+.shot-tags img.icoimg,.shot-tags .ico{width:26px;height:26px;flex:none;
+  background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.28)}
+.shot-tags .ico{border-color:#fff;color:var(--accent)}
 .crsl .shot{aspect-ratio:847/466}
 .cslide .shot>img{width:100%;height:100%;object-fit:cover;
   filter:saturate(.88);transition:transform 1.1s var(--ease),filter .7s var(--ease)}
