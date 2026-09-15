@@ -285,52 +285,29 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .opener-scrim{position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to top,rgba(16,15,13,.80) 0%,rgba(16,15,13,.46) 30%,rgba(16,15,13,.12) 58%,rgba(16,15,13,0) 78%),
              linear-gradient(to bottom,rgba(16,15,13,.52) 0%,rgba(16,15,13,.12) 16%,rgba(16,15,13,0) 30%)}
-/* ---------- vision: hanging label, big paragraph --------------------
-   After the reference: a small label hanging in the margin and the text
-   itself set large and light, the first line indented past the label so
-   the two share a top edge without a column rule between them. The page
-   used to set the principle as a headline and its explanation as small
-   grey body copy in the opposite column; here the explanation *is* the
-   page, at a size you read rather than skim, and the principle becomes
-   the note in the margin telling you which one you are reading. */
-.kblocks{display:grid}
-.kblock{position:relative;padding-block:clamp(38px,5.6vh,86px);
-  border-top:1px solid var(--vind-20)}
-.kblock:first-child{border-top:0;padding-top:0}
-.klabel{position:absolute;inset-inline-start:0;top:clamp(38px,5.6vh,86px);
-  width:var(--klab);margin:0;
-  font-size:var(--t-micro);font-weight:400;letter-spacing:.02em;line-height:1.4;
-  color:var(--walnut)}
-.kblock:first-child .klabel{top:0}
-.klabel .kn{display:block;font:400 clamp(10px,.62vw,12px)/1 var(--mono);
-  letter-spacing:.14em;color:var(--vind-60);margin-bottom:9px}
-.kbody{margin:0;font-weight:300;
-  font-size:clamp(23px,2.92vw,48px);line-height:1.3;letter-spacing:-.02em;
-  color:var(--vind-text);text-indent:calc(var(--klab) + clamp(20px,2vw,44px))}
-.kbody .kkick{color:var(--vind-80)}
-:root{--klab:clamp(104px,11.5vw,200px)}
+/* ---------- vision: the opening claim -------------------------------
+   After the reference: a small label hanging in the margin, level with the
+   first line, and the claim itself set at the size the home page opens on.
+   The first line is indented past the label, so the two share a top edge
+   without a rule or a column between them — the label reads as a note in
+   the margin rather than as a heading the paragraph hangs under. */
+:root{--vlab:clamp(96px,10vw,180px)}
+.vlede{position:relative;padding-block:clamp(70px,11vh,150px) clamp(50px,7vh,110px);
+  display:grid;gap:clamp(20px,2.4vh,38px);justify-items:start}
+.vlede-label{position:absolute;inset-inline-start:var(--gutter);top:clamp(70px,11vh,150px);
+  width:var(--vlab);margin:0;
+  font-size:var(--t-micro);font-weight:400;letter-spacing:.06em;color:var(--walnut);
+  /* one line-box of the claim tall, so it centres on its first line */
+  line-height:calc(var(--t-hero) * 1.08)}
+.vlede-body{margin:0;font-weight:300;font-size:var(--t-hero);line-height:1.08;
+  letter-spacing:-.01em;color:var(--vind-text)}
+.vlede-body:first-of-type{text-indent:calc(var(--vlab) + clamp(24px,2.4vw,56px))}
 
-/* Below the labelled measure there is no margin left to hang anything in,
-   so the label comes up above the text and the indent goes. */
+/* below the labelled measure there is no margin to hang in */
 @media (max-width:820px){
-  .klabel{position:static;width:auto;margin-bottom:14px}
-  .kblock:first-child .klabel{top:auto}
-  .kbody{text-indent:0}
+  .vlede-label{position:static;width:auto;line-height:1.4;margin-bottom:6px}
+  .vlede-body:first-of-type{text-indent:0}
 }
-
-/* The featured row the reference closes its section with: plates of
-   unequal width sitting on one baseline, each naming itself underneath. */
-.kex{display:flex;flex-wrap:wrap;gap:clamp(16px,1.6vw,30px);align-items:flex-start}
-.kex-item{flex:1 1 240px;min-width:0;display:grid;gap:7px;
-  text-decoration:none;color:inherit}
-.kex-item img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block;
-  background:var(--vind-20);transition:transform .7s var(--ease)}
-.kex-item:hover img{transform:scale(1.03)}
-.kex-t{font-size:var(--t-body);font-weight:400;letter-spacing:.02em;color:var(--vind-text)}
-.kex-p{font-size:var(--t-micro);font-weight:400;letter-spacing:.04em;color:var(--walnut)}
-.kex-item img{will-change:transform}
-.kex-item>span{display:block}
-.kex-item{overflow:hidden}
 
 /* ---------- hero notes ----------------------------------------------
    The reference hangs survey annotations over its elevation and lets you
@@ -2251,47 +2228,38 @@ const PRINCIPLES = [
 ];
 const PX_TITLE = 'מרכז תעסוקה מגשר: איך חיברנו בין שני חלקיה של העיר הנחצית על ידי כביש בין עירוני 443';
 
-/* The page's opening claim, out of the markup so it reads as copy rather
-   than as two stray lines of HTML. */
-const VISION_LEDE = [
-  'אנו פועלים מתוך מחויבות להיטיב עם הסביבה הפיזית - מרחבית, הפוליטית והחברתית באמצעות תכנון מוכוון תפישת עולם. בכל סביבת תכנון בה נתערב, נשאף לזיהוי המהות והצרכים הייחודיים לה. מתווה דרכינו מתאפיין באחריות, הוגנות, אהבה ותשוקה לתכנון, חדשנות, התבוננות ולמידה, סובלנות ושקיפות.',
-  'סביבת העבודה שאנו מטפחים מהווה מקור גאווה לעובדיה, מייצרת צמיחה אורגנית יציבה ומנוהלת בדרך נעימה ויעילה'
-];
-
 function visionHTML(){
-  /* All five drawers held the same three projects, so five expanders were
-     showing one list five times. It is one row now, at the foot of the
-     page, where the reference puts its own featured set. */
-  const ex = [P[7], P[3], P[1]];
-
+  const ex=[P[7],P[3],P[1]];
+  const pxRow = p => `<div class="pxrow">
+      <img src="${p.img}" alt="" loading="lazy">
+      <div class="t">
+        <h4>${esc(PX_TITLE)}</h4>
+        <div class="pl">${esc(p.place)}</div>
+        <a class="link-btn t-ui" href="#/project" data-project="${p.id}">${icon('i-arrow')}<span>לעמוד הפרויקט</span></a>
+      </div>
+    </div>`;
   return `
-  <section class="wrap page-head rv" style="padding-block:60px 0">
-    <h1 class="t-display meas">החזון שלנו</h1>
+  <section class="wrap vlede rv">
+    <h1 class="vlede-label">החזון שלנו</h1>
+    <p class="vlede-body">אנו פועלים מתוך מחויבות להיטיב עם הסביבה הפיזית - מרחבית, הפוליטית והחברתית באמצעות תכנון מוכוון תפישת עולם. בכל סביבת תכנון בה נתערב, נשאף לזיהוי המהות והצרכים הייחודיים לה. מתווה דרכינו מתאפיין באחריות, הוגנות, אהבה ותשוקה לתכנון, חדשנות, התבוננות ולמידה, סובלנות ושקיפות.</p>
+    <p class="vlede-body">סביבת העבודה שאנו מטפחים מהווה מקור גאווה לעובדיה, מייצרת צמיחה אורגנית יציבה ומנוהלת בדרך נעימה ויעילה</p>
   </section>
 
-  <section class="wrap rv" style="padding-block:30px 60px;display:grid;gap:20px;justify-items:start">
-    <p class="t-hero">${esc(VISION_LEDE[0])}</p>
-    <p class="t-hero">${esc(VISION_LEDE[1])}</p>
-  </section>
-
-  <section class="wrap" style="padding-bottom:clamp(40px,5vw,90px)">
-    <div class="kblocks">
-      ${PRINCIPLES.map(([t,k,b],i)=>`<article class="kblock rv">
-        <p class="klabel"><span class="kn">${String(i+1).padStart(2,'0')}</span>${esc(t)}</p>
-        <p class="kbody">${k?`<span class="kkick">${esc(k)} </span>`:''}${esc(b)}</p>
+  <section class="wrap" style="padding-bottom:clamp(30px,3.4vw,64px)">
+    <div class="rows">
+      ${PRINCIPLES.map(([t,k,b])=>`<article class="prow rv">
+        <div class="side">
+          <div class="txt">
+            <h2 class="${k?'t-display':'t-hero'}">${esc(t)}</h2>
+            ${k?`<div class="kick">${esc(k)}</div>`:''}
+          </div>
+        </div>
+        <div class="body">
+          <p>${esc(b)}</p>
+          <button class="pex" data-ex><span class="pm"></span><span>פרויקטים לדוגמא</span></button>
+          <div class="pxwrap"><div class="pxlist">${ex.map(pxRow).join('')}</div></div>
+        </div>
       </article>`).join('')}
-    </div>
-  </section>
-
-  <section class="wrap rv" style="padding-bottom:clamp(60px,8vw,140px)">
-    <p class="kn" style="margin:0 0 10px">פרויקטים לדוגמא</p>
-    <h2 class="t-display meas" style="margin:0 0 clamp(24px,3vw,48px)">איך זה נראה בפועל</h2>
-    <div class="kex">
-      ${ex.map(p=>`<a class="kex-item rv-img" href="#/project" data-project="${p.id}">
-        <img src="${p.img}" alt="" loading="lazy" draggable="false">
-        <span class="kex-t">${esc(p.title)}</span>
-        <span class="kex-p">${esc(p.place)}</span>
-      </a>`).join('')}
     </div>
   </section>`;
 }
