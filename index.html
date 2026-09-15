@@ -291,6 +291,10 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    header lockup carries, as type rather than the mark */
 .opener-kicker{font-weight:400;font-size:var(--t-micro);line-height:1.4;letter-spacing:.36px;
   color:rgba(255,255,255,.72);margin:0 0 10px}
+/* a project carries its plan, scale and field on the picture, ranged
+   under the title rather than waiting below the fold */
+.opener-txt .attrs{margin-block-start:clamp(14px,1.6vh,22px);gap:8px clamp(12px,1.2vw,22px)}
+.opener-txt .attr{color:#fff}
 
 /* the claim keeps the reading side, the scroll cue takes the empty left
    corner. Source order puts the claim first so it still reads first; in
@@ -469,9 +473,10 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    centres on the picture rather than ranging to the reading edge. */
 .shot-tags .attr{color:#fff}
 .shot-tags .attrs{gap:8px clamp(12px,1.2vw,20px);justify-content:center}
-.shot-tags img.icoimg,.shot-tags .ico{width:26px;height:26px;flex:none;
+.shot-tags img.icoimg,.shot-tags .ico,
+.opener-txt img.icoimg,.opener-txt .ico{width:26px;height:26px;flex:none;
   border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.28)}
-.shot-tags .ico{background:var(--marker-tint);border:1px solid var(--marker);color:var(--marker);
+.shot-tags .ico,.opener-txt .ico{background:var(--marker-tint);border:1px solid var(--marker);color:var(--marker);
   font-size:calc(26px * .56)}
 .crsl .shot{aspect-ratio:847/466}
 .crsl .cslide .shot>img{will-change:transform}
@@ -1259,8 +1264,9 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 
 /* ---------- single project ---------- */
 .pj-head{padding-block:clamp(26px,3vw,52px) clamp(16px,1.8vw,32px);display:grid;gap:12px;justify-items:start}
+/* the still that opens a project keeps the frame it was given */
+.opener-film{background:var(--ink)}
 .pj-head .attrs{margin-top:0}
-.pj-hero{width:100%;height:clamp(240px,55.4vw,1064px);object-fit:cover;background:var(--vind-20);display:block}
 .pj-body{display:grid;grid-template-columns:minmax(0,42%) minmax(0,58%);gap:clamp(24px,4vw,80px);
   padding-block:clamp(30px,3.4vw,64px);align-items:start}
 .pj-copy{display:grid;gap:20px;justify-items:start}
@@ -2354,14 +2360,21 @@ function projectHTML(){
   const A=[p.img,'assets/pr3.jpg','assets/pr4.jpg','assets/pr6.jpg','assets/pr1.jpg','assets/pr5.jpg'];
 
   return `
-  <section class="wrap pj-head rv">
-    ${attrs(p,['plan','size','domain'])}
-    <h1 class="t-display">${esc(p.title)}</h1>
-    <div class="t-display dim" style="line-height:1.06">${esc(p.place)}</div>
-  </section>
+  <div class="opener" id="opener">
+    <div class="opener-zoom" aria-hidden="true"><img class="opener-film" id="hero-film"
+      src="${p.img}" alt="${esc(p.title)}" decoding="async" draggable="false"></div>
+    <div class="opener-scrim" aria-hidden="true"></div>
+    <div class="opener-txt" id="opener-txt"><div class="wrap opener-row">
+      <div class="opener-lede">
+        <p class="opener-kicker">${esc(p.place)}</p>
+        <h1 class="opener-claim">${esc(p.title)}</h1>
+        ${attrs(p,['plan','size','domain'])}
+      </div>
+      <button class="opener-scroll" id="opener-scroll" type="button" aria-label="גלילה למטה">${icon('i-scroll')}${icon('i-scroll')}${icon('i-scroll')}</button>
+    </div></div>
+  </div>
 
-  <span class="rv rv-img" style="display:block"><img class="pj-hero" src="${p.img}" alt="${esc(p.title)}"></span>
-
+  <div class="over">
   <section class="wrap pj-body">
     <div class="pj-copy rv" id="pj-copy">
       <h2>להיטיב עם הסביבה באמצעות תכנון מוכוון תפישת עולם</h2>
@@ -2420,7 +2433,8 @@ function projectHTML(){
       <button class="cbtn prev" data-step="1" aria-label="הקודם">${icon('i-chevron')}</button>
       <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-chevron')}</button>
     </div>
-  </section>`;
+  </section>  </div>
+`;
 }
 
 /* ---------- menu ---------- */
@@ -2862,7 +2876,10 @@ document.addEventListener('click',e=>{ if(!e.target.closest('.chip-holder')) clo
 /* the hero film plays once and then holds its last frame */
 let filmPlayed=false, veilDone=false;
 function wireFilm(){
-  const film=document.getElementById('hero-film'); if(!film) return;
+  const film=document.getElementById('hero-film');
+  /* a project opens on a photograph rather than a film — same slot, same
+     parallax, but nothing to start, and play() would not exist on it */
+  if(!film || film.tagName!=='VIDEO') return;
   film.addEventListener('ended',()=>{ filmPlayed=true; film.pause(); },{once:true});
   if(filmPlayed){                       /* coming back to the page keeps the closing frame */
     const hold=()=>{ try{ film.currentTime=Math.max(0,(film.duration||0)-0.04); }catch(e){} };
@@ -2875,13 +2892,31 @@ function wireFilm(){
 }
 function startFilm(){
   const film=document.getElementById('hero-film');
-  if(film && film._start && !filmPlayed) film._start();
+  if(film && film.tagName==='VIDEO' && film._start && !filmPlayed) film._start();
 }
 /* browsers suspend media in a hidden tab — pick the opening back up on return */
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) startFilm(); });
 
+/* A rail's neighbours sit off to the side rather than below the fold, and
+   the browser will not fetch them until they are nearly in view — by
+   which time the reader is already looking at an empty frame. Once the
+   rail itself is within a screen, everything in it is asked for at once.
+   Before that it stays lazy, so a long page still opens light. */
+function eagerWhenNear(el){
+  if(!el || !('IntersectionObserver' in window)) return;
+  const io=new IntersectionObserver(es=>{
+    if(!es.some(e=>e.isIntersecting)) return;
+    el.querySelectorAll('img[loading="lazy"]').forEach(im=>{
+      im.decoding='async'; im.loading='eager';
+    });
+    io.disconnect();
+  },{rootMargin:'700px 0px'});
+  io.observe(el);
+}
+
 /* ---------- carousels: drag to scroll, arrows step one card ---------- */
 function wireCarousels(){
+  document.querySelectorAll('[data-crsl],.ticker').forEach(eagerWhenNear);
   document.querySelectorAll('[data-crsl]').forEach(wrap=>{
     const el=wrap.querySelector('.carousel');
     const prev=wrap.querySelector('.cbtn.prev'), next=wrap.querySelector('.cbtn.next');
