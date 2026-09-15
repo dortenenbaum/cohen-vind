@@ -1000,7 +1000,6 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 .prow .side{display:flex;align-items:flex-start;gap:20px;justify-content:flex-start}
 .prow .side .txt{display:grid;gap:0;flex:1}
 .prow .side .kick{font-weight:300;font-size:var(--t-display);line-height:1.2;letter-spacing:-.46px;color:var(--vind-80)}
-.prow .side .thumb{width:119px;height:114px;object-fit:cover;background:var(--vind-20);flex:none;order:2}
 .prow .body{display:grid;gap:30px;justify-items:start}
 .prow .body>p{font-weight:300;font-size:var(--t-title);line-height:1.2;letter-spacing:.74px;color:var(--vind-text);margin:0}
 
@@ -1934,8 +1933,8 @@ const PRINCIPLES = [
   ['זיהוי הצרכים הייחודים לסביבת התכנון',null,'כל פרויקט מתחיל באנשים שיחיו בו, יעבדו בו או ישתמשו בו מדי יום. אנחנו מאמינים שהבנת הצרכים, השאיפות ואורח החיים היא הבסיס לכל החלטה תכנונית. הקשבה אמיתית יוצרת אדריכלות טובה יותר.',false],
   ['תכנון אחראי והוגן',null,'אנחנו לא מתכננים עבור הלקוח אלא יחד איתו. הדיאלוג הרציף לאורך הדרך מייצר החלטות טובות יותר, מחויבות גבוהה יותר ותוצאה שמרגישה נכונה לכל מי שמעורב בפרויקט.',false],
   ['ראייה חדשנית ומחדשת (מובילה?)',null,'כל מגרש, כל רגולציה וכל מגבלה הם חלק מהפאזל. אנחנו נהנים להתמודד עם מורכבות ולהפוך אותה לפתרונות ברורים, מדויקים ופשוטים.',false],
-  ['הקשר הוא נקודת המוצא','כל מקום מספר סיפור אחר.','אנחנו לא מחפשים סגנון שחוזר על עצמו. כל פרויקט נולד מתוך המקום שבו הוא נמצא – העיר, הרחוב, הנוף, האקלים והקהילה שסביבו.',true],
-  ['רעיון אחד חזק','פחות רעש. יותר משמעות.','אנחנו מאמינים שלכל פרויקט צריך להיות רעיון מרכזי שמוביל את כל ההחלטות. כשהרעיון ברור – כל פרט מקבל משמעות.',true]
+  ['הקשר הוא נקודת המוצא','כל מקום מספר סיפור אחר.','אנחנו לא מחפשים סגנון שחוזר על עצמו. כל פרויקט נולד מתוך המקום שבו הוא נמצא – העיר, הרחוב, הנוף, האקלים והקהילה שסביבו.'],
+  ['רעיון אחד חזק','פחות רעש. יותר משמעות.','אנחנו מאמינים שלכל פרויקט צריך להיות רעיון מרכזי שמוביל את כל ההחלטות. כשהרעיון ברור – כל פרט מקבל משמעות.']
 ];
 const PX_TITLE = 'מרכז תעסוקה מגשר: איך חיברנו בין שני חלקיה של העיר הנחצית על ידי כביש בין עירוני 443';
 
@@ -1960,9 +1959,8 @@ function visionHTML(){
 
   <section class="wrap" style="padding-bottom:clamp(30px,3.4vw,64px)">
     <div class="rows">
-      ${PRINCIPLES.map(([t,k,b,thumb],i)=>`<article class="prow rv">
+      ${PRINCIPLES.map(([t,k,b])=>`<article class="prow rv">
         <div class="side">
-          ${thumb?`<img class="thumb" src="${['assets/pr4.jpg','assets/pr6.jpg'][i%2]}" alt="" loading="lazy">`:''}
           <div class="txt">
             <h2 class="${k?'t-display':'t-hero'}">${esc(t)}</h2>
             ${k?`<div class="kick">${esc(k)}</div>`:''}
