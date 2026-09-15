@@ -514,13 +514,17 @@ img.icoimg.big{width:32px;height:32px}
   border:1px solid var(--sand);border-radius:999px;padding:9px 16px;color:var(--walnut);
   transition:border-color .22s var(--ease),color .22s var(--ease),background .22s var(--ease)}
 .plan:hover{border-color:var(--walnut);color:var(--vind-text)}
-.plan[aria-pressed="true"]{background:var(--accent-tint);border-color:var(--accent-tint);
-  color:var(--accent)}
+.plan[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 .badge{height:20px;min-width:30px;display:inline-flex;align-items:center;justify-content:center;
   padding:0 8px;border-radius:999px;box-sizing:border-box;
   background:transparent;border:1px solid var(--sand);color:var(--walnut);
   font-size:var(--t-badge);line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums}
-.badge.on{background:var(--walnut);border-color:var(--walnut);color:var(--paper)}
+.badge.on{background:var(--accent);border-color:var(--accent);color:#fff}
+/* inside a tab that is already the colour the count inverts: the light
+   end of the ramp, with the colour on it — the same pairing the icon
+   beside it uses */
+.plan[aria-pressed="true"] .badge.on{background:var(--accent-050);
+  border-color:var(--accent-050);color:var(--accent)}
 
 .tool-rule{height:1px;background:var(--vind-20)}
 .tools{display:flex;flex-wrap:wrap-reverse;align-items:center;justify-content:space-between;gap:14px 24px;padding-block:16px 20px}
@@ -541,7 +545,7 @@ img.icoimg.big{width:32px;height:32px}
 .reset:hover{color:var(--vind-dark);border-color:var(--vind-dark)}
 
 .pop{position:absolute;top:calc(100% + 8px);inset-inline-start:0;z-index:40;min-width:292px;
-  background:var(--accent-050);border:1px solid var(--accent-100);border-radius:10px;padding:8px;
+  background:var(--white);border:1px solid var(--vind-20);border-radius:10px;padding:8px;
   box-shadow:0 18px 44px -18px rgba(45,55,25,.34);display:none}
 .pop.open{display:block;animation:popIn .18s var(--ease)}
 @keyframes popIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
@@ -671,7 +675,12 @@ td.go svg{width:17px;height:11px}
    drawn into and leave bands top and bottom.
    --------------------------------------------------------------------- */
 .mapbox.full{position:fixed;inset:0;z-index:200;aspect-ratio:auto;
-  width:100vw;height:100dvh;max-width:none}
+  width:100vw;height:100dvh;max-width:none;justify-content:center}
+/* The stage keeps its own ratio — the pins are placed as percentages of
+   it and calibrated to the raster, so stretching it would move every
+   one of them off its real position. It is scaled until it covers
+   instead, and the frame clips whatever runs past. */
+.mapbox.full .mapstage{width:auto;height:100%;min-width:100%;margin-inline:0}
 body.map-full{overflow:hidden}
 /* Full screen means the map and nothing else. The bar and the floating
    contacts are hidden outright rather than stacked under it — z-index
@@ -1216,7 +1225,7 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
     <a class="brand" href="#/" data-nav="home">
       <span class="brand-lockup">
         <svg class="brand-mark" viewBox="0 0 63 63" aria-hidden="true"><use href="#cv-mark"/></svg>
-        <img class="brand-neg" src="assets/logomark-neg.svg" alt="" width="63" height="63">
+        <img class="brand-neg" src="assets/logomark-neg.svg?v=5" alt="" width="63" height="63">
       </span>
       <span class="brand-txt">כהן וינד ושות׳<span>אדריכלות ותכנון ערים</span></span>
     </a>
@@ -1403,9 +1412,14 @@ const state = {page:'home',view:'grid',plan:'all',f:{status:[],size:[],domain:[]
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const icon = id => `<svg aria-hidden="true"><use href="#${id}"/></svg>`;
 /* the circular avatars are the exported "Icon Avatar" components, used as-is */
+/* The icon and pin files get repainted in place and keep their names,
+   so a browser that has seen them once will keep serving the old paint.
+   Bump this whenever those assets change. */
+const ASSET_V = '5';
+
 const av = (key,letter,big,off)=> letter
   ? `<span class="ico lt${big?' big':''}${off?' off':''}">${letter}</span>`
-  : `<img class="icoimg${big?' big':''}" src="assets/icons/${key}${off?'-off':''}.svg" alt="" width="32" height="32">`;
+  : `<img class="icoimg${big?' big':''}" src="assets/icons/${key}${off?'-off':''}.svg?v=${ASSET_V}" alt="" width="32" height="32">`;
 
 const matches = (p,skip) =>
   (skip==='plan'  || state.plan==='all' || p.plan===state.plan) &&
@@ -1725,7 +1739,7 @@ function listHTML(items){
 }
 
 /* map pins are the exported Figma components, used as-is */
-const pinSrc = (p,on=true)=>`assets/pins/${p.plan}-${p.size}${on?'':'-off'}.svg`;
+const pinSrc = (p,on=true)=>`assets/pins/${p.plan}-${p.size}${on?'':'-off'}.svg?v=${ASSET_V}`;
 
 function spec(p){
     const area = p.units ? (p.units*85).toLocaleString('he-IL') : ({S:'25,000',M:'120,000',L:'450,000'})[p.size];
