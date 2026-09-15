@@ -803,18 +803,41 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 .empty b{display:block;font-weight:300;font-size:var(--t-title);color:var(--vind-text);margin-bottom:8px}
 
 /* ---------- footer ---------- */
-.ft-in{display:flex;flex-wrap:wrap-reverse;align-items:center;justify-content:space-between;gap:18px 32px;padding-block:22px}
-/* every item in the row sits on one line, icons included — the socials
-   were riding four pixels low against the text beside them */
-.ft-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;line-height:1}
-.ft-meta>*{display:inline-flex;align-items:center}
-.ft-meta .socials{gap:14px}
-.ft-meta .socials a{display:inline-flex;align-items:center}
-.ft-meta .socials svg{display:block}
-.ft-meta a:hover{color:var(--vind-dark)}
-.socials{display:flex;gap:12px}
-.socials svg{width:18px;height:18px}
-.socials a:hover{color:var(--vind-dark)}
+/* ---- the footer ------------------------------------------------------
+   A panel in the colour, read in near-black, everything ruled into cells
+   — the reference's structure, running from the right.
+   ---------------------------------------------------------------------- */
+.ft{background:var(--accent);color:#141414;
+  padding-block:clamp(52px,7vw,120px) clamp(22px,2.6vw,40px);margin-top:0}
+.ft a{color:inherit;text-decoration:none}
+.ft-say{margin:0 0 clamp(36px,5vw,84px);max-width:20ch;font-weight:300;
+  font-size:var(--t-display);line-height:1.14;letter-spacing:-.46px}
+
+.ft-cells{display:flex;flex-wrap:wrap;
+  border-block:1px solid currentColor}
+.ft-cell{display:flex;align-items:center;white-space:nowrap;
+  padding:clamp(10px,.9vw,15px) clamp(14px,1.2vw,22px);
+  font-size:var(--t-micro);line-height:1;
+  border-inline-start:1px solid currentColor;
+  transition:background .2s var(--ease)}
+.ft-cell:first-child{border-inline-start:0}
+a.ft-cell:hover{background:rgba(0,0,0,.09)}
+.ft-grow{flex:1 1 auto;justify-content:flex-start}
+
+.ft-base{display:flex;align-items:flex-end;justify-content:space-between;
+  gap:clamp(24px,3vw,56px);margin-top:clamp(64px,9vw,150px);flex-wrap:wrap-reverse}
+.ft-cells-sm{flex:1 1 520px}
+.ft-cells-sm .ft-cell{font-size:clamp(11px,.72vw,15px)}
+
+.ft-mark{display:flex;align-items:center;gap:13px;flex:none}
+.ft-mark img{width:52px;height:52px;display:block;flex:none}
+.ft-mark>span{font-weight:700;font-size:var(--t-micro);line-height:1.35;letter-spacing:.36px}
+.ft-mark>span>span{display:block;font-weight:400;opacity:.72}
+
+@media (max-width:760px){
+  .ft-cell{font-size:12px;padding:10px 12px}
+  .ft-base{align-items:flex-start}
+}
 
 .floats{position:fixed;inset-inline-start:14px;inset-block-end:22px;z-index:50;display:grid;gap:10px}
 .floats button{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--accent-050);color:var(--accent);box-shadow:0 4px 14px -6px rgba(0,0,0,.4)}
@@ -1282,20 +1305,33 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 
 <main id="app"></main>
 
-<footer>
-  <div class="wrap ft-in rv">
-    <div class="brand">
-      <svg class="brand-mark" viewBox="0 0 63 63" aria-hidden="true"><use href="#cv-mark"/></svg>
-      <span class="brand-txt">כהן וינד ושות׳<span>אדריכלות ותכנון ערים</span></span>
+<footer class="ft">
+  <div class="wrap rv">
+    <p class="ft-say">רוצים לדבר על תוכנית? נשמח לשמוע מכם.</p>
+
+    <div class="ft-cells">
+      <a class="ft-cell" href="#/">צרו קשר</a>
+      <a class="ft-cell" href="#/">074-7015130</a>
+      <a class="ft-cell" href="#/">onyx@onyxgroup.co.il</a>
+      <span class="ft-cell ft-grow">זבולון 2, תל אביב 4685002</span>
+      <a class="ft-cell" href="#/" data-nav="join">משרות</a>
     </div>
-    <div class="ft-meta t-ui">
-      <span class="socials">
-        <a href="#/" aria-label="פייסבוק"><svg><use href="#i-fb"/></svg></a>
-        <a href="#/" aria-label="אינסטגרם"><svg><use href="#i-ig"/></svg></a>
-        <a href="#/" aria-label="לינקדאין"><svg><use href="#i-li"/></svg></a>
-      </span>
-      <span>074-7015130</span><span>זבולון 2, תל אביב 4685002</span>
-      <a href="#/">onyx@onyxgroup.co.il</a><a href="#/">צרו קשר</a>
+
+    <div class="ft-base">
+      <a class="ft-mark" href="#/" data-nav="home">
+        <img src="assets/logomark-neg.svg?v=5" alt="" width="63" height="63">
+        <span>כהן וינד ושות׳<span>אדריכלות ותכנון ערים</span></span>
+      </a>
+
+      <div class="ft-cells ft-cells-sm">
+        <span class="ft-cell">אדריכלות ותכנון ערים</span>
+        <span class="ft-cell">© 2026</span>
+        <a class="ft-cell" href="#/">תנאי שימוש</a>
+        <span class="ft-cell ft-grow"></span>
+        <a class="ft-cell" href="#/">לינקדאין</a>
+        <a class="ft-cell" href="#/">אינסטגרם</a>
+        <a class="ft-cell" href="#/">פייסבוק</a>
+      </div>
     </div>
   </div>
 </footer>
