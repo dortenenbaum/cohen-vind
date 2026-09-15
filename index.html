@@ -285,6 +285,66 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .opener-scrim{position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to top,rgba(16,15,13,.80) 0%,rgba(16,15,13,.46) 30%,rgba(16,15,13,.12) 58%,rgba(16,15,13,0) 78%),
              linear-gradient(to bottom,rgba(16,15,13,.52) 0%,rgba(16,15,13,.12) 16%,rgba(16,15,13,0) 30%)}
+/* ---------- hero notes ----------------------------------------------
+   The reference hangs survey annotations over its elevation and lets you
+   find them with the cursor: a small mark on the drawing, and on approach
+   a panel in the primary carrying a reference and a line of text, with
+   hairline guides running out to the edges of the frame.
+
+   Ours does the same over the project's photograph. Each mark draws its
+   own guides rather than a crosshair chasing the pointer — the cursor is
+   already at the mark when the panel opens, so the lines read as the
+   annotation's own leader rather than as a second thing to watch. The hit
+   area is 52px around a 10px mark, so they are found by sweeping rather
+   than by aiming. The marks sit clear of the lower third, where the claim
+   and the scroll cue live.                                              */
+.hnotes{position:absolute;inset:0;z-index:2;pointer-events:none}
+.hnote{position:absolute;inset-inline-start:var(--x);top:var(--y);
+  width:52px;height:52px;margin:-26px 0 0 -26px;padding:0;border:0;background:none;
+  display:grid;place-items:center;cursor:crosshair;pointer-events:auto}
+.hnote-pin{width:10px;height:10px;background:var(--accent);
+  box-shadow:0 0 0 1px rgba(255,255,255,.5);
+  transition:transform .32s var(--ease)}
+.hnote:hover .hnote-pin,.hnote:focus-visible .hnote-pin{transform:scale(1.35)}
+
+/* the leaders, clipped by the opener's own overflow */
+.hnote::before,.hnote::after{content:"";position:absolute;left:50%;top:50%;
+  background:rgba(255,255,255,.32);opacity:0;
+  transition:opacity .38s var(--ease)}
+.hnote::before{width:220vw;height:1px;transform:translate(-50%,-50%)}
+.hnote::after{height:220vh;width:1px;transform:translate(-50%,-50%)}
+.hnote:hover::before,.hnote:hover::after,
+.hnote:focus-visible::before,.hnote:focus-visible::after{opacity:1}
+
+.hnote-card{position:absolute;top:calc(50% + 18px);inset-inline-start:calc(50% + 18px);
+  width:max-content;min-width:190px;max-width:min(300px,52vw);
+  background:var(--accent);color:var(--accent-ink);padding:11px 13px 13px;
+  text-align:start;opacity:0;transform:translateY(7px);pointer-events:none;
+  transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.hnote.flip .hnote-card{inset-inline-start:auto;inset-inline-end:calc(50% + 18px)}
+.hnote.up   .hnote-card{top:auto;bottom:calc(50% + 18px)}
+.hnote:hover .hnote-card,.hnote:focus-visible .hnote-card{opacity:1;transform:none}
+.hnote-code{display:block;direction:ltr;text-align:start;
+  font:400 clamp(10px,.6vw,12px)/1 var(--mono);letter-spacing:.06em;
+  opacity:.82;margin-bottom:7px}
+.hnote-txt{display:block;font-size:clamp(12px,.78vw,15px);font-weight:400;line-height:1.45}
+
+/* Centred over the frame and clear of the logo and the language switch,
+   the way the reference floats its own invitation over the drawing. It
+   goes when a mark opens, not when the pointer merely enters the hero —
+   tying it to the hero meant it vanished before it had been read, and it
+   has no business sitting over a panel it just invited you to open. */
+.hnote-hint{position:absolute;z-index:2;top:calc(var(--hdr-h) + 26px);inset-inline:0;
+  margin:0;text-align:center;color:rgba(255,255,255,.72);
+  font:400 clamp(10px,.62vw,12px)/1.4 var(--mono);letter-spacing:.06em;
+  pointer-events:none;transition:opacity .5s var(--ease)}
+.opener:has(.hnote:hover) .hnote-hint{opacity:0}
+
+@media (hover:none){ .hnotes,.hnote-hint{display:none} }
+@media (prefers-reduced-motion:reduce){
+  .hnote-pin,.hnote-card,.hnote::before,.hnote::after{transition-duration:.01ms}
+}
+
 .opener-txt{position:absolute;inset-inline:0;
   inset-block-end:calc(clamp(30px,5.4vh,74px) + env(safe-area-inset-bottom,0px));
   color:#fff;will-change:transform,opacity}
@@ -2463,6 +2523,30 @@ function pjMap(p){
   </div>`;
 }
 
+/* Six annotations over the project's photograph, in the reference's manner:
+   a mark you find with the cursor, then a reference line and a sentence.
+   The copy is placeholder â Hebrew lorem â and so are the plan references;
+   both hold the shape until the practice writes the real ones. x and y are
+   per cent of the frame. `flip` opens the panel to the other side so it
+   never runs off an edge, `up` opens it above the mark. */
+const HERO_NOTES = [
+  {x:16, y:24, code:'TBA 3021/B · 01', txt:'לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אלית'},
+  {x:33, y:44, code:'TBA 3021/B · 02', txt:'סד דו איוסמוד טמפור אינסידידונט, לברה אט דולורה מגנה'},
+  {x:50, y:19, code:'TBA 3021/B · 03', txt:'אוט אנים אד מינים ותאמת, קוויס נוסטרוד אקסרסיטציה'},
+  {x:64, y:50, code:'TBA 3021/B · 04', txt:'דואיס אאוטה אירורה בדולור אין רפרהנדריט, אין וולופטטה', flip:1},
+  {x:79, y:28, code:'TBA 3021/B · 05', txt:'אקסצפתאור סינט אוקאיקאט קופידאטאט נון פרוידנט', flip:1},
+  {x:88, y:56, code:'TBA 3021/B · 06', txt:'סאנט אין קולפה קווי אופיציה דסרונט מולית אנים', flip:1, up:1}
+];
+
+const heroNotesHTML = () => `<div class="hnotes">
+  ${HERO_NOTES.map(n=>`<button class="hnote${n.flip?' flip':''}${n.up?' up':''}" type="button"
+      style="--x:${n.x}%;--y:${n.y}%" aria-label="${esc(n.code)} — ${esc(n.txt)}">
+    <span class="hnote-pin" aria-hidden="true"></span>
+    <span class="hnote-card"><span class="hnote-code">${esc(n.code)}</span><span class="hnote-txt">${esc(n.txt)}</span></span>
+  </button>`).join('')}
+</div>
+<p class="hnote-hint">הזיזו את הסמן על התצלום כדי לגלות הערות תכנון</p>`;
+
 function projectHTML(){
   const p = P.find(x=>x.id===state.project) || P[0];
   const area = p.units ? (p.units*85).toLocaleString('he-IL') : ({S:'25,000',M:'120,000',L:'450,000'})[p.size];
@@ -2476,6 +2560,7 @@ function projectHTML(){
     <div class="opener-zoom" aria-hidden="true"><img class="opener-film" id="hero-film"
       src="${p.img}" alt="${esc(p.title)}" decoding="async" draggable="false"></div>
     <div class="opener-scrim" aria-hidden="true"></div>
+    ${heroNotesHTML()}
     <div class="opener-txt" id="opener-txt"><div class="wrap opener-row">
       <div class="opener-lede">
         <p class="opener-kicker">${esc(p.place)}</p>
