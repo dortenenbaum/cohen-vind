@@ -1021,8 +1021,11 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
   background:linear-gradient(135deg,var(--vind-20) 0%,var(--vind-40) 100%)}
 .person .ph:has(img)::after{display:none}
 
+/* the caption is inset from the reading edge of its own picture, the way
+   the reference sets it — the tiles run flush, the words do not */
 .person .cap{display:flex;flex-direction:column;align-items:flex-start;
-  gap:2px;padding-block-start:clamp(18px,1.6vw,30px)}
+  gap:2px;padding-block-start:clamp(12px,1vw,18px);
+  padding-inline:clamp(12px,1.1vw,20px)}
 .person h3{margin:0;font-weight:400;font-size:var(--t-body);letter-spacing:.36px;color:var(--vind-text)}
 .person .role{font-size:clamp(11px,.72vw,13px);color:var(--vind-80);letter-spacing:.36px}
 /* the way in sits under the role as a small link, not as a control */
