@@ -454,8 +454,6 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    the margin rather than as a heading the paragraph hangs under. */
 :root{--lede-lab:clamp(96px,10vw,180px)}
 .lede{padding-block:clamp(70px,11vh,150px) clamp(50px,7vh,110px)}
-/* the claim stops where the carousel's middle plate stops */
-.lede-in{max-width:var(--plate);margin-inline:auto}
 /* the wrapper's top edge is the paragraph's, so the label needs no arithmetic
    to land on the first line — it inherits the line-height and sits in it */
 .lede-in{position:relative}
@@ -782,15 +780,7 @@ a.lede-label:hover .u,a.lede-label:focus-visible .u{background-size:100% 1px}
    a wider screen shows more of the neighbours rather than a bigger
    card. Ours had made the card a share of the rail, so once the rail
    reached the glass the card grew with the window. */
-.crsl{--csl-gap:30px}
-/* The carousel's measure lives on the root rather than on .crsl, because
-   the large paragraphs share it: the plate in the middle of the carousel
-   is the widest thing on the page that is not full bleed, and the claim
-   reading to exactly that edge is what ties the two halves of the page
-   together. --csl-pad is the slide's own inset, so --plate is the picture
-   and not the slide that carries it. */
-:root{--csl-w:min(84vw,1120px);--csl-pad:38px;
-  --plate:calc(var(--csl-w) - 2 * var(--csl-pad))}
+.crsl{--csl-gap:30px;--csl-w:min(84vw,1120px)}
 /* The rail runs to both edges of the window at every width, the way the
    reference does. Negating the gutter was not enough: .wrap caps at
    --maxw and centres, so a wide screen still left the auto margin on
@@ -804,7 +794,7 @@ a.lede-label:hover .u,a.lede-label:focus-visible .u{background-size:100% 1px}
 .carousel::-webkit-scrollbar{display:none}
 .carousel.dragging{cursor:grabbing;scroll-snap-type:none}
 .crsl .cslide{flex:none;width:var(--csl-w);scroll-snap-align:center;display:block;position:relative;
-  padding-inline:var(--csl-pad)}
+  padding-inline:38px}
 .csl-num{position:absolute;inset-inline-start:4px;top:2px;bottom:auto;height:auto;
   writing-mode:vertical-rl;direction:ltr;font-size:16px;line-height:1;letter-spacing:.04em;
   color:var(--sand);white-space:nowrap;transition:color .35s var(--ease)}
@@ -1727,7 +1717,7 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 @media (max-width:1280px){
   .values{grid-template-columns:repeat(2,1fr);row-gap:48px}
   .grid{--gh:clamp(190px,26vw,320px)}
-  :root{--csl-w:min(84vw,760px)}
+  .crsl{--csl-w:min(84vw,760px)}
   .cslide .shot{height:min(43.5vw,424px)}
   .crsl .shot{height:auto}
   .cslide.career{width:min(58vw,540px)}
@@ -1747,7 +1737,7 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
   .values{grid-template-columns:1fr}
   .grid{--gap:14px}
   .grid .card{flex:1 1 100%}
-  :root{--csl-w:86vw;--csl-pad:0px}
+  .crsl{--csl-w:86vw}
   .cslide.career{width:86vw}
   .cslide .shot,.cslide.career .shot{height:48vw}
   .crsl .shot{height:auto}
