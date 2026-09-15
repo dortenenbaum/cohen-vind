@@ -518,7 +518,8 @@ img.icoimg.big{width:32px;height:32px}
 .badge{height:20px;min-width:30px;display:inline-flex;align-items:center;justify-content:center;
   padding:0 8px;border-radius:999px;box-sizing:border-box;
   background:transparent;border:1px solid var(--sand);color:var(--walnut);
-  font-size:var(--t-badge);line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums}
+  font-size:var(--t-badge);line-height:1;letter-spacing:0;font-weight:700;
+  font-variant-numeric:tabular-nums}
 .badge.on{background:var(--accent);border-color:var(--accent);color:#fff}
 /* inside a tab that is already the colour the count inverts: the light
    end of the ramp, with the colour on it — the same pairing the icon
@@ -594,9 +595,9 @@ img.icoimg.big{width:32px;height:32px}
    row dimming and the picture that rides the cursor.
    -------------------------------------------------------------------- */
 .windex{position:relative;margin-top:clamp(40px,6vh,64px)}
-.windex-head,.windex-row{display:grid;grid-template-columns:80px 1fr 1fr 96px 88px;gap:24px}
+.windex-head,.windex-row{display:grid;grid-template-columns:96px 1fr 1fr 104px 96px;gap:clamp(18px,1.7vw,32px)}
 .windex-head{padding:0 0 20px;border-bottom:.5px solid var(--sand)}
-.windex-head span{font-size:clamp(10px,.573vw,11px);font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+.windex-head span{font-size:var(--t-badge);font-weight:500;letter-spacing:.16em;text-transform:uppercase;
   color:var(--walnut);text-align:start}
 .windex-head .sortable{cursor:pointer;transition:color .3s var(--ease)}
 .windex-head .sortable:hover{color:var(--vind-text)}
@@ -604,9 +605,9 @@ img.icoimg.big{width:32px;height:32px}
   color:inherit;transition:opacity .3s var(--ease)}
 .windex-row:hover{opacity:1;background:var(--accent-050)}
 .windex-row:focus-visible{outline:2px solid var(--vind-text);outline-offset:-2px}
-.wx-year{font-size:clamp(13px,.729vw,14px);font-weight:300;letter-spacing:.04em;color:var(--walnut)}
-.wx-title{font-size:clamp(15px,.833vw,16px);font-weight:400;letter-spacing:.02em;color:var(--vind-text)}
-.wx-place{font-size:clamp(13px,.729vw,14px);font-weight:300;letter-spacing:.02em;color:var(--vind-text)}
+.wx-year{font-size:var(--t-micro);font-weight:300;letter-spacing:.04em;color:var(--walnut)}
+.wx-title{font-size:var(--t-body);font-weight:400;letter-spacing:.02em;color:var(--vind-text)}
+.wx-place{font-size:var(--t-body);font-weight:300;letter-spacing:.02em;color:var(--walnut)}
 .wx-type{font-size:clamp(11px,.625vw,12px);font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--walnut)}
 .wx-size{text-align:end}
 /* the last two columns carry the marker rather than its name — the same
@@ -615,7 +616,7 @@ img.icoimg.big{width:32px;height:32px}
 .wx-type,.wx-size{display:flex;align-items:center}
 .wx-size{justify-content:flex-end}
 .wx-ico{position:relative;display:inline-flex;align-items:center;justify-content:center}
-.wx-ico img.icoimg,.wx-ico .ico{width:27px;height:27px}
+.wx-ico img.icoimg,.wx-ico .ico{width:clamp(27px,1.75vw,34px);height:clamp(27px,1.75vw,34px)}
 .wx-ico::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 9px);left:50%;
   transform:translate(-50%,5px);background:var(--ink);color:var(--paper);
   font-size:11px;letter-spacing:.02em;line-height:1;white-space:nowrap;
