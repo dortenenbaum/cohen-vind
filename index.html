@@ -286,6 +286,43 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .opener-scrim{position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to top,rgba(16,15,13,.80) 0%,rgba(16,15,13,.46) 30%,rgba(16,15,13,.12) 58%,rgba(16,15,13,0) 78%),
              linear-gradient(to bottom,rgba(16,15,13,.52) 0%,rgba(16,15,13,.12) 16%,rgba(16,15,13,0) 30%)}
+/* ---------- vision: the three principles ---------------------------
+   After the reference: the heading and a narrow column of text on the
+   reading side, a portrait plate on the far side, and the middle left
+   empty. The emptiness is the point — it is what makes a short paragraph
+   read as a statement instead of as a column of body copy, so the middle
+   column is half the measure and nothing is allowed into it.
+
+   Five principles became three. At this size each one takes a screen, and
+   five of them turned the page into a scroll; the two that went were the
+   pair carrying a kicker, which the first three do without. */
+.prin{padding-block:clamp(120px,21vh,300px) clamp(60px,9vh,150px);
+  display:grid;gap:clamp(90px,15vh,210px)}
+.pblock{display:grid;grid-template-columns:26fr 50fr 24fr;
+  gap:clamp(24px,3vw,60px);align-items:start}
+/* the gap tracks the heading rather than the viewport — a clamp of its own
+   drifted, opening to 1.4 heading-heights where the reference holds 2.8 */
+.pblock-txt{grid-column:1;display:grid;gap:calc(var(--t-title) * 1.9);justify-items:start}
+.pblock h2{margin:0;font-weight:400;font-size:var(--t-title);line-height:1.18;
+  letter-spacing:-.01em;color:var(--vind-text)}
+.pblock p{margin:0;font-size:var(--t-body);line-height:1.62;color:var(--vind-80)}
+.pblock .pkick{color:var(--vind-text)}
+.pblock-shot{grid-column:3;display:block;overflow:hidden;background:var(--vind-20);
+  aspect-ratio:.82}
+.pblock-shot img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .8s var(--ease)}
+.pblock-shot:hover img{transform:scale(1.04)}
+
+/* the empty middle costs more than it gives once the text column is narrow
+   enough to break badly; below this the plate goes under the words */
+@media (max-width:900px){
+  .prin{gap:clamp(64px,10vh,120px)}
+  .pblock{grid-template-columns:1fr;gap:28px}
+  .pblock-txt{grid-column:1;gap:20px}
+  .pblock-shot{grid-column:1;aspect-ratio:4/3;max-width:420px}
+}
+@media (prefers-reduced-motion:reduce){ .pblock-shot img{transition:none} }
+
 /* ---------- the opening claim ---------------------------------------
    A small label hanging in the margin, level with the first line, and the
    claim itself at --t-hero. Used by the vision page and by the paragraph
@@ -2263,22 +2300,16 @@ function visionHTML(){
     </div>
   </section>
 
-  <section class="wrap" style="padding-bottom:clamp(30px,3.4vw,64px)">
-    <div class="rows">
-      ${PRINCIPLES.map(([t,k,b])=>`<article class="prow rv">
-        <div class="side">
-          <div class="txt">
-            <h2 class="${k?'t-display':'t-hero'}">${esc(t)}</h2>
-            ${k?`<div class="kick">${esc(k)}</div>`:''}
-          </div>
-        </div>
-        <div class="body">
-          <p>${esc(b)}</p>
-          <button class="pex" data-ex><span class="pm"></span><span>פרויקטים לדוגמא</span></button>
-          <div class="pxwrap"><div class="pxlist">${ex.map(pxRow).join('')}</div></div>
-        </div>
-      </article>`).join('')}
-    </div>
+  <section class="wrap prin">
+    ${PRINCIPLES.slice(0,3).map(([t,k,b],i)=>`<article class="pblock rv">
+      <div class="pblock-txt">
+        <h2>${esc(t)}</h2>
+        <p>${k?`<span class="pkick">${esc(k)} </span>`:''}${esc(b)}</p>
+      </div>
+      <a class="pblock-shot rv-img" href="#/project" data-project="${ex[i].id}" aria-label="${esc(ex[i].title)}, ${esc(ex[i].place)}">
+        <img src="${ex[i].img}" alt="" loading="lazy" draggable="false">
+      </a>
+    </article>`).join('')}
   </section>`;
 }
 
