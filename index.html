@@ -309,6 +309,10 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .sec{padding-block:80px}
 .sec-head{display:grid;justify-items:start;gap:18px;margin-bottom:40px}
 .sec-head.mid{justify-items:center;text-align:center}
+/* the carousel and the map are one section: a second head inside it,
+   and a single way out at the end of both */
+.sec-head-2{margin-block-start:clamp(56px,7vh,110px)}
+.sec-foot{display:flex;justify-content:center;margin-block-start:clamp(32px,4vh,64px)}
 /* ---- bands ----------------------------------------------------------
    The page alternates between the warm ground and a clean white, so the
    beige reads as a choice rather than as the only option there is.
@@ -1480,7 +1484,6 @@ function homeHTML(){
   <section class="wrap sec">
     <div class="sec-head mid rv">
       <h2 class="t-display">פרויקטים נבחרים</h2>
-      <a class="link-btn t-ui" href="#/projects" data-nav="projects">${icon('i-arrow')}<span>כל הפרוייקטים</span></a>
     </div>
     <div class="crsl" data-crsl>
       <div class="carousel">
@@ -1500,19 +1503,18 @@ function homeHTML(){
       <button class="cbtn prev" data-step="1" aria-label="הקודם">${icon('i-arrow-long')}</button>
       <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-arrow-long')}</button>
     </div>
-  </section>
-  </div>
 
-  <div class="wrap"><div class="rule"></div></div>
-
-  <section class="wrap sec">
-    <div class="sec-head rv">
+    <div class="sec-head mid rv sec-head-2">
       <h2 class="t-display">אנחנו על המפה</h2>
-      <p class="t-body dim" style="max-width:855px">45 תוכניות פעילות מעכו ועד מצפה רמון. לחצו על סימון כדי לראות את הפרויקט.</p>
-      <a class="link-btn t-ui" href="#/projects" data-nav="projects">${icon('i-arrow')}<span>לעמוד הפרויקטים</span></a>
+      <p class="t-body dim" style="max-width:66ch">45 תוכניות פעילות מעכו ועד מצפה רמון. לחצו על סימון כדי לראות את הפרויקט.</p>
     </div>
     ${mapHTML(P)}
+
+    <div class="sec-foot rv">
+      <a class="link-btn t-ui" href="#/projects" data-nav="projects">${icon('i-arrow')}<span>כל הפרוייקטים</span></a>
+    </div>
   </section>
+  </div>
 
   <section class="wrap sec">
     <h2 class="t-display meas" style="margin-bottom:40px">קריירה בכהן וינד ושות׳ אדריכלים ותכנון ערים</h2>
@@ -1763,17 +1765,27 @@ function visionHTML(){
 
 /* [name, role, portrait] — add a third entry per person and the tile
    swaps its placeholder for the photograph, no other change needed. */
+/* [name, role, portrait] — the portraits are a stand-in set and are
+   to be replaced with the practice's own before this goes live. */
 const TEAM_ROLES = [
-  ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
-  ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
-  ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
-  ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
-  ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
-  ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
-  ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
-  ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
-  ['משה זילברשץ רוזנברג','מוביל צוות'],['שם האדריכל','מתכננת גאוגרפית מרחבית'],
-  ['משה זילברשץ רוזנברג','מוביל צוות']
+  ['משה זילברשץ רוזנברג','מוביל צוות','assets/team/01.jpg'],
+  ['שם האדריכל','מתכננת גאוגרפית מרחבית','assets/team/02.jpg'],
+  ['משה זילברשץ רוזנברג','מוביל צוות','assets/team/03.jpg'],
+  ['שם האדריכל','מתכננת גאוגרפית מרחבית','assets/team/04.jpg'],
+  ['משה זילברשץ רוזנברג','מוביל צוות','assets/team/05.jpg'],
+  ['שם האדריכל','מתכננת גאוגרפית מרחבית','assets/team/06.jpg'],
+  ['משה זילברשץ רוזנברג','מוביל צוות','assets/team/07.jpg'],
+  ['שם האדריכל','מתכננת גאוגרפית מרחבית','assets/team/08.jpg'],
+  ['משה זילברשץ רוזנברג','מוביל צוות','assets/team/09.jpg'],
+  ['שם האדריכל','מתכננת גאוגרפית מרחבית','assets/team/10.jpg'],
+  ['משה זילברשץ רוזנברג','מוביל צוות','assets/team/11.jpg'],
+  ['שם האדריכל','מתכננת גאוגרפית מרחבית','assets/team/12.jpg'],
+  ['משה זילברשץ רוזנברג','מוביל צוות','assets/team/13.jpg'],
+  ['שם האדריכל','מתכננת גאוגרפית מרחבית','assets/team/14.jpg'],
+  ['משה זילברשץ רוזנברג','מוביל צוות','assets/team/15.jpg'],
+  ['שם האדריכל','מתכננת גאוגרפית מרחבית','assets/team/16.jpg'],
+  ['משה זילברשץ רוזנברג','מוביל צוות','assets/team/17.jpg'],
+  ['שם האדריכל','מתכננת גאוגרפית מרחבית','assets/team/18.jpg']
 ];
 
 function teamHTML(){
