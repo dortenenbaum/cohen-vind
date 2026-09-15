@@ -138,9 +138,7 @@ body.hdr-clear .hdr{background:transparent}
 body.hdr-clear .brand-mark{opacity:.88}
 body.hdr-clear .brand-txt{color:#fff}
 body.hdr-clear .brand-txt span{color:rgba(255,255,255,.72)}
-body.hdr-clear .lang button{color:rgba(255,255,255,.72)}
-body.hdr-clear .lang button[aria-pressed="true"]{color:#fff;border-bottom-color:#fff}
-body.hdr-clear .lang span{color:rgba(255,255,255,.45)}
+body.hdr-clear .lang{color:#fff}
 body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 /* an open menu always needs its own ground */
 /* the drawer brings its own ground, so the bar stays as the film left
@@ -170,9 +168,12 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .burger[aria-expanded="true"] i:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
 .burger[aria-expanded="true"] i:nth-child(2){opacity:0;width:0}
 .burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
-.lang{display:flex;align-items:center;gap:5px;color:var(--vind-80)}
+/* both languages and the stroke between them read in one colour — the
+   rule under the live one is what marks it, the way it is everywhere
+   else on this site */
+.lang{display:flex;align-items:center;gap:5px;color:var(--vind-text)}
 .lang button{padding-bottom:3px}
-.lang button[aria-pressed="true"]{color:var(--vind-text);border-bottom:1.5px solid var(--vind-dark);
+.lang button[aria-pressed="true"]{border-bottom:1.5px solid currentColor;
   transition:color .5s var(--ease),border-color .5s var(--ease)}
 
 /* ---------- menu ---------- */
@@ -1267,8 +1268,11 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 /* the still that opens a project keeps the frame it was given */
 .opener-film{background:var(--ink)}
 .pj-head .attrs{margin-top:0}
+/* the page comes off the picture into open paper before it starts
+   talking — the first screen is a photograph, and the record needs a
+   breath between the two */
 .pj-body{display:grid;grid-template-columns:minmax(0,42%) minmax(0,58%);gap:clamp(24px,4vw,80px);
-  padding-block:clamp(30px,3.4vw,64px);align-items:start}
+  padding-block:clamp(60px,8.4vw,170px) clamp(30px,3.4vw,64px);align-items:start}
 .pj-copy{display:grid;gap:20px;justify-items:start}
 .pj-copy h2{margin:0;font-weight:300;font-size:var(--t-display);line-height:1.12;letter-spacing:-.46px;color:var(--vind-text);max-width:20ch}
 .pj-copy p{margin:0;font-size:var(--t-body);line-height:1.55;letter-spacing:.54px;color:var(--vind-text)}
@@ -1280,7 +1284,10 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 .pj-more i{font-style:normal;font-size:1.15em;line-height:1}
 
 .pj-meta{display:grid;gap:26px}
-.pj-specs{display:grid;grid-template-columns:1fr 1fr;gap:22px clamp(20px,2.4vw,44px);align-items:start}
+/* the record opens the reading column, above the account of the project
+   rather than beside it; the left column is the map alone */
+.pj-specs{display:grid;grid-template-columns:1fr 1fr;gap:22px clamp(20px,2.4vw,44px);align-items:start;
+  width:100%;margin-block-end:clamp(6px,1vw,18px)}
 .pj-specs dl{margin:0;display:grid;gap:14px;align-content:start}
 .pj-specs .row{display:grid;gap:4px}
 .pj-specs dt{font-size:var(--t-micro);color:var(--vind-80);letter-spacing:.36px}
@@ -1305,8 +1312,14 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 .pj-grid{display:grid;gap:30px;padding-block:clamp(14px,1.6vw,30px)}
 .pj-grid .row{display:grid;gap:30px}
 .pj-grid img{width:100%;object-fit:cover;background:var(--vind-20);display:block;aspect-ratio:16/10}
-.pj-grid .bleed{margin-inline:calc(var(--gutter) * -1)}
-.pj-grid .bleed img{aspect-ratio:1920/1064}
+/* The plate that opens the set is a band, not a picture in the column:
+   .wrap caps at --maxw and centres, so negating the gutter still left the
+   auto margin on a wide screen. It sits outside the wrap instead, runs
+   edge to edge at any width, and drifts against the page as it passes —
+   the same treatment the home page gives the studio photograph. */
+.pj-band{position:relative;width:100%;margin:0;overflow:hidden;
+  height:clamp(300px,46vw,900px);background:var(--vind-20)}
+.pj-band img{width:100%;height:100%;object-fit:cover;display:block;will-change:transform}
 .r2{grid-template-columns:1fr 1fr}
 .r3{grid-template-columns:repeat(3,1fr)}
 .r4{grid-template-columns:repeat(4,1fr)}
@@ -2397,14 +2410,6 @@ function projectHTML(){
   <div class="over">
   <section class="wrap pj-body">
     <div class="pj-copy rv" id="pj-copy">
-      <h2>להיטיב עם הסביבה באמצעות תכנון מוכוון תפישת עולם</h2>
-      <p>${esc(PJ_LEAD)}</p>
-      <p class="more">${esc(PJ_MORE)}</p>
-      <p class="more">${esc(DESC[p.domain])}</p>
-      <button class="pj-more" data-more><i>+</i><span>קרא עוד</span></button>
-    </div>
-
-    <div class="pj-meta rv">
       <div class="pj-specs">
         <dl>
           <div class="row"><dt>סוג תוכנית</dt><dd>${av(p.plan)}${PLAN[p.plan].label}</dd></div>
@@ -2418,13 +2423,24 @@ function projectHTML(){
           <div class="row"><dt>מזמין הפרויקט</dt><dd>${esc(p.client)}</dd></div>
         </dl>
       </div>
+      <h2>להיטיב עם הסביבה באמצעות תכנון מוכוון תפישת עולם</h2>
+      <p>${esc(PJ_LEAD)}</p>
+      <p class="more">${esc(PJ_MORE)}</p>
+      <p class="more">${esc(DESC[p.domain])}</p>
+      <button class="pj-more" data-more><i>+</i><span>קרא עוד</span></button>
+    </div>
+
+    <div class="pj-meta rv">
       ${pjMap(p)}
       <p class="pj-credits">${PJ_CREDITS}</p>
     </div>
   </section>
 
+  <figure class="pj-band rv rv-img">
+    <img src="${A[1]}" alt="" loading="lazy" draggable="false" data-par="9">
+  </figure>
+
   <section class="wrap pj-grid">
-    <div class="bleed">${row('', [A[1]])}</div>
     ${row('', [A[2]])}
     ${row('r2',[A[3],A[4]])}
     ${row('r3',[A[5],A[0],A[1]])}
