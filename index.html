@@ -361,8 +361,8 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .hnote.flip .hnote-card{inset-inline-start:auto;inset-inline-end:calc(50% + 18px)}
 .hnote.up   .hnote-card{top:auto;bottom:calc(50% + 18px)}
 .hnote:hover .hnote-card,.hnote:focus-visible .hnote-card{opacity:1;transform:none}
-.hnote-code{display:block;direction:ltr;text-align:start;
-  font:400 clamp(10px,.6vw,12px)/1 var(--mono);letter-spacing:.06em;
+.hnote-code{display:block;
+  font-size:clamp(10px,.6vw,12px);line-height:1;letter-spacing:.04em;
   opacity:.82;margin-bottom:7px}
 .hnote-txt{display:block;font-size:clamp(12px,.78vw,15px);font-weight:400;line-height:1.45}
 
@@ -2553,18 +2553,30 @@ function pjMap(p){
 }
 
 /* Six annotations over the project's photograph, in the reference's manner:
-   a mark you find with the cursor, then a reference line and a sentence.
-   The copy is placeholder â Hebrew lorem â and so are the plan references;
-   both hold the shape until the practice writes the real ones. x and y are
-   per cent of the frame. `flip` opens the panel to the other side so it
-   never runs off an edge, `up` opens it above the mark. */
+   a mark you find with the cursor, then the document it comes from and what
+   it says. Written as a planner would write them â a density floor, a
+   frontage rule, a parking standard set against walking distance to transit,
+   a height step-down at the seam with the existing neighbourhood, a park
+   sized and placed by walking distance, and a drainage and shade clause.
+   They are not claims about this particular scheme; they are here so the
+   hero reads as a plan under review rather than as decoration, and so the
+   practice can see the shape its own notes would take.
+
+   x and y are per cent of the frame. `flip` opens the panel to the other
+   side so it never runs off an edge, `up` opens it above the mark. */
 const HERO_NOTES = [
-  {x:16, y:24, code:'TBA 3021/B · 01', txt:'לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אלית'},
-  {x:33, y:44, code:'TBA 3021/B · 02', txt:'סד דו איוסמוד טמפור אינסידידונט, לברה אט דולורה מגנה'},
-  {x:50, y:19, code:'TBA 3021/B · 03', txt:'אוט אנים אד מינים ותאמת, קוויס נוסטרוד אקסרסיטציה'},
-  {x:64, y:50, code:'TBA 3021/B · 04', txt:'דואיס אאוטה אירורה בדולור אין רפרהנדריט, אין וולופטטה', flip:1},
-  {x:79, y:28, code:'TBA 3021/B · 05', txt:'אקסצפתאור סינט אוקאיקאט קופידאטאט נון פרוידנט', flip:1},
-  {x:88, y:56, code:'TBA 3021/B · 06', txt:'סאנט אין קולפה קווי אופיציה דסרונט מולית אנים', flip:1, up:1}
+  {x:16, y:24, code:'תמ״א 35 · מרקם עירוני',
+   txt:'צפיפות מזערית של 12 יח״ד לדונם נטו, כנדרש במרקם עירוני חדש'},
+  {x:33, y:44, code:'הוראות התוכנית · 6.3',
+   txt:'חזית מסחרית פעילה לאורך הציר הראשי — עומק 12 מ׳ ושקיפות 70% לפחות'},
+  {x:50, y:19, code:'נספח בינוי · גבהים',
+   txt:'24 קומות בציר המרכזי, יורד מדורג לשש קומות בגבול השכונה הקיימת'},
+  {x:64, y:50, code:'נספח תנועה · 4.1',
+   txt:'תחנת מטרו במרחק 400 מ׳ הליכה; תקן חניה מופחת ל־0.7 מקום ליח״ד', flip:1},
+  {x:79, y:28, code:'שטחים פתוחים · 5.2',
+   txt:'פארק שכונתי בן 14 דונם, במרחק הליכה של 300 מ׳ מכל יחידת דיור', flip:1},
+  {x:88, y:56, code:'נספח סביבתי · 8.4',
+   txt:'רצועת חלחול לאורך הוואדי, והצללה של 60% על מדרכות הציר בשעות הצהריים', flip:1, up:1}
 ];
 
 const heroNotesHTML = () => `<div class="hnotes" id="hnotes">
@@ -2652,9 +2664,10 @@ function projectHTML(){
     <div class="crsl" data-crsl>
       <div class="carousel">
         ${others.map((o,i)=>`<a class="cslide rv ${i%2?'w1111':'w1152'}" href="#/project" data-project="${o.id}">
-          <div class="shot rv-img"><img src="${o.img}" alt="${esc(o.title)}" loading="lazy" draggable="false"></div>
+          <div class="shot rv-img"><img src="${o.img}" alt="${esc(o.title)}" loading="lazy" draggable="false">
+            <div class="shot-tags">${attrs(o,['plan','size','domain'])}</div>
+          </div>
           <div class="meta">
-            ${attrs(o,['plan','size','domain'])}
             <div class="titles"><h3 class="t-display">${esc(o.title)}</h3><div class="place">${esc(o.place)}</div></div>
           </div>
         </a>`).join('')}
