@@ -423,16 +423,16 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 
 /* selected-projects carousel: right-aligned track that bleeds off the left page edge */
 .crsl{position:relative}
-.cbtn{position:absolute;top:0;width:calc(10% + var(--gutter) * 1.2);z-index:6;border:0;background:none;
+.cbtn{position:absolute;top:0;width:calc(var(--vw,100vw) * .1);z-index:6;border:0;background:none;
   padding:0 30px;direction:ltr;
   color:#fff;display:flex;align-items:center;
   opacity:0;pointer-events:none;transition:opacity .3s ease-in-out}
 .cbtn svg{width:18px;height:31px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))}
 .crsl:hover .cbtn,.cbtn:focus-visible{opacity:1;pointer-events:auto}
 .cbtn[disabled]{opacity:0!important;pointer-events:none}
-.cbtn.prev{right:calc(var(--gutter) * -1);justify-content:flex-end}
+.cbtn.prev{right:calc(50% - var(--vw,100vw) / 2);justify-content:flex-end}
 .cbtn.prev svg{transform:scaleX(-1)}
-.cbtn.next{left:calc(var(--gutter) * -1);justify-content:flex-start}
+.cbtn.next{left:calc(50% - var(--vw,100vw) / 2);justify-content:flex-start}
 @media (hover:none){.cbtn{opacity:1;pointer-events:auto}}
 /* One slide holds the middle of the frame with both neighbours showing at
    the edges. The side padding is whatever is left over once the slide has
@@ -444,10 +444,16 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    padding alone sets the peek and the slide simply fills what is left:
    10% either side leaves a slide 80% of the rail, the reference's ratio. */
 .crsl{--csl-peek:10%;--csl-gap:30px}
+/* The rail runs to both edges of the window at every width, the way the
+   reference does. Negating the gutter was not enough: .wrap caps at
+   --maxw and centres, so a wide screen still left the auto margin on
+   either side. A percentage margin resolves against this box, so half the
+   window less half the box reaches the glass exactly — and --vw is the
+   document's own width, which is what keeps the scrollbar out of it. */
 .carousel{display:flex;gap:var(--csl-gap);overflow-x:auto;overscroll-behavior-x:contain;
   scroll-snap-type:x mandatory;scrollbar-width:none;cursor:grab;
   padding-inline:var(--csl-peek);padding-bottom:4px;
-  margin-inline:calc(var(--gutter) * -1)}
+  margin-inline:calc(50% - var(--vw,100vw) / 2)}
 .carousel::-webkit-scrollbar{display:none}
 .carousel.dragging{cursor:grabbing;scroll-snap-type:none}
 .crsl .cslide{flex:none;width:100%;scroll-snap-align:center;display:block;position:relative;
@@ -502,7 +508,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .cslide .place{font-weight:300;font-size:var(--t-display);line-height:1.2;letter-spacing:-.46px;color:var(--vind-80)}
 
 /* careers runs as an ambient ticker — full-bleed, no controls, nothing clickable */
-.ticker{overflow:hidden;margin-inline:calc(var(--gutter) * -1);pointer-events:none;direction:ltr}
+.ticker{overflow:hidden;margin-inline:calc(50% - var(--vw,100vw) / 2);pointer-events:none;direction:ltr}
 .ticker-track{display:flex;gap:30px;width:max-content;animation:tick 56s linear infinite}
 /* an endless marquee off the bottom of the page still costs a frame
    every frame; it only runs while it is on screen */
@@ -1268,15 +1274,13 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 /* the still that opens a project keeps the frame it was given */
 .opener-film{background:var(--ink)}
 .pj-head .attrs{margin-top:0}
-/* The page comes off the picture into open paper, and what it says first
-   is the claim — set on its own above the two columns, so the record and
-   the map read as its evidence rather than as its neighbours. */
-.pj-lead{padding-block:clamp(60px,8.4vw,170px) clamp(18px,2.2vw,40px)}
-.pj-lead h2{margin:0;font-weight:300;font-size:var(--t-display);line-height:1.12;
-  letter-spacing:-.46px;color:var(--vind-text);max-width:20ch}
+/* The claim opens the reading column and the map starts level with it —
+   both columns are aligned to their tops, so the two begin on one line. */
 .pj-body{display:grid;grid-template-columns:minmax(0,42%) minmax(0,58%);gap:clamp(24px,4vw,80px);
-  padding-block:0 clamp(56px,7vw,150px);align-items:start}
+  padding-block:clamp(36px,4.6vw,96px) clamp(56px,7vw,150px);align-items:start}
 .pj-copy{display:grid;gap:20px;justify-items:start}
+.pj-copy h2{margin:0;font-weight:300;font-size:var(--t-display);line-height:1.12;
+  letter-spacing:-.46px;color:var(--vind-text);max-width:20ch}
 .pj-copy p{margin:0;font-size:var(--t-body);line-height:1.55;letter-spacing:.54px;color:var(--vind-text)}
 .pj-copy p.more{display:none}
 .pj-copy.open p.more{display:block}
@@ -2413,12 +2417,9 @@ function projectHTML(){
   </div>
 
   <div class="over">
-  <section class="wrap pj-lead rv">
-    <h2>להיטיב עם הסביבה באמצעות תכנון מוכוון תפישת עולם</h2>
-  </section>
-
   <section class="wrap pj-body">
     <div class="pj-copy rv" id="pj-copy">
+      <h2>להיטיב עם הסביבה באמצעות תכנון מוכוון תפישת עולם</h2>
       <div class="pj-specs">
         <dl>
           <div class="row"><dt>סוג תוכנית</dt><dd>${av(p.plan)}${PLAN[p.plan].label}</dd></div>
@@ -3431,6 +3432,13 @@ if('scrollRestoration' in history) history.scrollRestoration='manual';
 if(!REDUCED) document.body.classList.add('booting');
 render();
 runVeil().then(liftVeil);
+
+/* the window's own width, without the scrollbar — 100vw counts it, and
+   a rail measured with vw would overflow by that much on every page */
+const setVW=()=>document.documentElement.style.setProperty('--vw',
+  document.documentElement.clientWidth+'px');
+setVW();
+addEventListener('resize',setVW,{passive:true});
 
 let resplit;
 addEventListener('resize',()=>{
