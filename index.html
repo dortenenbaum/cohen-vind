@@ -332,7 +332,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    put a white rule above the picture and a white strip down each side */
 .shopfront{position:relative;width:100%;margin:0;
   height:clamp(300px,42vw,760px);overflow:hidden;background:var(--vind-20)}
-.shopfront img{width:100%;height:100%;object-fit:cover;display:block}
+.shopfront img{width:100%;height:100%;object-fit:cover;display:block;will-change:transform}
 
 /* ---- the vision set -------------------------------------------------
    Read as a sheet of drawings rather than three cards: each cell is
@@ -837,7 +837,7 @@ td.go svg{width:17px;height:11px}
    Inner pages — vision, team, about, join us, job, article
    ============================================================ */
 .band{position:relative;width:100%;height:clamp(180px,28.5vw,548px);overflow:hidden;background:var(--vind-20)}
-.band img{width:100%;height:100%;object-fit:cover}
+.band img{width:100%;height:100%;object-fit:cover;will-change:transform}
 .band-title{position:absolute;inset-block-end:clamp(16px,2.2vw,40px);inset-inline-start:var(--gutter);
   font-weight:300;font-size:var(--t-display);line-height:1.2;letter-spacing:-.46px;color:var(--vind-text)}
 
@@ -890,7 +890,7 @@ td.go svg{width:17px;height:11px}
   gap:clamp(24px,3.4vw,64px);align-items:start;
   padding-block-end:clamp(32px,4.4vh,64px);border-block-end:1px solid var(--sand)}
 .cv-shot{aspect-ratio:3/4;background:var(--vind-20);overflow:hidden}
-.cv-shot img{width:100%;height:100%;object-fit:cover;filter:grayscale(1)}
+.cv-shot img{width:100%;height:100%;object-fit:cover;filter:grayscale(1);will-change:transform}
 .cv-head h1{margin:0}
 .cv-role{font-size:var(--t-ui);color:var(--walnut);letter-spacing:.36px;margin-block-start:6px}
 .cv-intro{max-width:56ch;margin-block-start:clamp(18px,2.4vh,34px)}
@@ -1494,7 +1494,7 @@ function homeHTML(){
   </div>
 
   <figure class="shopfront rv rv-img">
-    <img src="assets/studio.jpg" alt="צוות המשרד" loading="lazy" draggable="false">
+    <img src="assets/studio.jpg" alt="צוות המשרד" loading="lazy" draggable="false" data-par="9">
   </figure>
 
   <section class="wrap sec">
@@ -1894,7 +1894,7 @@ const FIELD_TXT = 'הפרויקט מציע פיתוח של מרחב אורבני
 function aboutHTML(){
   return `
   <div class="band rv rv-img">
-    <img src="assets/band.jpg" alt="">
+    <img src="assets/band.jpg" data-par="8" alt="">
     <div class="band-title">אודות</div>
   </div>
 
@@ -1972,7 +1972,7 @@ function jobRow(j,i){
 function joinHTML(){
   return `
   <div class="band rv rv-img">
-    <img src="assets/band.jpg" alt="">
+    <img src="assets/band.jpg" data-par="6" alt="">
     <div class="band-title">בואו לעבוד אתנו</div>
   </div>
 
@@ -2208,7 +2208,7 @@ function cvHTML(){
     <a class="link-btn t-ui cv-back back" href="#/team" data-nav="team">${icon('i-arrow')}<span>לצוות המשרד</span></a>
 
     <div class="cv-top rv">
-      <div class="cv-shot rv-img">${img?`<img src="${img}" alt="${esc(name)}">`:''}</div>
+      <div class="cv-shot rv-img">${img?`<img src="${img}" alt="${esc(name)}" data-par="7">`:''}</div>
       <div class="cv-head">
         <h1 class="t-display">${esc(name)}</h1>
         <div class="cv-role">${esc(role)}</div>
@@ -2258,8 +2258,8 @@ function renderMenu(){
    with JS off or reduced motion on, nothing is ever hidden.
    ============================================================ */
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const LINE_SEL = 'h2.t-display, p.t-display, h3.t-title, .cslide h3, .cslide .place, .card h3, .card .place, .mappanel h4, .mappanel .place';
-const ITEM_SEL = '.link-btn, .t-body, .attrs, figcaption, .plan, .chip-holder, .count, .reset, .view-btn, .pchips, .pspecs, .pdesc, .pcta, .ft-meta, .brand, .mapsearch, .mapzoom, .mapnote';
+const LINE_SEL = 'h2.t-display, p.t-display, h3.t-title, .cslide h3, .cslide .place, .card h3, .card .place, .mappanel h4, .mappanel .place, .cv-head h1, .opener-claim, .vcell-body h3';
+const ITEM_SEL = '.link-btn, .t-body, .attrs, figcaption, .plan, .chip-holder, .count, .reset, .view-btn, .pchips, .pspecs, .pdesc, .pcta, .ft-meta, .brand, .mapsearch, .mapzoom, .mapnote, .cv-role, .cv-h, .cv-row, .person .cap, .windex-row, .vcell-art';
 let revealIO=null, revealTimer=null, firstPaint=true;
 
 function splitLines(el){
@@ -2400,8 +2400,42 @@ const app = document.getElementById('app');
 function render(reveal=true){
   app.innerHTML = (VIEWS[state.page] || homeHTML)();
   renderMenu();
-  wireMap(); wireCarousels(); wireFilm(); wireOpener(); wireIndexPreview();
+  wireMap(); wireCarousels(); wireFilm(); wireOpener(); wireIndexPreview(); wireParallax();
   if(reveal) initReveal();
+}
+
+/* ---------- parallax -------------------------------------------------
+   An image inside a fixed frame drifts against the page as it passes,
+   the way the reference does it: overscaled a little so the drift never
+   uncovers an edge, and driven off the element's own progress across
+   the viewport rather than off a global scroll number. Only what is on
+   screen is written to.
+   --------------------------------------------------------------------- */
+let parItems=[], parRaf=0;
+function parCollect(){
+  parItems=[...document.querySelectorAll('[data-par]')].map(el=>({
+    el, amt:Number(el.dataset.par)||6
+  }));
+}
+function parFrame(){
+  parRaf=0;
+  const h=innerHeight||1;
+  for(const it of parItems){
+    const r=it.el.getBoundingClientRect();
+    if(r.bottom<-240 || r.top>h+240) continue;
+    /* -1 a screen below the fold, +1 a screen above it */
+    const p=((r.top+r.height/2)-h/2)/((h+r.height)/2);
+    it.el.style.transform=`translate3d(0,${(p*it.amt).toFixed(2)}%,0) scale(1.22)`;
+  }
+}
+const parTick=()=>{ if(!parRaf) parRaf=requestAnimationFrame(parFrame) };
+function wireParallax(){
+  if(REDUCED) return;
+  parCollect(); parFrame();
+}
+if(!REDUCED){
+  addEventListener('scroll',parTick,{passive:true});
+  addEventListener('resize',()=>{parCollect();parTick()},{passive:true});
 }
 
 /* ---------- opener ---------------------------------------------------
