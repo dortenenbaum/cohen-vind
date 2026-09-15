@@ -56,7 +56,7 @@
   --cw:min(var(--maxw), 100vw - 2*var(--gutter));
 
   /* type — exact Figma values at 1920, scaled fluidly below it */
-  --t-hero:clamp(34px,3.6458vw,88px);      /* 70 / 1.0  /   —   / Light  */
+  --t-hero:clamp(30px,3.177vw,77px);       /* eased down ~13% from the Figma 70 at 1920 */
   --t-display:clamp(27px,2.3958vw,58px);   /* 46 / 1.2 / -0.46 / Light  */
   --t-title:clamp(22px,1.9271vw,46px);     /* 37 / 1.2 /  0.74 / Light  */
   --t-ui:clamp(15px,1.0417vw,25px);        /* 20 / norm /  0.40 / Reg   */
@@ -173,9 +173,9 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .menu{position:fixed;top:0;bottom:0;left:0;z-index:99;
   width:min(420px,86vw);padding:120px 56px 56px;
   display:flex;flex-direction:column;
-  background:rgba(8,8,8,.84);
-  -webkit-backdrop-filter:blur(30px) saturate(105%) brightness(.42);
-  backdrop-filter:blur(30px) saturate(105%) brightness(.42);
+  background:rgba(10,10,10,.66);
+  -webkit-backdrop-filter:blur(30px) saturate(110%) brightness(.58);
+  backdrop-filter:blur(30px) saturate(110%) brightness(.58);
   color:#fff;
   box-shadow:0 0 60px rgba(22,17,13,0);
   transform:translateX(-100%);
@@ -405,7 +405,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   padding:0 30px;direction:ltr;
   color:#fff;display:flex;align-items:center;
   opacity:0;pointer-events:none;transition:opacity .3s ease-in-out}
-.cbtn svg{width:39px;height:21px;filter:drop-shadow(0 1.5px .75px rgba(0,0,0,.8))}
+.cbtn svg{width:18px;height:31px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
 .crsl:hover .cbtn,.cbtn:focus-visible{opacity:1;pointer-events:auto}
 .cbtn[disabled]{opacity:0!important;pointer-events:none}
 .cbtn.prev{right:calc(var(--gutter) * -1);justify-content:flex-end}
@@ -1108,7 +1108,7 @@ td.go svg{width:17px;height:11px}
 @media (max-width:900px){
   .grid{grid-template-columns:repeat(2,1fr)}
   .cbtn{width:78px;height:78px}
-  .cbtn svg{width:22px;height:14px}
+  .cbtn svg{width:15px;height:25px}
   .tablewrap{overflow-x:auto}          /* only a phone needs to pan the table */
   table{min-width:900px}
   .hdr-in{height:74px}.menu{padding-top:74px}
@@ -1126,6 +1126,7 @@ td.go svg{width:17px;height:11px}
 
 <svg class="sr" aria-hidden="true"><defs>
   <symbol id="i-arrow" viewBox="0 0 19 12"><path d="M18.5 6H1M6.5 1 1 6l5.5 5" fill="none" stroke="currentColor" stroke-width="1.1"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 12 20"><path d="M10 1.5 2 10l8 8.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-arrow-long" viewBox="0 0 39 21"><path d="M2.15108 8.15147C1.68245 8.6201 1.68245 9.3799 2.15108 9.84853L9.78784 17.4853C10.2565 17.9539 11.0163 17.9539 11.4849 17.4853C11.9535 17.0166 11.9535 16.2569 11.4849 15.7882L4.69667 9L11.4849 2.21177C11.9535 1.74314 11.9535 0.983346 11.4849 0.514716C11.0163 0.0460869 10.2565 0.0460869 9.78784 0.514716L2.15108 8.15147ZM36.5996 7.8L2.99961 7.8L2.99961 10.2L36.5996 10.2L36.5996 7.8Z" fill="currentColor"/></symbol>
   <symbol id="i-scroll" viewBox="0 0 25 19"><path d="M2 1.365 12.24 16.31 23 1.365" fill="none" stroke="currentColor" stroke-width="2.31" stroke-linecap="round"/></symbol>
   <symbol id="i-all" viewBox="0 0 14 14"><g fill="currentColor"><rect y="0" width="3.4" height="3.4" rx=".5"/><rect x="5.3" width="3.4" height="3.4" rx=".5"/><rect x="10.6" width="3.4" height="3.4" rx=".5"/><rect y="5.3" width="3.4" height="3.4" rx=".5"/><rect x="5.3" y="5.3" width="3.4" height="3.4" rx=".5"/><rect x="10.6" y="5.3" width="3.4" height="3.4" rx=".5"/><rect y="10.6" width="3.4" height="3.4" rx=".5"/><rect x="5.3" y="10.6" width="3.4" height="3.4" rx=".5"/><rect x="10.6" y="10.6" width="3.4" height="3.4" rx=".5"/></g></symbol>
@@ -1490,7 +1491,6 @@ function homeHTML(){
     <p class="t-display meas">משרד כהן וינד ושות׳ אדריכלות ובינוי ערים פועל בירושלים משנת 1996. המשרד עוסק במגוון פרויקטים עירוניים, אזוריים וארציים ברחבי הארץ. לקוחותינו הינם גופים עירוניים וממשלתיים לצד חברות פרטיות, המייצגים יחדיו קשת רחבה של נושאים וקבוצות בחברה הישראלית.</p>
     <a class="link-btn t-ui" href="#/about" data-nav="about">${icon('i-arrow')}<span>אודות המשרד</span></a>
   </section>
-  <div class="wrap rule-wrap rv"><div class="rule"></div></div>
   </div>
 
   <figure class="shopfront rv rv-img">
@@ -1498,7 +1498,7 @@ function homeHTML(){
   </figure>
 
   <section class="wrap sec">
-    <div class="sec-head rv">
+    <div class="sec-head mid rv">
       <h2 class="t-display meas">החזון שלנו</h2>
       <p class="t-body" style="max-width:855px">${esc(FIELD_TXT)}</p>
       <a class="link-btn t-ui" href="#/vision" data-nav="vision">${icon('i-arrow')}<span>חזון וערכים</span></a>
@@ -1538,8 +1538,8 @@ function homeHTML(){
           </div>
         </a>`).join('')}
       </div>
-      <button class="cbtn prev" data-step="1" aria-label="הקודם">${icon('i-arrow-long')}</button>
-      <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-arrow-long')}</button>
+      <button class="cbtn prev" data-step="1" aria-label="הקודם">${icon('i-chevron')}</button>
+      <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-chevron')}</button>
     </div>
 
     <div class="sec-head mid rv sec-head-2">
@@ -2187,8 +2187,8 @@ function projectHTML(){
           </div>
         </a>`).join('')}
       </div>
-      <button class="cbtn prev" data-step="1" aria-label="הקודם">${icon('i-arrow-long')}</button>
-      <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-arrow-long')}</button>
+      <button class="cbtn prev" data-step="1" aria-label="הקודם">${icon('i-chevron')}</button>
+      <button class="cbtn next" data-step="-1" aria-label="הבא">${icon('i-chevron')}</button>
     </div>
   </section>`;
 }
