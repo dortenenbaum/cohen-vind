@@ -638,18 +638,21 @@ img.icoimg.big{width:var(--ico-sz-lg);height:var(--ico-sz-lg)}
    name, then one quiet line carrying the kind of plan, the year and the
    place. The three icon chips said the same thing louder and three times
    over — the map pins already carry scale and plan. */
-/* The caption reads on the index's type, not its own: the name on --t-body
+/* Three lines and no more: the name, where it is, and the marks. The year
+   was the first thing to go — nearly every project reads 2025, so it told
+   the reader nothing while taking the strongest position in the caption.
+   It still carries in the index, where a column of years can be sorted and
+   compared.
+
+   The caption reads on the index's type, not its own: the name on --t-body
    and the line under it on --t-micro, both Regular. Light belongs to the
    display sizes on this site — at caption size it only made the gallery
    look like a different page. */
 .card .meta{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:14px}
 .card h3{margin:0;font-size:var(--t-body);font-weight:400;letter-spacing:.02em;
   line-height:1.3;color:var(--vind-text)}
-.card .cap{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px;
-  font-size:var(--t-micro);font-weight:400;letter-spacing:.04em;line-height:1.3;
-  color:var(--walnut)}
-.card .cap b{font-weight:400}
-.card .cap i{font-style:normal;color:var(--vind-60)}
+.card .cap{font-size:var(--t-micro);font-weight:400;letter-spacing:.04em;
+  line-height:1.3;color:var(--walnut)}
 
 /* Plan, scale and domain are the same three marks the index carries, so they
    are the same component — the icon alone, and the label on hover. Spelt out
@@ -1979,7 +1982,7 @@ function gridHTML(items){
       <div class="shot rv-img"><img src="${p.img}" alt="${esc(p.title)}" loading="lazy"></div>
       <div class="meta">
         <h3>${esc(p.title)}</h3>
-        <div class="cap"><b>${p.year}</b><i>·</i><span>${esc(p.place)}</span></div>
+        <div class="cap">${esc(p.place)}</div>
         ${marks(p)}
       </div>
     </a>`).join('')}</div>`;
