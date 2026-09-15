@@ -597,24 +597,23 @@ img.icoimg.big{width:32px;height:32px}
 .windex{position:relative;margin-top:clamp(40px,6vh,64px)}
 .windex-head,.windex-row{display:grid;grid-template-columns:96px 1fr 1fr 104px 96px;gap:clamp(18px,1.7vw,32px)}
 .windex-head{padding:0 0 20px;border-bottom:.5px solid var(--sand)}
-.windex-head span{font-size:var(--t-badge);font-weight:500;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--walnut);text-align:start}
+.windex-head span{font-size:var(--t-micro);font-weight:400;letter-spacing:.36px;
+  color:var(--walnut);text-align:start;justify-self:start}
 .windex-head .sortable{cursor:pointer;transition:color .3s var(--ease)}
 .windex-head .sortable:hover{color:var(--vind-text)}
 .windex-row{padding:26px 0;border-bottom:.5px solid var(--sand);text-decoration:none;
   color:inherit;transition:opacity .3s var(--ease)}
 .windex-row:hover{opacity:1;background:var(--accent-050)}
 .windex-row:focus-visible{outline:2px solid var(--vind-text);outline-offset:-2px}
-.wx-year{font-size:var(--t-micro);font-weight:300;letter-spacing:.04em;color:var(--walnut)}
+.wx-year{font-size:var(--t-micro);font-weight:400;letter-spacing:.04em;color:var(--walnut)}
 .wx-title{font-size:var(--t-body);font-weight:400;letter-spacing:.02em;color:var(--vind-text)}
-.wx-place{font-size:var(--t-body);font-weight:300;letter-spacing:.02em;color:var(--walnut)}
-.wx-type{font-size:clamp(11px,.625vw,12px);font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--walnut)}
-.wx-size{text-align:end}
+.wx-place{font-size:var(--t-body);font-weight:400;letter-spacing:.02em;color:var(--walnut)}
+.wx-type{font-size:var(--t-micro);font-weight:400;letter-spacing:.36px;color:var(--walnut)}
 /* the last two columns carry the marker rather than its name — the same
    avatars the cards and the map use, so one glance reads across all
    three views. The name is still there, on hover and to a reader. */
-.wx-type,.wx-size{display:flex;align-items:center}
-.wx-size{justify-content:flex-end}
+.wx-type,.wx-size{display:flex;align-items:center;justify-content:flex-start}
+.windex-row>*{text-align:start;justify-self:start}
 .wx-ico{position:relative;display:inline-flex;align-items:center;justify-content:center}
 .wx-ico img.icoimg,.wx-ico .ico{width:clamp(27px,1.75vw,34px);height:clamp(27px,1.75vw,34px)}
 .wx-ico::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 9px);left:50%;
@@ -624,12 +623,12 @@ img.icoimg.big{width:32px;height:32px}
   transition:opacity .22s var(--ease),transform .22s var(--ease)}
 .wx-ico:hover::after{opacity:1;transform:translate(-50%,0)}
 /* the preview rides the pointer; it is never in the way, so it takes no events */
-.windex-preview{position:absolute;top:0;left:0;z-index:10;width:280px;height:180px;
+.windex-preview{position:absolute;top:0;left:0;z-index:10;width:clamp(260px,21vw,360px);height:auto;aspect-ratio:3/2;
   overflow:hidden;pointer-events:none;visibility:hidden;opacity:0;
   transition:opacity .3s var(--ease)}
-.windex-preview.tall{width:203px;height:360px}
+.windex-preview.tall{width:clamp(200px,15vw,260px)}
 .windex-preview.on{visibility:visible;opacity:1}
-.windex-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.windex-preview img{width:100%;height:100%;object-fit:contain;display:block}
 @media (max-width:900px){
   .windex-head,.windex-row{grid-template-columns:60px 1fr 1fr 120px;gap:16px}
   .wx-size{display:none}
@@ -2744,6 +2743,11 @@ function wireIndexPreview(){
     if(img.getAttribute('src')!==row.dataset.shot){
       img.src=row.dataset.shot;
       pv.classList.toggle('tall', !!row.dataset.tall);
+      /* the frame takes the picture's own proportions — imposing one
+         cropped a quarter off a portrait and more off a landscape that
+         had been flagged as one */
+      const fit=()=>{ if(img.naturalWidth) pv.style.aspectRatio=img.naturalWidth+'/'+img.naturalHeight; };
+      img.complete ? fit() : img.addEventListener('load',fit,{once:true});
     }
     if(!on){ on=true; pv.classList.add('on') }
     x=e.clientX; y=e.clientY;
