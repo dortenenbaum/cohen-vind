@@ -296,27 +296,64 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    They arrive one at a time: each block is a reveal unit, so the page
    hands them over as you come to them instead of presenting all five at
    once. */
-.prins{display:grid;gap:clamp(90px,15vh,220px);
+/* Twelve columns, and each principle takes its own width and its own
+   start on them. Five paragraphs all beginning at the same edge read as a
+   list however large the type is; staggered, the page has a rhythm you
+   follow rather than a column you scan. --c1 is the start, --cn the span. */
+.prins{display:grid;grid-template-columns:repeat(12,1fr);
+  column-gap:clamp(12px,1.4vw,28px);row-gap:clamp(90px,15vh,220px);
   padding-block:clamp(40px,7vh,110px) clamp(80px,11vh,180px)}
-.prin{--lede-lab:clamp(118px,13vw,230px)}
+.prin{grid-column:var(--c1) / span var(--cn);--lede-lab:clamp(118px,13vw,230px)}
 .prin .pkick{color:var(--vind-80)}
 
-/* the examples stay quiet under the text — a line of names, each drawing
-   its own rule on hover, the same gesture the about label makes */
-.prin-ex{display:flex;flex-wrap:wrap;align-items:baseline;
-  gap:8px clamp(18px,2vw,38px);
-  margin-top:clamp(26px,3.2vw,56px);
-  padding-top:clamp(16px,1.8vw,28px);border-top:1px solid var(--vind-20)}
-.prin-ex-l{font-size:var(--t-micro);color:var(--vind-60);letter-spacing:.04em}
-.prin-ex a{font-size:var(--t-micro);color:var(--walnut);text-decoration:none;
+/* the way in to the examples: the same plus the page already uses */
+.prin-more{display:inline-flex;align-items:center;gap:14px;flex-direction:row-reverse;
+  margin-top:clamp(26px,3.2vw,56px);padding:0;border:0;background:none;cursor:pointer;
+  font-family:inherit;font-size:var(--t-micro);color:var(--walnut);
   transition:color .25s var(--ease)}
-.prin-ex a:hover,.prin-ex a:focus-visible{color:var(--vind-text)}
-.prin-ex a .u{background-image:linear-gradient(currentColor,currentColor);
-  background-repeat:no-repeat;background-position:100% 100%;background-size:0 1px;
-  padding-bottom:3px;transition:background-size .34s var(--ease)}
-.prin-ex a:hover .u,.prin-ex a:focus-visible .u{background-size:100% 1px}
+.prin-more:hover{color:var(--vind-text)}
+.prin-more .pm{width:22px;height:22px;flex:none;position:relative}
+.prin-more .pm::before,.prin-more .pm::after{content:"";position:absolute;
+  inset-inline-start:50%;top:50%;background:currentColor;
+  transition:transform .35s var(--ease)}
+.prin-more .pm::before{width:13px;height:1.2px;transform:translate(-50%,-50%)}
+.prin-more .pm::after{width:1.2px;height:13px;transform:translate(-50%,-50%)}
+.prin.open .prin-more .pm::before{transform:translate(-50%,-50%) rotate(45deg)}
+.prin.open .prin-more .pm::after{transform:translate(-50%,-50%) rotate(135deg)}
 
-@media (prefers-reduced-motion:reduce){ .prin-ex a .u{transition:none} }
+.prin-wrap{display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .55s var(--ease)}
+.prin.open .prin-wrap{grid-template-rows:1fr}
+.prin-list{overflow:hidden;display:grid;gap:clamp(28px,3.4vw,60px)}
+.prin.open .prin-list{padding-top:clamp(26px,3vw,52px)}
+
+/* a case: the picture, then why this project belongs to this principle —
+   set below the claim's size, because it is evidence for the claim and
+   not another claim */
+.pcase{display:grid;grid-template-columns:minmax(0,300px) 1fr;
+  gap:clamp(20px,2.4vw,44px);align-items:start;
+  padding-top:clamp(22px,2.6vw,40px);border-top:1px solid var(--vind-20)}
+.pcase:first-child{border-top:0;padding-top:0}
+.pcase-shot{display:block;overflow:hidden;background:var(--vind-20);aspect-ratio:3/2}
+.pcase-shot img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .8s var(--ease)}
+.pcase-shot:hover img{transform:scale(1.04)}
+.pcase-t{display:grid;gap:9px;justify-items:start;max-width:56ch}
+.pcase-t h3{margin:0;font-weight:400;font-size:var(--t-title);line-height:1.2;
+  letter-spacing:-.01em;color:var(--vind-text)}
+.pcase-pl{font-size:var(--t-micro);color:var(--walnut);letter-spacing:.04em}
+.pcase-t p{margin:6px 0 0;font-size:var(--t-body);line-height:1.68;color:var(--vind-80)}
+.pcase-t .link-btn{margin-top:14px}
+
+@media (max-width:900px){
+  .prins{grid-template-columns:1fr;row-gap:clamp(64px,10vh,130px)}
+  .prin{grid-column:1 / -1}
+  .pcase{grid-template-columns:1fr;gap:18px}
+  .pcase-shot{max-width:420px}
+}
+@media (prefers-reduced-motion:reduce){
+  .prin-wrap,.prin-more .pm::before,.prin-more .pm::after,.pcase-shot img{transition:none}
+}
 
 /* ---------- the opening claim ---------------------------------------
    A small label hanging in the margin, level with the first line, and the
@@ -2284,6 +2321,27 @@ const PRINCIPLES = [
 ];
 const PX_TITLE = 'מרכז תעסוקה מגשר: איך חיברנו בין שני חלקיה של העיר הנחצית על ידי כביש בין עירוני 443';
 
+/* Why each example belongs to its principle. Placeholder copy — plausible
+   planning language written to hold the shape, not an account of anything
+   these projects actually did. The practice replaces it; nothing here
+   should be quoted as fact. One pair per principle, in PRINCIPLES order. */
+const PRIN_CASE = [
+  ['התוכנית נפתחה בקריאה של מה שכבר קורה במקום — מי עובר בו, באילו שעות, ואילו שימושים החזיקו מעמד בלי שאיש תכנן אותם. הממצאים האלה קבעו את תמהיל השימושים ואת מיקומם של המוסדות הציבוריים, ולא להפך.',
+   'כאן הצורך שהוביל את התוכנית לא הופיע בתוכנית האב: מחסור בשטחי תעסוקה בהישג יד לתושבי השכונות הוותיקות. התוכנית נבנתה סביבו, והבינוי למגורים נגזר ממנו ולא קדם לו.'],
+  ['התוכנית לוותה בדיאלוג רציף עם הגורמים שיישאו בתוצאותיה — הרשות, בעלי הקרקע והתושבים הקיימים. חלק מההחלטות התארכו בשל כך, והתוצאה עמידה יותר: מה שסוכם בשלב התכנון לא נפתח מחדש בשלב הביצוע.',
+   'מנגנון האיזון בין בעלי הזכויות נבנה יחד איתם ולא הוצג להם כגזירה. ההוגנות כאן אינה אמירה אלא טבלה: מי מקבל מה, מתי, ובאיזה שלב של המימוש.'],
+  ['המגרש נשא שלוש מגבלות שנחשבו סותרות — רצועת תשתית, הפרשי גובה חדים ותקן חניה נוקשה. הפתרון לא ביטל אף אחת מהן אלא ניצל אותן: התשתית הפכה לציר ירוק, והפרש הגובה למפלס מסחרי שנפתח לשני הכיוונים.',
+   'במקום להרחיב את הכביש, התוכנית צמצמה אותו והעבירה את הקיבולת לתחבורה הציבורית. זו החלטה שנראתה חריגה בזמנו, ומאז שימשה תקדים בשתי תוכניות נוספות באותו מרחב.'],
+  ['הבינוי נגזר מקו הרכס ומכיווני הרוח, לא מתבנית שהובאה מבחוץ. הגבהים יורדים מדורג לעבר השכונה הוותיקה, כך שהתוספת נקראת כהמשך של מה שהיה ולא כגוף זר שהונח לידו.',
+   'האתר נושא שכבות היסטוריות שלא ניתן היה למחוק ולא היה טעם לשחזר. התוכנית הותירה אותן קריאות — בתוואי הרחובות, בקווי הבנייה ובשמות — והשתמשה בהן כשלד לתכנון החדש.'],
+  ['לתוכנית יש משפט אחד: לחבר בין שני חלקי העיר שהכביש הפריד ביניהם. כל החלטה אחרת — מיקום המסחר, כיוון החזיתות, מפלס הכניסות — נמדדה מול המשפט הזה, ומה שלא שירת אותו ירד.',
+   'הרעיון המרכזי כאן הוא מרחב ציבורי אחד רציף, והמבנים סודרו סביבו. זה מה שאפשר להסביר את התוכנית בדקה, וזה גם מה שאפשר לשמור עליה כשהיא השתנתה בשלבי האישור.']
+];
+
+/* Each paragraph takes its own width and its own start on the twelve
+   columns, so the five do not stack into one left edge. Start, span. */
+const PRIN_COL = [[1,12],[1,9],[3,10],[2,8],[4,9]];
+
 /* Two example projects per principle, and a different pair each time —
    all five drawers used to open on the same three, which said the same
    thing five times over and made the link read as decoration. */
@@ -2308,15 +2366,25 @@ function visionHTML(){
   </section>
 
   <section class="wrap prins">
-    ${PRINCIPLES.map(([t,k,b],i)=>`<article class="prin rv">
+    ${PRINCIPLES.map(([t,k,b],i)=>`<article class="prin rv" style="--c1:${PRIN_COL[i][0]};--cn:${PRIN_COL[i][1]}">
       <div class="lede-in">
         <h2 class="lede-label">${esc(t)}</h2>
         <p class="lede-body">${k?`<span class="pkick">${esc(k)} </span>`:''}${esc(b)}</p>
       </div>
-      <div class="prin-ex">
-        <span class="prin-ex-l">פרויקטים לדוגמא</span>
-        ${PRIN_EX[i].map(j=>P[j]).map(x=>`<a href="#/project" data-project="${x.id}"><span class="u">${esc(x.title)}</span></a>`).join('')}
-      </div>
+      <button class="prin-more" data-ex type="button"><span class="pm"></span><span>פרויקטים לדוגמא</span></button>
+      <div class="prin-wrap"><div class="prin-list">
+        ${PRIN_EX[i].map((j,n)=>{ const x=P[j]; return `<article class="pcase">
+          <a class="pcase-shot rv-img" href="#/project" data-project="${x.id}" aria-label="${esc(x.title)}">
+            <img src="${x.img}" alt="" loading="lazy" draggable="false">
+          </a>
+          <div class="pcase-t">
+            <h3>${esc(x.title)}</h3>
+            <div class="pcase-pl">${esc(x.place)}</div>
+            <p>${esc(PRIN_CASE[i][n])}</p>
+            <a class="link-btn t-ui" href="#/project" data-project="${x.id}">${icon('i-arrow')}<span>לעמוד הפרויקט</span></a>
+          </div>
+        </article>`; }).join('')}
+      </div></div>
     </article>`).join('')}
   </section>`;
 }
@@ -3654,7 +3722,7 @@ document.addEventListener('click',e=>{
   if(t.closest('[data-pjfull]')){ pjFull(); return }
 
   const ex=t.closest('[data-ex]');
-  if(ex){ ex.closest('.prow')?.classList.toggle('open'); return }
+  if(ex){ ex.closest('.prow,.prin')?.classList.toggle('open'); return }
 
   if(t.closest('[data-mapkey]')){
     const k=prompt('מפתח Google Maps JavaScript API:\n(נשמר בדפדפן שלכם בלבד)');
