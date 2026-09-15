@@ -826,11 +826,17 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 
 .ft-base{display:flex;align-items:flex-end;justify-content:space-between;
   gap:clamp(24px,3vw,56px);margin-top:clamp(64px,9vw,150px);flex-wrap:wrap-reverse}
-.ft-cells-sm{flex:1 1 520px}
-.ft-cells-sm .ft-cell{font-size:clamp(11px,.72vw,15px)}
+/* the line under the band is not a second table — one ruled row is
+   enough, and the rest reads as a line of text */
+.ft-legal{display:flex;flex-wrap:wrap;align-items:center;
+  gap:6px clamp(16px,1.6vw,30px);font-size:clamp(11px,.72vw,15px)}
+.ft-legal a{transition:opacity .2s var(--ease)}
+.ft-legal a:hover{opacity:.62}
 
 .ft-mark{display:flex;align-items:center;gap:13px;flex:none}
-.ft-mark img{width:52px;height:52px;display:block;flex:none}
+/* the mark is drawn solid here, not knocked out — a graded knockout on
+   this ground reads as a stain rather than a logo */
+.ft-mark svg{width:52px;height:52px;display:block;flex:none}
 .ft-mark>span{font-weight:700;font-size:var(--t-micro);line-height:1.35;letter-spacing:.36px}
 .ft-mark>span>span{display:block;font-weight:400;opacity:.72}
 
@@ -1319,18 +1325,16 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 
     <div class="ft-base">
       <a class="ft-mark" href="#/" data-nav="home">
-        <img src="assets/logomark-neg.svg?v=5" alt="" width="63" height="63">
+        <svg viewBox="0 0 63 63" aria-hidden="true"><use href="#cv-mark"/></svg>
         <span>כהן וינד ושות׳<span>אדריכלות ותכנון ערים</span></span>
       </a>
 
-      <div class="ft-cells ft-cells-sm">
-        <span class="ft-cell">אדריכלות ותכנון ערים</span>
-        <span class="ft-cell">© 2026</span>
-        <a class="ft-cell" href="#/">תנאי שימוש</a>
-        <span class="ft-cell ft-grow"></span>
-        <a class="ft-cell" href="#/">לינקדאין</a>
-        <a class="ft-cell" href="#/">אינסטגרם</a>
-        <a class="ft-cell" href="#/">פייסבוק</a>
+      <div class="ft-legal">
+        <span>© 2026</span>
+        <a href="#/">תנאי שימוש</a>
+        <a href="#/">לינקדאין</a>
+        <a href="#/">אינסטגרם</a>
+        <a href="#/">פייסבוק</a>
       </div>
     </div>
   </div>
