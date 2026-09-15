@@ -917,6 +917,14 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
   font-weight:300;font-size:var(--t-display);line-height:1.2;letter-spacing:-.46px;color:var(--vind-text)}
 
 .page-head{padding-block:clamp(36px,4vw,80px) clamp(20px,2.4vw,40px);display:grid;gap:18px;justify-items:start}
+/* the studio page opens on the paragraph itself rather than a title —
+   the heading stays for the document outline and for a reader */
+.team-head{justify-items:start;text-align:start;
+  padding-block:clamp(40px,5vw,90px) clamp(28px,3.4vw,56px)}
+/* the opening paragraph is set as the page's heading would be — the same
+   size, leading and tracking as .t-display, ranged to the reading edge */
+.team-head .meas{max-width:34ch;font-size:var(--t-display);line-height:1.2;
+  letter-spacing:-.46px;font-weight:300}
 
 /* principle rows (vision) */
 .rows{display:grid}
@@ -1926,9 +1934,9 @@ const TEAM_ROLES = [
 
 function teamHTML(){
   return `
-  <section class="wrap page-head rv">
-    <h1 class="t-display">צוות המשרד</h1>
-    <p class="t-body dim" style="max-width:66ch">מי אנחנו. איך אנחנו עובדים. במה אנחנו מאמינים. כהן וינד אדריכלים ב־6 עקרונות.</p>
+  <section class="wrap page-head team-head rv">
+    <h1 class="sr">צוות המשרד</h1>
+    <p class="t-display meas">את המשרד מובילים האדריכל ארי כהן, מייסד המשרד ואדריכל ומתכנן ערים בעל יותר מ־35 שנות ניסיון, יחד עם מיכאל וינד והשותפים אמיר אלישע ואלה זילברפרב־בן עזרא. לצדם פועל צוות רחב הכולל אדריכלים, מתכנני ערים ועמיתים בכירים ובהם אבי לינדנבאום, עירד שומרוני ונמרוד דניאל רוזנפלד, וכן צוות מקצועי נוסף של אדריכלים ומתכננים.</p>
   </section>
 
   <section class="sec" style="padding-top:clamp(20px,2vw,36px)">
