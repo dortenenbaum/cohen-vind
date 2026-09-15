@@ -16,35 +16,35 @@
 
 :root{
   /* ------------------------------------------------------------------
-     Paper & ink. The ground is warm off-white rather than screen grey,
-     the neutrals carry the same warm bias so nothing reads cold on it,
-     and one hot accent replaces the lime — used on marks, never as a
-     surface.
+     White ground. The neutrals are neutral — no warm bias in any
+     surface or rule — and the only warmth left on the page is the
+     terracotta that marks what you can act on, and the clay the map
+     markers are drawn in.
      ------------------------------------------------------------------ */
-  --paper:#f6f2eb;          /* wool   — was #f2f0ea */
-  --paper-hi:#ffffff;      /* the clean band between the warm ones */
-  --paper-2:#ede6d8;        /* linen  — was #e9e6de */
-  --ink:#302620;            /* slate  — was #282828 */
-  --accent:#c9512e;         /* PRIMARY — buttons, links, live state */
-  --accent-tint:#f4e3da;    /* its wash                              */
+  --paper:#ffffff;          /* the ground                            */
+  --paper-hi:#f7f7f6;       /* the quieter band between white ones   */
+  --paper-2:#f2f2f1;        /* a raised surface on the ground        */
+  --ink:#242424;            /* text and drawn edges                  */
+  --accent:#c9512e;         /* PRIMARY — buttons, links, live state  */
+  --accent-tint:#f7e6df;    /* its wash                              */
   --marker:#7a3a20;         /* clay — map pins and the icon avatars  */
   --marker-tint:#e8dbd1;    /* matches the exported SVG assets       */
   --accent-ink:#ffffff;
-  --walnut:#6b5a48;         /* secondary text and small caps labels */
-  --sand:#d4c9b4;           /* hairlines */
+  --walnut:#6b6b6b;         /* secondary text and small labels       */
+  --sand:#dededc;           /* hairlines                             */
 
   /* Figma library names, repointed at the paper system, so every rule
      in the sheet restyles without being touched. */
   --vind-light-b:var(--paper-2);
-  --vind-light:#ede6d8;
-  --vind-medium:#d4c9b4;
+  --vind-light:#f2f2f1;
+  --vind-medium:#dededc;
   --vind-dark:var(--ink);
-  --vind-10:#f6f4ef;        /* was used twice but never defined */
-  --vind-20:#e4e1d9;
-  --vind-40:#cfccc4;
-  --vind-60:#b3b3af;
-  --vind-80:#72726f;
-  --vind-text:#302620;
+  --vind-10:#fafafa;        /* was used twice but never defined */
+  --vind-20:#ededec;
+  --vind-40:#d8d8d6;
+  --vind-60:#bcbcba;
+  --vind-80:#767674;
+  --vind-text:#242424;
   --white:#ffffff;
   --ground:var(--paper);
 
@@ -441,7 +441,10 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   filter:saturate(.88);transition:transform 1.1s var(--ease),filter .7s var(--ease)}
 .cslide:hover .shot>img{transform:scale(1.055);filter:saturate(1)}
 .cslide .meta{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:18px}
-.titles{display:flex;flex-direction:column;align-items:center;gap:0;width:100%;text-align:center}
+/* the title block is shared by the cards and the carousel; only the
+   carousel centres, and centring it here quietly centred the grid too */
+.titles{display:flex;flex-direction:column;align-items:flex-start;gap:0;width:100%}
+.cslide .titles{align-items:center;text-align:center}
 .cslide h3{margin:0}
 .cslide .place{font-weight:300;font-size:var(--t-display);line-height:1.2;letter-spacing:-.46px;color:var(--vind-80)}
 
