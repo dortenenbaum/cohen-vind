@@ -325,9 +325,23 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .hnote:hover .hnote-pin::after,.hnote:focus-visible .hnote-pin::after,
 .hnote.pinned .hnote-pin::after{animation:none;opacity:0}
 
-/* Clicking keeps a note open, so you can read one and go on looking. */
+/* Clicking keeps a note open, so you can read one and go on looking — and
+   a note that stays needs a way out. The cross only exists once the note is
+   pinned; while it is merely hovered there is nothing to close. It is the
+   one part of the panel that takes the pointer, so the text underneath can
+   still be selected and the dots behind it are not swallowed. */
 .hnote.pinned .hnote-card{opacity:1;transform:none}
 .hnote.pinned::before,.hnote.pinned::after{opacity:1}
+.hnote-x{position:absolute;top:-9px;inset-inline-end:-9px;width:20px;height:20px;
+  border-radius:50%;background:var(--accent-ink);
+  box-shadow:0 1px 3px rgba(16,15,13,.28);
+  display:none;place-items:center;pointer-events:auto;cursor:pointer}
+.hnote.pinned .hnote-x{display:grid}
+.hnote-x::before,.hnote-x::after{content:"";position:absolute;
+  width:9px;height:1px;background:var(--accent)}
+.hnote-x::before{transform:rotate(45deg)}
+.hnote-x::after{transform:rotate(-45deg)}
+.hnote-x:hover{background:#fff}
 
 /* The pointer carries a small crosshair and its own coordinates, easing
    after it rather than pinned to it — the lag is what makes it read as an
@@ -2584,7 +2598,7 @@ const heroNotesHTML = () => `<div class="hnotes" id="hnotes">
   ${HERO_NOTES.map((n,i)=>`<button class="hnote${n.flip?' flip':''}${n.up?' up':''}" type="button"
       style="--x:${n.x}%;--y:${n.y}%;--i:${i}" aria-label="${esc(n.code)} — ${esc(n.txt)}">
     <span class="hnote-pin" aria-hidden="true"></span>
-    <span class="hnote-card"><span class="hnote-code">${esc(n.code)}</span><span class="hnote-txt">${esc(n.txt)}</span></span>
+    <span class="hnote-card"><span class="hnote-x" aria-hidden="true"></span><span class="hnote-code">${esc(n.code)}</span><span class="hnote-txt">${esc(n.txt)}</span></span>
   </button>`).join('')}
 </div>`;
 
@@ -3067,10 +3081,21 @@ function wireHeroNotes(){
   };
   wrap.addEventListener('click', onClick);
 
+  /* a panel that stays should also answer to Escape */
+  const onKey = e => {
+    if(e.key !== 'Escape') return;
+    const open = wrap.querySelector('.hnote.pinned');
+    if(open){ open.classList.remove('pinned'); open.blur() }
+  };
+  addEventListener('keydown', onKey);
+
   const slow = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
   if(slow || !fine){
-    heroNotesTeardown = () => wrap.removeEventListener('click', onClick);
+    heroNotesTeardown = () => {
+      wrap.removeEventListener('click', onClick);
+      removeEventListener('keydown', onKey);
+    };
     return;
   }
 
@@ -3104,6 +3129,7 @@ function wireHeroNotes(){
     opener.removeEventListener('pointermove', onMove);
     opener.removeEventListener('pointerleave', onLeave);
     wrap.removeEventListener('click', onClick);
+    removeEventListener('keydown', onKey);
   };
 }
 
