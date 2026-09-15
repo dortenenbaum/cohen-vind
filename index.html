@@ -302,10 +302,47 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .hnote{position:absolute;inset-inline-start:var(--x);top:var(--y);
   width:52px;height:52px;margin:-26px 0 0 -26px;padding:0;border:0;background:none;
   display:grid;place-items:center;cursor:crosshair;pointer-events:auto}
-.hnote-pin{width:10px;height:10px;background:var(--accent);
-  box-shadow:0 0 0 1px rgba(255,255,255,.5);
+/* A dot, and a ring that breathes out of it — a mark that sits still on a
+   photograph is scenery, and nobody thinks to go near it. The ring is the
+   invitation. They are staggered off --i so the six read as six separate
+   invitations rather than one blinking chorus, and it stops on approach:
+   once you are there the dot has done its job. */
+.hnote-pin{position:relative;width:9px;height:9px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 0 1px rgba(255,255,255,.5);
   transition:transform .32s var(--ease)}
-.hnote:hover .hnote-pin,.hnote:focus-visible .hnote-pin{transform:scale(1.35)}
+.hnote-pin::after{content:"";position:absolute;left:50%;top:50%;
+  width:9px;height:9px;border-radius:50%;border:1px solid var(--accent);
+  transform:translate(-50%,-50%);
+  animation:hnote-ping 2.8s var(--ease) infinite;
+  animation-delay:calc(var(--i,0) * .42s)}
+@keyframes hnote-ping{
+  0%   {transform:translate(-50%,-50%) scale(1);   opacity:.9}
+  62%  {transform:translate(-50%,-50%) scale(3.4); opacity:0}
+  100% {transform:translate(-50%,-50%) scale(3.4); opacity:0}
+}
+.hnote:hover .hnote-pin,.hnote:focus-visible .hnote-pin,
+.hnote.pinned .hnote-pin{transform:scale(1.35)}
+.hnote:hover .hnote-pin::after,.hnote:focus-visible .hnote-pin::after,
+.hnote.pinned .hnote-pin::after{animation:none;opacity:0}
+
+/* Clicking keeps a note open, so you can read one and go on looking. */
+.hnote.pinned .hnote-card{opacity:1;transform:none}
+.hnote.pinned::before,.hnote.pinned::after{opacity:1}
+
+/* The pointer carries a small crosshair and its own coordinates, easing
+   after it rather than pinned to it — the lag is what makes it read as an
+   instrument being moved across a drawing instead of a second cursor. */
+.hcross{position:absolute;left:0;top:0;z-index:1;pointer-events:none;
+  opacity:0;transition:opacity .4s var(--ease);will-change:transform}
+.hcross.on{opacity:1}
+.hcross i{position:absolute;background:var(--accent);display:block}
+.hcross .hcx{left:-7px;top:0;width:15px;height:1px}
+.hcross .hcy{left:0;top:-7px;width:1px;height:15px}
+/* the readout takes the accent, not white — the hero runs from bright sky
+   to dark ground and white only held on half of it */
+.hcross b{position:absolute;inset-inline-start:14px;top:9px;white-space:nowrap;
+  direction:ltr;font:400 clamp(9px,.56vw,11px)/1 var(--mono);letter-spacing:.06em;
+  color:var(--accent)}
 
 /* the leaders, clipped by the opener's own overflow */
 .hnote::before,.hnote::after{content:"";position:absolute;left:50%;top:50%;
@@ -329,20 +366,12 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   opacity:.82;margin-bottom:7px}
 .hnote-txt{display:block;font-size:clamp(12px,.78vw,15px);font-weight:400;line-height:1.45}
 
-/* Centred over the frame and clear of the logo and the language switch,
-   the way the reference floats its own invitation over the drawing. It
-   goes when a mark opens, not when the pointer merely enters the hero —
-   tying it to the hero meant it vanished before it had been read, and it
-   has no business sitting over a panel it just invited you to open. */
-.hnote-hint{position:absolute;z-index:2;top:calc(var(--hdr-h) + 26px);inset-inline:0;
-  margin:0;text-align:center;color:rgba(255,255,255,.72);
-  font:400 clamp(10px,.62vw,12px)/1.4 var(--mono);letter-spacing:.06em;
-  pointer-events:none;transition:opacity .5s var(--ease)}
-.opener:has(.hnote:hover) .hnote-hint{opacity:0}
 
-@media (hover:none){ .hnotes,.hnote-hint{display:none} }
+@media (hover:none){ .hnotes{display:none} }
 @media (prefers-reduced-motion:reduce){
   .hnote-pin,.hnote-card,.hnote::before,.hnote::after{transition-duration:.01ms}
+  .hnote-pin::after{animation:none;opacity:.5}
+  .hcross{display:none}
 }
 
 .opener-txt{position:absolute;inset-inline:0;
@@ -2538,14 +2567,14 @@ const HERO_NOTES = [
   {x:88, y:56, code:'TBA 3021/B · 06', txt:'סאנט אין קולפה קווי אופיציה דסרונט מולית אנים', flip:1, up:1}
 ];
 
-const heroNotesHTML = () => `<div class="hnotes">
-  ${HERO_NOTES.map(n=>`<button class="hnote${n.flip?' flip':''}${n.up?' up':''}" type="button"
-      style="--x:${n.x}%;--y:${n.y}%" aria-label="${esc(n.code)} — ${esc(n.txt)}">
+const heroNotesHTML = () => `<div class="hnotes" id="hnotes">
+  <span class="hcross" id="hcross" aria-hidden="true"><i class="hcx"></i><i class="hcy"></i><b></b></span>
+  ${HERO_NOTES.map((n,i)=>`<button class="hnote${n.flip?' flip':''}${n.up?' up':''}" type="button"
+      style="--x:${n.x}%;--y:${n.y}%;--i:${i}" aria-label="${esc(n.code)} — ${esc(n.txt)}">
     <span class="hnote-pin" aria-hidden="true"></span>
     <span class="hnote-card"><span class="hnote-code">${esc(n.code)}</span><span class="hnote-txt">${esc(n.txt)}</span></span>
   </button>`).join('')}
-</div>
-<p class="hnote-hint">הזיזו את הסמן על התצלום כדי לגלות הערות תכנון</p>`;
+</div>`;
 
 function projectHTML(){
   const p = P.find(x=>x.id===state.project) || P[0];
@@ -2867,6 +2896,7 @@ function render(reveal=true){
   app.innerHTML = (VIEWS[state.page] || homeHTML)();
   renderMenu();
   wireMap(); wireCarousels(); wireFilm(); wireOpener(); wireIndexPreview(); wireParallax();
+  wireHeroNotes();
   wireRules(); wireTicker();
   if(reveal) initReveal();
 }
@@ -2997,6 +3027,73 @@ let openerRAF=0, openerTick=null, openerWantClear=false;
 function applyHdrClear(){
   document.body.classList.toggle('hdr-clear', openerWantClear && veilDone);
 }
+/* ---------- hero notes: the pointer ---------------------------------
+   The reference trails a small crosshair and a live pixel coordinate
+   behind the pointer, easing rather than tracking, which is what makes it
+   read as an instrument crossing a drawing instead of a second cursor.
+   One rAF loop, running only while the pointer is over the hero, and torn
+   down on every re-render because the page rebuilds its whole body.
+
+   The dots also take a click: hover shows a note, clicking keeps it open
+   so you can read one and carry on looking. */
+let heroNotesTeardown = null;
+function wireHeroNotes(){
+  if(heroNotesTeardown){ heroNotesTeardown(); heroNotesTeardown=null }
+  const opener = document.getElementById('opener');
+  const wrap   = document.getElementById('hnotes');
+  const cross  = document.getElementById('hcross');
+  if(!opener || !wrap || !cross) return;
+
+  /* clicking pins a note open; clicking it again, or another one, releases */
+  const onClick = e => {
+    const btn = e.target.closest('.hnote');
+    if(!btn) return;
+    const was = btn.classList.contains('pinned');
+    wrap.querySelectorAll('.hnote.pinned').forEach(n=>n.classList.remove('pinned'));
+    if(!was) btn.classList.add('pinned');
+  };
+  wrap.addEventListener('click', onClick);
+
+  const slow = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  if(slow || !fine){
+    heroNotesTeardown = () => wrap.removeEventListener('click', onClick);
+    return;
+  }
+
+  const read = cross.querySelector('b');
+  let tx=0, ty=0, x=0, y=0, raf=0, live=false, seen=false;
+
+  const frame = () => {
+    /* ease a fifth of the remaining distance each frame — close enough to
+       keep up, far enough behind to read as a trail */
+    x += (tx - x) * 0.2;
+    y += (ty - y) * 0.2;
+    cross.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
+    read.textContent = `X:${Math.round(tx)}PX  Y:${Math.round(ty)}PX`;
+    raf = (Math.abs(tx-x) > .3 || Math.abs(ty-y) > .3) ? requestAnimationFrame(frame) : 0;
+  };
+
+  const onMove = e => {
+    const r = opener.getBoundingClientRect();
+    tx = e.clientX - r.left; ty = e.clientY - r.top;
+    if(!seen){ seen=true; x=tx; y=ty }          /* no swoop in from the corner */
+    if(!live){ live=true; cross.classList.add('on') }
+    if(!raf) raf = requestAnimationFrame(frame);
+  };
+  const onLeave = () => { live=false; seen=false; cross.classList.remove('on') };
+
+  opener.addEventListener('pointermove', onMove, {passive:true});
+  opener.addEventListener('pointerleave', onLeave);
+
+  heroNotesTeardown = () => {
+    if(raf) cancelAnimationFrame(raf);
+    opener.removeEventListener('pointermove', onMove);
+    opener.removeEventListener('pointerleave', onLeave);
+    wrap.removeEventListener('click', onClick);
+  };
+}
+
 function wireOpener(){
   if(openerTick){ removeEventListener('scroll',openerTick); removeEventListener('resize',openerTick); openerTick=null }
   const over=document.querySelector('.over'), txt=document.getElementById('opener-txt');
