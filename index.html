@@ -186,18 +186,18 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   .menu{background:rgba(8,8,8,.97)}
 }
 .menu-label{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--accent);margin:0 0 36px}
+  color:rgba(255,255,255,.55);margin:0 0 36px}
 .menu-in{display:flex;flex-direction:column;flex:1;min-height:0}
 .menu nav{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
 .menu nav a{position:relative;display:block;text-align:start;text-decoration:none;
   font-family:var(--font-display,inherit);font-weight:300;
   font-size:clamp(22px,2.6vw,28px);line-height:1.15;letter-spacing:-.01em;
   color:#fff;padding-block:7px;
-  transition:opacity .4s var(--ease),transform .5s var(--ease-settle);
+  transition:opacity .4s var(--ease),color .3s var(--ease),transform .5s var(--ease-settle);
   animation:navIn .42s var(--ease) backwards;animation-delay:calc(var(--i) * 45ms)}
 @keyframes navIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .menu nav a .ar{display:none}
-.menu nav a:hover{opacity:.6;transform:translateX(-8px)}
+.menu nav a:hover{opacity:1;color:var(--accent);transform:translateX(-8px)}
 .menu nav a[aria-current="page"]{opacity:1}
 /* the current page is marked by a rule in the margin, not a colour */
 .menu nav a[aria-current="page"]:before{content:"";position:absolute;top:50%;
@@ -205,11 +205,11 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .menu-side{margin-top:auto;padding-top:40px;display:flex;flex-direction:column;gap:6px;
   animation:navIn .5s var(--ease) backwards;animation-delay:.2s}
 .menu-contact{display:flex;flex-direction:column;gap:6px}
-.menu-contact a{font-size:13px;font-weight:300;color:var(--accent);text-decoration:none;
+.menu-contact a{font-size:13px;font-weight:300;color:rgba(255,255,255,.88);text-decoration:none;
   width:fit-content;transition:color .4s var(--ease)}
 .menu-contact a:hover{color:#fff}
 .menu-contact span{font-size:11px;font-weight:300;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--accent)}
+  text-transform:uppercase;color:rgba(255,255,255,.5)}
 /* close control, mirroring the reference's two crossed rules */
 .menu-close{position:absolute;top:clamp(24px,4vh,40px);inset-inline-end:clamp(24px,5vw,40px);
   width:32px;height:32px;background:none;border:0;cursor:pointer;z-index:1}
