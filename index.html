@@ -60,6 +60,11 @@
   --maxw:clamp(1740px,90.625vw,2200px);
   --gutter:clamp(16px,4.6875vw,116px);
   --hdr-h:91px;
+  /* The bar's transitions live in one place because the preloader has its
+     own rule for the same element: the shorthand there was replacing this
+     list wholesale, which is why the bar was jumping in and out of view
+     instead of sliding. Anything adding to it adds var(--hdr-tr) first. */
+  --hdr-tr:background .5s var(--ease),transform .6s var(--ease);
   --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
 
   /* the attribute rows — plan, size, domain — read as a caption under a
@@ -116,10 +121,9 @@ a{color:inherit;text-decoration:none}
    opener's negative top margin still reckons with it — only the transform
    moves, which costs a composite and no layout. */
 .hdr{position:sticky;top:0;z-index:60;background:var(--ground);
-  transition:background .5s var(--ease),transform .42s var(--ease);
-  will-change:transform}
-body.hdr-away .hdr{transform:translateY(-100%)}
-@media (prefers-reduced-motion:reduce){ .hdr{transition:background .5s var(--ease)} }
+  transition:var(--hdr-tr);will-change:transform}
+body.hdr-away .hdr{transform:translateY(-101%)}
+@media (prefers-reduced-motion:reduce){ .hdr{--hdr-tr:background .5s var(--ease)} }
 
 /* ---- header over the film ------------------------------------------
    While the opener is still uncovered the bar has no ground of its own
@@ -1261,7 +1265,7 @@ a.ft-cell:hover{background:rgba(0,0,0,.09)}
 @media (prefers-reduced-motion:no-preference){
   .hdr{opacity:1}
   body.booting .hdr{opacity:0}
-  body.booted .hdr{transition:opacity .55s cubic-bezier(.4,0,.2,1)}
+  body.booted .hdr{transition:var(--hdr-tr),opacity .55s cubic-bezier(.4,0,.2,1)}
 
   /* above the fold on first paint: no colour block, images just resolve
      into the space already reserved for them */
@@ -4082,8 +4086,15 @@ addEventListener('resize',()=>{
     const y=Math.max(0,scrollY), d=y-last;
     if(Math.abs(d)<TH) return;
     last=y;
-    /* an open menu, or an open gallery, owns the screen and keeps its way out */
+    /* an open menu owns the screen and keeps its way out */
     if(document.body.classList.contains('menu-open')){ set(false); return }
+    /* A hero holds the bar. While the film or the picture is still the
+       screen the bar belongs to it — it is transparent over it and has
+       nothing to take away from. The opener is sticky, so its own rect
+       says it is on screen for most of the page; the question is whether
+       the content has climbed over it, which is the same question
+       openerWantClear already answers for the clear-bar state. */
+    if(openerWantClear){ set(false); return }
     set(y>FREE && d>0);
   },{passive:true});
   /* going to another page starts at the top again */
