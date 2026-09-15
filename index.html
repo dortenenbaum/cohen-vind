@@ -406,8 +406,14 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   background:none;cursor:pointer;color:var(--vind-text);
   display:grid;place-items:center;transition:color .2s var(--ease),transform .2s var(--ease)}
 .pgal-arrow svg{width:13px;height:22px}
+/* The chevron is drawn pointing left. In an RTL gallery the reading
+   direction continues leftward, so the arrow on the left is "next" and
+   keeps the glyph as drawn; the one on the right is "previous" and turns
+   it. The flip goes on the svg, not the button, or it would fight the
+   transform that centres it. This is what the site's own carousel does. */
 .pgal-arrow.prev{inset-inline-start:clamp(8px,1.4vw,26px)}
-.pgal-arrow.next{inset-inline-end:clamp(8px,1.4vw,26px);transform:translateY(-50%) scaleX(-1)}
+.pgal-arrow.prev svg{transform:scaleX(-1)}
+.pgal-arrow.next{inset-inline-end:clamp(8px,1.4vw,26px)}
 .pgal-arrow:hover{color:var(--accent)}
 .pgal-arrow[disabled]{opacity:.22;pointer-events:none}
 
@@ -416,7 +422,6 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
     padding-inline:var(--gutter);gap:18px}
   .pgal-shot{aspect-ratio:4/3;max-height:none}
   .pgal-arrow{top:auto;bottom:14px;transform:none}
-  .pgal-arrow.next{transform:scaleX(-1)}
 }
 @media (prefers-reduced-motion:reduce){ .pgal{transition:none} }
 
