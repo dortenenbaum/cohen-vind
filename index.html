@@ -299,6 +299,21 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .opener-scrim{position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to top,rgba(16,15,13,.80) 0%,rgba(16,15,13,.46) 30%,rgba(16,15,13,.12) 58%,rgba(16,15,13,0) 78%),
              linear-gradient(to bottom,rgba(16,15,13,.52) 0%,rgba(16,15,13,.12) 16%,rgba(16,15,13,0) 30%)}
+/* ---- the line under the phrase --------------------------------------
+   The sentence finishes saying itself and then a stroke is drawn under
+   the words the practice turns on, by hand rather than by rule — it
+   starts at the reading edge and travels the way the line was just read.
+   One is placed per client rect, so a phrase that breaks across two lines
+   gets a stroke on each.
+   -------------------------------------------------------------------- */
+svg.uline{position:absolute;overflow:visible;pointer-events:none;z-index:1}
+svg.uline path{fill:none;stroke:var(--accent);stroke-width:2.4;stroke-linecap:round;
+  stroke-linejoin:round;vector-effect:non-scaling-stroke;
+  stroke-dasharray:1;stroke-dashoffset:1}
+svg.uline.on path{stroke-dashoffset:0;
+  transition:stroke-dashoffset 1s cubic-bezier(.22,.61,.36,1) var(--d,0s)}
+svg.uline.set path{transition:none;stroke-dashoffset:0}
+
 /* ---------- vision: the principles, in the opening voice --------------
    The page speaks in one size. Each principle takes the shape the claim
    takes — its title hanging small in the margin, its text at --t-hero —
@@ -2579,7 +2594,7 @@ function visionHTML(){
   <section class="wrap lede rv">
     <div class="lede-in">
       <h1 class="lede-label">החזון שלנו</h1>
-      <p class="lede-body">${esc(VISION_ALL)}</p>
+      <p class="lede-body" data-autotype>${esc(VISION_ALL)}</p>
     </div>
   </section>
 
@@ -3321,7 +3336,7 @@ function render(reveal=true){
   renderMenu();
   wireMap(); wireCarousels(); wireFilm(); wireOpener(); wireIndexPreview(); wireParallax();
   wireHeroNotes(); wirePrinciples(); wireGallery();
-  wireRules(); wireTicker();
+  wireRules(); wireTicker(); wireAutoType();
   if(reveal) initReveal();
 }
 
@@ -3474,6 +3489,86 @@ function wireRules(){
   }
 }
 
+/* ---------- the vision types itself, then underlines its claim --------
+   Every other large text here sets against the scroll: the reader's own
+   travel down the page is what fills it. This one sits at the top with
+   nothing to travel through, so it runs on a clock instead — and when the
+   sentence has finished, a stroke is drawn under the phrase it turns on.
+   --------------------------------------------------------------------- */
+const AUTO_SECS=4;                       /* however long the passage, it says
+                                            itself in about this many */
+const AUTO_MIN=52;                       /* characters a second, at least */
+const UNDER_PHRASE='להיטיב עם הסביבה הפיזית';
+let autoRAF=0, autoEl=null;
+
+function underRects(el){
+  const host=el.closest('.lede-in')||el.parentElement;
+  const live=el.querySelector('.tp-live')||el;
+  const node=[...live.childNodes].find(n=>n.nodeType===3);
+  if(!node) return null;
+  const i=(node.nodeValue||'').indexOf(UNDER_PHRASE);
+  if(i<0) return null;
+  const rg=document.createRange();
+  rg.setStart(node,i); rg.setEnd(node,i+UNDER_PHRASE.length);
+  return {host,rects:[...rg.getClientRects()].filter(r=>r.width>4)};
+}
+
+function drawUnder(el,instant){
+  const found=underRects(el);
+  if(!found) return;
+  const {host,rects}=found;
+  host.querySelectorAll('svg.uline').forEach(n=>n.remove());
+  const hb=host.getBoundingClientRect();
+  rects.forEach((r,k)=>{
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 300 12');
+    svg.setAttribute('preserveAspectRatio','none');
+    svg.setAttribute('aria-hidden','true');
+    svg.setAttribute('class','uline'+(instant?' set':''));
+    /* drawn from the reading edge: the path starts at x=297 and runs out
+       to x=3, with enough wander in it to read as a hand and not a rule */
+    svg.innerHTML='<path pathLength="1" d="M297 4.8C247 8.4 191 9.6 140 8.4 97 7.4 48 6.2 3 8"/>';
+    const h=Math.max(7,Math.min(15,r.height*0.2));
+    svg.style.left=(r.left-hb.left)+'px';
+    svg.style.top=(r.bottom-hb.top+Math.max(2,r.height*0.04))+'px';
+    svg.style.width=r.width+'px';
+    svg.style.height=h+'px';
+    svg.style.setProperty('--d',(k*0.16).toFixed(2)+'s');
+    host.appendChild(svg);
+    if(!instant) requestAnimationFrame(()=>requestAnimationFrame(()=>svg.classList.add('on')));
+  });
+}
+
+function wireAutoType(){
+  cancelAnimationFrame(autoRAF); autoRAF=0; autoEl=null;
+  const el=document.querySelector('[data-autotype]');
+  if(!el) return;
+  splitType(el);                        /* the ghost holds the box open */
+  const live=el.querySelector('.tp-live'), text=el.dataset.raw||'';
+  if(!live||!text) return;
+  autoEl=el;
+  if(REDUCED){ live.textContent=text; drawUnder(el,true); return; }
+  live.textContent='';
+  const cps=Math.max(AUTO_MIN,text.length/AUTO_SECS);
+  let n=0, acc=0, last=performance.now();
+  const step=now=>{
+    acc+=(now-last)/1000*cps; last=now;
+    if(acc>=1){
+      n=Math.min(text.length,n+Math.floor(acc)); acc-=Math.floor(acc);
+      live.textContent=text.slice(0,n);
+    }
+    if(n<text.length){ autoRAF=requestAnimationFrame(step); return; }
+    autoRAF=0;
+    drawUnder(el);
+  };
+  autoRAF=requestAnimationFrame(step);
+}
+/* the phrase moves when the measure does, so the strokes are replaced —
+   already drawn, with no second performance */
+addEventListener('resize',()=>{
+  if(autoEl && !autoRAF) drawUnder(autoEl,true);
+},{passive:true});
+
 /* ---------- parallax -------------------------------------------------
    An image inside a fixed frame drifts against the page as it passes,
    the way the reference does it: overscaled a little so the drift never
@@ -3488,7 +3583,7 @@ function parCollect(){
     el, amt:Number(el.dataset.par)||6
   }));
   parDraw=[...document.querySelectorAll('.shopfront,.mapdraw')];
-  parType=[...document.querySelectorAll('[data-typed]')].map(el=>{
+  parType=[...document.querySelectorAll('[data-typed]:not([data-autotype])')].map(el=>{
     const live=el.querySelector('.tp-live');
     return live ? {el, live, text:el.dataset.raw||'', n:-1} : null;
   }).filter(Boolean);
