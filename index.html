@@ -67,7 +67,9 @@
   --ground:var(--paper);
 
   /* layout — 1920 breakpoint, 1740 content, 90px gutters */
-  --maxw:clamp(1740px,90.625vw,2200px);
+  /* the measure comes in with it: the large setting and everything else
+     that sits in .wrap share this one container */
+  --maxw:clamp(1655px,86vw,2090px);
   --gutter:clamp(16px,4.6875vw,116px);
   --hdr-h:91px;
   /* The bar's transitions live in one place because the preloader has its
@@ -86,7 +88,10 @@
   --cw:min(var(--maxw), 100vw - 2*var(--gutter));
 
   /* type — exact Figma values at 1920, scaled fluidly below it */
-  --t-hero:clamp(30px,3.177vw,77px);       /* eased down ~13% from the Figma 70 at 1920 */
+  /* four points off the whole ramp — 4pt is 5.333px, taken from the fluid
+     middle and from both ends, so the reduction is the same at every
+     width rather than only at the top */
+  --t-hero:clamp(24.667px,calc(3.177vw - 5.333px),71.667px);
   --t-display:clamp(27px,2.3958vw,58px);   /* 46 / 1.2 / -0.46 / Light  */
   --t-title:clamp(22px,1.9271vw,46px);     /* 37 / 1.2 /  0.74 / Light  */
   --t-ui:clamp(15px,1.0417vw,25px);        /* 20 / norm /  0.40 / Reg   */
