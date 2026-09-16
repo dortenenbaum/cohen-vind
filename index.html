@@ -121,6 +121,11 @@
      as the logo above it and the address below. That is --cw, which is
      exactly what .wrap leaves inside its gutter. */
   --plate-w:var(--cw);
+  /* where a plate starts, before it closes on --plate-w. Past the glass on
+     both sides: the container is already nine tenths of the window, so a
+     plate that began at the window edge had 77 pixels of travel a side —
+     there, but not something you could see happen. */
+  --plate-open:calc(var(--vw,100vw) * 1.16);
   /* Fixed, like the large setting above it: it holds at 35px from a
      laptop upward and steps down below that, rather than growing with the
      window. (The steps are in the block under this one.) */
@@ -764,6 +769,12 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
 
 /* the layer that climbs over the film */
 .over{position:relative;z-index:1;background:var(--paper)}
+/* The clip that lets a plate start wider than the window without the page
+   scrolling sideways. It is lifted while the map has the screen: a clip
+   on an ancestor catches a fixed descendant too, and the full-screen map
+   came out shifted and short of the left edge. Nothing is animating in
+   here at that moment anyway. */
+body:not(.map-full) .over{overflow-x:clip}
 
 @media (max-width:760px){
   /* the floating contact buttons sit in the bottom corner on the reading
@@ -816,7 +827,8 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    the sides were being cut. At the picture's own ratio there is no
    difference to take, at any width. */
 .shopfront{--sf:0;position:relative;margin-block:0;
-  margin-inline:calc((100% - var(--plate-w)) / 2 * var(--sf));
+  margin-inline:calc((100% - var(--plate-open)) / 2 * (1 - var(--sf))
+                   + (100% - var(--plate-w)) / 2 * var(--sf));
   aspect-ratio:2400 / 1182;overflow:hidden;background:var(--vind-20)}
 @media (prefers-reduced-motion:reduce){ .shopfront{--sf:1} }
 /* The studio photograph itself does not drift — only its frame closes on
@@ -1303,7 +1315,7 @@ td.go svg{width:17px;height:11px}
    frame simply runs flatter than it was drawn when it has to. */
 .mapdraw{--sf:0;aspect-ratio:auto;
   height:min(calc(var(--plate-w) * 1080 / 1738),95vh);
-  margin-inline:calc((100% - var(--vw,100vw)) / 2 * (1 - var(--sf))
+  margin-inline:calc((100% - var(--plate-open)) / 2 * (1 - var(--sf))
                    + (100% - var(--plate-w)) / 2 * var(--sf))}
 @media (prefers-reduced-motion:reduce){ .mapdraw{--sf:1} }
 
@@ -1312,8 +1324,13 @@ td.go svg{width:17px;height:11px}
    ratio has to go with it, or the map would keep the letterbox it was
    drawn into and leave bands top and bottom.
    --------------------------------------------------------------------- */
+/* The margins that close the plate onto the page's container have to be
+   given up here, or they go on offsetting a box that is meant to be the
+   screen: fixed with inset:0 and a margin still on it came out eighty-odd
+   pixels to one side, with a strip of the page showing past the other. */
 .mapbox.full{position:fixed;inset:0;z-index:200;aspect-ratio:auto;
-  width:100vw;height:100dvh;max-width:none;justify-content:center}
+  width:100vw;height:100dvh;max-width:none;justify-content:center;
+  margin-inline:0}
 /* The stage keeps its own ratio — the pins are placed as percentages of
    it and calibrated to the raster, so stretching it would move every
    one of them off its real position. It is scaled until it covers
