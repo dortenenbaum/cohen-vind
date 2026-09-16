@@ -917,14 +917,16 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
 .cslide h3{margin:0}
 .cslide .place{font-weight:300;font-size:var(--t-display);line-height:1.2;letter-spacing:-.46px;color:var(--vind-80)}
 
-/* careers runs as an ambient ticker — full-bleed, no controls, nothing clickable */
-.ticker{overflow:hidden;margin-inline:calc(50% - var(--vw,100vw) / 2);pointer-events:none;direction:ltr}
-.ticker-track{display:flex;gap:30px;width:max-content;animation:tick 56s linear infinite}
-/* an endless marquee off the bottom of the page still costs a frame
-   every frame; it only runs while it is on screen */
-.ticker.idle .ticker-track{animation-play-state:paused}
-@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@media (prefers-reduced-motion:reduce){.ticker-track{animation:none}}
+/* The careers rail drifts on its own and can be taken hold of, the way
+   the reference's gallery does: the position is written frame by frame
+   rather than run off a keyframe, so a hand on it interrupts the drift
+   instead of fighting it, and letting go carries the throw before the
+   drift picks up again. Full-bleed, and nothing in it is clickable. */
+.ticker{overflow:hidden;margin-inline:calc(50% - var(--vw,100vw) / 2);direction:ltr;
+  cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.ticker.dragging{cursor:grabbing}
+.ticker-track{display:flex;gap:30px;width:max-content;will-change:transform}
+@media (prefers-reduced-motion:reduce){.ticker{cursor:default}}
 .ticker .cslide{direction:rtl;margin:0}
 .cslide.career{width:calc(var(--cw) * .46897)}
 .cslide.career .shot{height:calc(var(--cw) * .31264)}
@@ -3324,16 +3326,100 @@ function render(reveal=true){
    --------------------------------------------------------------------- */
 const RULE_SEL='.prow,.pxrow,.values,.vcell-art,.cv-top,.cv-block,.cv-row,.jobrow,.ft-cells';
 let ruleIO=null;
-/* the marquee rests unless it is on screen */
-let tickIO=null;
+/* ---------- the drifting rail ----------------------------------------
+   The list is doubled in the markup, so half the track is one full pass:
+   the offset is kept inside that half and the seam never shows. Drift is
+   a constant creep; a drag replaces it outright and the speed of the
+   release is carried on and allowed to die away into the creep again.
+
+   It runs only while it is on screen — an endless translate off the foot
+   of the page still costs a frame every frame.
+   --------------------------------------------------------------------- */
+const TICK_SPEED=30;            /* px a second, the reference's own rate */
+let tickIO=null, tickRAF=0, tickRail=[], tickLast=0;
+
+function tickFrame(now){
+  tickRAF=0;
+  const dt=Math.min(0.05,(now-tickLast)/1000||0);   /* a tab that slept does not lurch */
+  tickLast=now;
+  let live=false;
+  for(const r of tickRail){
+    if(!r.vis) continue;
+    live=true;
+    if(!r.half){ r.half=r.track.scrollWidth/2; if(!r.half) continue; }
+    if(!r.drag){
+      r.x -= (TICK_SPEED + r.vel) * dt;
+      r.vel *= Math.pow(0.0015,dt);                 /* the throw dies away */
+      if(Math.abs(r.vel)<0.5) r.vel=0;
+    }
+    /* keep the offset inside one pass, in either direction */
+    while(r.x <= -r.half) r.x += r.half;
+    while(r.x > 0)        r.x -= r.half;
+    r.track.style.transform=`translate3d(${r.x.toFixed(2)}px,0,0)`;
+  }
+  if(live) tickRAF=requestAnimationFrame(tickFrame);
+}
+const tickStart=()=>{ if(!tickRAF){ tickLast=performance.now(); tickRAF=requestAnimationFrame(tickFrame); } };
+
 function wireTicker(){
-  tickIO?.disconnect();
-  const t=document.querySelector('.ticker');
-  if(!t) return;
-  t.classList.add('idle');
-  tickIO=new IntersectionObserver(es=>es.forEach(e=>
-    e.target.classList.toggle('idle',!e.isIntersecting)),{rootMargin:'200px 0px'});
-  tickIO.observe(t);
+  tickIO?.disconnect(); tickIO=null;
+  cancelAnimationFrame(tickRAF); tickRAF=0;
+  tickRail=[];
+  const rails=[...document.querySelectorAll('.ticker')];
+  if(!rails.length) return;
+
+  for(const el of rails){
+    const track=el.querySelector('.ticker-track');
+    if(!track) continue;
+    const r={el,track,x:0,half:0,vel:0,vis:false,drag:null};
+    tickRail.push(r);
+
+    /* the half is only knowable once the pictures have their size */
+    const measure=()=>{ r.half=track.scrollWidth/2; };
+    measure();
+    track.querySelectorAll('img').forEach(im=>{
+      if(!im.complete) im.addEventListener('load',measure,{once:true});
+    });
+    addEventListener('resize',measure,{passive:true});
+
+    if(REDUCED) continue;
+
+    el.addEventListener('pointerdown',e=>{
+      if(e.button) return;
+      r.drag={id:e.pointerId,x:e.clientX,from:r.x,t:performance.now(),lx:e.clientX};
+      r.vel=0;
+      el.classList.add('dragging');
+      el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener('pointermove',e=>{
+      if(!r.drag || e.pointerId!==r.drag.id) return;
+      r.x=r.drag.from + (e.clientX - r.drag.x);
+      const now=performance.now(), dt=now-r.drag.t;
+      if(dt>8){                                   /* px a second, for the throw */
+        r.vel=-(e.clientX - r.drag.lx)/dt*1000;
+        r.drag.t=now; r.drag.lx=e.clientX;
+      }
+      tickStart();
+    });
+    const release=e=>{
+      if(!r.drag || (e.pointerId!==undefined && e.pointerId!==r.drag.id)) return;
+      r.drag=null;
+      el.classList.remove('dragging');
+      r.vel=Math.max(-1800,Math.min(1800,r.vel));   /* a throw, not a launch */
+      tickStart();
+    };
+    el.addEventListener('pointerup',release);
+    el.addEventListener('pointercancel',release);
+  }
+
+  tickIO=new IntersectionObserver(es=>{
+    for(const e of es){
+      const r=tickRail.find(x=>x.el===e.target);
+      if(r) r.vis=e.isIntersecting;
+    }
+    if(tickRail.some(r=>r.vis)) tickStart();
+  },{rootMargin:'200px 0px'});
+  tickRail.forEach(r=>tickIO.observe(r.el));
 }
 
 /* The footer and the header outlive every render, so their bars are built
