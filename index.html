@@ -953,6 +953,13 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
 .shot-marks .ico,.opener-txt .ico{background:var(--marker-tint);border:1px solid var(--marker);color:var(--marker)}
 .opener-txt .ico{font-size:calc(26px * .56)}
 .crsl .shot{aspect-ratio:847/466}
+/* On a large screen the plate stands taller. The card's width is capped,
+   so height is the only room left — and it costs nothing: every project
+   image here is taller than 847/466 (they run 1.28 to 1.79 against the
+   frame's 1.82), so a taller frame shows more of each rather than
+   cropping it further. */
+@media (min-width:1281px){ .crsl .shot{aspect-ratio:847/546} }
+@media (min-width:1700px){ .crsl .shot{aspect-ratio:847/580} }
 .crsl .cslide .shot>img{will-change:transform}
 /* Only the transform moves. A filter on the picture has to re-raster the
    whole image on every frame, which is what made the first pass stutter,
