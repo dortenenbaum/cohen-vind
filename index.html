@@ -95,6 +95,11 @@
   /* the tracking the large setting reads at — a fixed measure, not a
      ratio, so it stays the same however the size moves */
   --lede-ls:.375px;
+  /* the leading of the large setting. Four rules read it — the paragraph,
+     the wrapper whose line box the label centres itself in, the label's
+     own offset, and the footer's claim — and they have to agree or the
+     label walks off the first line. */
+  --lede-lh:1.14;
   /* the narrower measure the large setting keeps, as a length rather than
      a percentage — the plates that close on it sit in other containers */
   --lede-w:calc(var(--cw) * .8);
@@ -541,7 +546,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   width:var(--lede-lab);margin:0;overflow-wrap:break-word;
   font-size:var(--t-micro);font-weight:400;letter-spacing:.06em;color:var(--walnut);
   line-height:1.35;
-  padding-top:calc((var(--t-hero) * 1.08 - var(--t-micro) * 1.35) / 2)}
+  padding-top:calc((var(--t-hero) * var(--lede-lh) - var(--t-micro) * 1.35) / 2)}
 /* a length, not a ratio: a unitless line-height inherits as the number, so
    the 13px label was building a 14px line box instead of the paragraph's */
 /* The large setting keeps a narrower measure than the rest of the page
@@ -549,9 +554,9 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    inside it is not: the type stays ranged to the reading edge, and the
    label in the margin travels in with the block it belongs to. */
 .lede-in{width:var(--lede-w);margin-inline:auto;
-  font-size:var(--t-hero);line-height:calc(var(--t-hero) * 1.08)}
+  font-size:var(--t-hero);line-height:calc(var(--t-hero) * var(--lede-lh))}
 .lede-body{margin:0;font-weight:300;font-size:var(--t-hero);
-  line-height:calc(var(--t-hero) * 1.08);
+  line-height:calc(var(--t-hero) * var(--lede-lh));
   letter-spacing:var(--lede-ls);color:var(--vind-text)}
 /* only the opening claim hangs a label, so only it clears one */
 .lede .lede-body{font-size:inherit;line-height:inherit;
@@ -1411,7 +1416,7 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 /* the break is written into the copy, so the measure does not need to
    guess one: a 20ch cap was folding the first sentence in half again */
 .ft-say{margin:0 0 clamp(22px,2.8vw,44px);max-width:none;font-weight:300;
-  font-size:var(--t-hero);line-height:calc(var(--t-hero) * 1.08);letter-spacing:var(--lede-ls)}
+  font-size:var(--t-hero);line-height:calc(var(--t-hero) * var(--lede-lh));letter-spacing:var(--lede-ls)}
 
 .ft-cells{display:flex;flex-wrap:wrap;
   border-block:1px solid currentColor}
@@ -4222,17 +4227,25 @@ function wireCarousels(){
        it. Nothing in the rail is draggable in that sense. */
     track.addEventListener('dragstart',e=>e.preventDefault());
 
-    let down=false,x0=0,tx0=0,i0=0,moved=0;
+    let down=false,x0=0,tx0=0,i0=0,moved=0,held=false;
     win.addEventListener('pointerdown',e=>{
       if(e.target.closest('.cbtn')) return;
       cancelAnimationFrame(anim); anim=0;
-      down=true; moved=0; x0=e.clientX; tx0=tx; i0=i;
-      track.classList.add('dragging');
-      try{ win.setPointerCapture(e.pointerId) }catch(err){}
+      down=true; moved=0; held=false; x0=e.clientX; tx0=tx; i0=i;
     });
+    /* The rail only takes hold of the pointer once it is really being
+       dragged. Capturing it on the press retargets the click to the
+       window, and since the window is the rail's parent the click then
+       passed through neither the card nor the rail: a tap on a neighbour
+       reached nothing at all, and the card sat where it was. */
     win.addEventListener('pointermove',e=>{
       if(!down) return;
-      const d=e.clientX-x0; moved=Math.max(moved,Math.abs(d)); put(tx0+d);
+      const d=e.clientX-x0; moved=Math.max(moved,Math.abs(d));
+      if(!held && moved>4){
+        held=true; track.classList.add('dragging');
+        try{ win.setPointerCapture(e.pointerId) }catch(err){}
+      }
+      if(held) put(tx0+d);
     });
     /* the gesture settles one card along, never wherever the finger
        happened to stop; under a seventh of a card it is a tap that
@@ -4240,6 +4253,7 @@ function wireCarousels(){
     const release=()=>{
       if(!down) return;
       down=false; track.classList.remove('dragging');
+      if(!held) return;                 /* a tap: the click handler has it */
       const cs=cards(); if(!cs.length){ return }
       const probe = cs[i0+1] ? i0+1 : i0-1;
       const one = centre(probe)-centre(i0);
@@ -4250,6 +4264,8 @@ function wireCarousels(){
     };
     win.addEventListener('pointerup',release);
     win.addEventListener('pointercancel',release);
+    /* a drag let go outside the rail still settles */
+    addEventListener('pointerup',release);
     win.addEventListener('click',e=>{ if(moved>6){e.preventDefault();e.stopPropagation();} },true);
   });
 }
