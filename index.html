@@ -10,6 +10,16 @@
    paddings, gaps and the colour variables of the Vind library.
    ============================================================ */
 
+/* ---- the face ------------------------------------------------------
+   Narkiss Block — Zvi Narkiss's 1957 design in the 2019 Fontef release by
+   Yanek Iontef and Daniel Grumer. Three cuts, Light, Regular and Bold,
+   which is exactly the three weights this site sets.
+
+   No Narkiss file is served from here: it is licensed and not ours to
+   ship, so the site asks for it by name and falls back to SimplerPro,
+   which is. Point --face at a self-hosted @font-face when a webfont
+   licence is in hand and the whole site follows from this one line.
+   -------------------------------------------------------------------- */
 @font-face{font-family:"SimplerPro_V3";src:url("assets/fonts/SimplerPro_V3-Light.otf") format("opentype");font-weight:300;font-style:normal;font-display:swap}
 @font-face{font-family:"SimplerPro_V3";src:url("assets/fonts/SimplerPro_V3-Regular.otf") format("opentype");font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:"SimplerPro_V3";src:url("assets/fonts/SimplerPro_V3-Bold.otf") format("opentype");font-weight:700;font-style:normal;font-display:swap}
@@ -93,7 +103,7 @@
 html{scroll-behavior:smooth}
 body{
   margin:0;direction:rtl;background:var(--ground);color:var(--vind-text);
-  font-family:"SimplerPro_V3","Assistant","Arial Hebrew",system-ui,sans-serif;
+  font-family:var(--face);
   font-weight:400;font-size:var(--t-body);line-height:1.4;letter-spacing:.54px;
   -webkit-font-smoothing:antialiased;
 }
@@ -481,7 +491,9 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    pays for the space between — otherwise the two paddings add up and the
    break reads twice as wide as the one before it.
    -------------------------------------------------------------------- */
-:root{--lede-lab:clamp(96px,10vw,180px);
+:root{
+  --face:"Narkiss Block","SimplerPro_V3","Assistant","Arial Hebrew",system-ui,sans-serif;
+  --lede-lab:clamp(96px,10vw,180px);
   --gap-sec:clamp(80px,11vh,172px);     /* between one section and the next */
   --gap-tie:clamp(24px,3.4vh,48px);     /* between a label and what it names */
   --gap-wide:clamp(120px,16vh,250px);   /* where a break wants more air than the rest */
@@ -1248,7 +1260,7 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 @keyframes pinPop{from{opacity:0}to{opacity:1}}
 .pin .cpin{display:block;height:clamp(26px,calc(var(--cw) * .02474),43px);width:auto;
   filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
-.pin .cpin text{font-family:"SimplerPro_V3",sans-serif;font-weight:700;fill:#E55429}
+.pin .cpin text{font-family:var(--face);font-weight:700;fill:#E55429}
 .pin img{height:clamp(26px,calc(var(--cw) * .02474),43px);width:auto;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
 .pin:hover,.pin.sel{z-index:6;transform:translate(-50%,-100%) scale(calc(var(--pz,1) * 1.16))}
 .mapzoom{position:absolute;bottom:16px;right:16px;display:flex;gap:8px;z-index:8}
@@ -4338,8 +4350,8 @@ function mountGoogle(box){
         icon:{url:pinSrc(p),scaledSize:new google.maps.Size(33,43),anchor:new google.maps.Point(16,43)}});
       m.addListener('click',()=>{
         info.setContent(
-          `<div style="direction:rtl;text-align:right;font-family:SimplerPro_V3,sans-serif;max-width:270px;padding:2px 4px 6px">
-             <div style="font:300 21px/1.25 SimplerPro_V3,sans-serif;color:#242424;letter-spacing:.2px">${esc(p.title)}</div>
+          `<div style="direction:rtl;text-align:right;font-family:var(--face);max-width:270px;padding:2px 4px 6px">
+             <div style="font:300 21px/1.25 var(--face);color:#242424;letter-spacing:.2px">${esc(p.title)}</div>
              <div style="font-size:15px;color:#6b6b6b;margin-top:2px">${esc(p.place)}</div>
              <div style="font-size:13px;color:#E55429;margin-top:8px">${PLAN[p.plan].label} · ${DOMAIN[p.domain].label} · ${SIZE[p.size].label}</div>
            </div>`);
