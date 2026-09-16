@@ -3537,13 +3537,22 @@ function drawUnder(el,instant){
     const h=sw+2;
     svg.style.setProperty('--sw',sw.toFixed(2)+'px');
     svg.style.left=(r.left-hb.left)+'px';
-    svg.style.top=(r.top-hb.top+r.height*0.90-h/2)+'px';
+    svg.style.top=(r.top-hb.top+r.height*0.96-h/2)+'px';
     svg.style.width=r.width+'px';
     svg.style.height=h+'px';
     svg.style.setProperty('--d',(k*0.16).toFixed(2)+'s');
     host.appendChild(svg);
     if(!instant) requestAnimationFrame(()=>requestAnimationFrame(()=>svg.classList.add('on')));
   });
+}
+
+/* Both passes wait out the 1s draw — replacing the strokes mid-travel
+   would snap them to full length in front of the reader. */
+function settleUnder(el){
+  const again=()=>{ if(el.isConnected) drawUnder(el,true); };
+  document.fonts?.ready?.then(()=>setTimeout(again,1400));
+  setTimeout(again,1400);
+  setTimeout(again,2800);
 }
 
 function wireAutoType(){
@@ -3554,7 +3563,7 @@ function wireAutoType(){
   const live=el.querySelector('.tp-live'), text=el.dataset.raw||'';
   if(!live||!text) return;
   autoEl=el;
-  if(REDUCED){ live.textContent=text; drawUnder(el,true); return; }
+  if(REDUCED){ live.textContent=text; drawUnder(el,true); settleUnder(el); return; }
   live.textContent='';
   const cps=Math.max(AUTO_MIN,text.length/AUTO_SECS);
   let n=0, acc=0, last=performance.now();
@@ -3567,6 +3576,11 @@ function wireAutoType(){
     if(n<text.length){ autoRAF=requestAnimationFrame(step); return; }
     autoRAF=0;
     drawUnder(el);
+    /* The rule is placed against where the words are at that instant. A
+       face that arrives late, or anything above still settling, moves
+       them afterwards and would leave the rule behind — so it is placed
+       again, already drawn, once the page has stopped moving. */
+    settleUnder(el);
   };
   autoRAF=requestAnimationFrame(step);
 }
