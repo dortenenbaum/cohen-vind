@@ -510,7 +510,10 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   --gap-sec:clamp(80px,11vh,172px);     /* between one section and the next */
   --gap-tie:clamp(24px,3.4vh,48px);     /* between a label and what it names */
   --gap-wide:clamp(120px,16vh,250px);   /* where a break wants more air than the rest */
-  --gap-lead:clamp(48px,6.5vh,96px)}    /* a large text down to the thing it introduces */
+  /* A large text stands the same distance from whatever follows it,
+     whether that is a photograph, a map or a rail — it had been holding
+     the map and the careers rail closer than it holds the studio plate. */
+  --gap-lead:var(--gap-sec)}
 .lede{padding-block:var(--gap-sec)}
 /* A lede that runs straight into the thing it introduces holds it close —
    but not as close as a 13px label holds its own content: a paragraph set
@@ -740,7 +743,10 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
   .opener-film{transform:scale(1.07)!important}
 }
 .sec{padding-block:var(--gap-sec)}
-.sec-head{display:grid;justify-items:start;gap:18px;margin-bottom:var(--gap-tie)}
+/* the head ranges to the same edge the large setting does, so the title
+   above a rail lines up with the paragraph above the plate */
+.sec-head{display:grid;justify-items:start;gap:18px;margin-bottom:var(--gap-tie);
+  width:var(--lede-w);margin-inline:auto}
 .sec-head.mid{justify-items:center;text-align:center}
 /* the carousel and the map are one section: a second head inside it,
    and a single way out at the end of both */
@@ -900,7 +906,7 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    the screen's height, not its width: the picture is 1.82 times as wide as
    it is tall, so 112vh is what keeps it from standing taller than the
    window on a short one. */
-.crsl{--csl-gap:30px;--csl-w:min(84vw,1120px,112vh)}
+.crsl{--csl-gap:30px;--csl-w:min(84vw,1160px,132vh)}
 /* The rail runs to both edges of the window at every width, the way the
    reference does. Negating the gutter was not enough: .wrap caps at
    --maxw and centres, so a wide screen still left the auto margin on
@@ -1000,8 +1006,8 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
 .ticker-track{display:flex;gap:30px;width:max-content;will-change:transform}
 @media (prefers-reduced-motion:reduce){.ticker{cursor:default}}
 .ticker .cslide{direction:rtl;margin:0}
-.cslide.career{width:calc(var(--cw) * .46897)}
-.cslide.career .shot{height:calc(var(--cw) * .31264)}
+.cslide.career{width:calc(var(--cw) * .56)}
+.cslide.career .shot{height:calc(var(--cw) * .373)}
 .cslide.career figcaption{margin-top:14px;color:var(--vind-80)}
 
 /* ---------- attribute rows (label + 25.6px avatar) ---------- */
@@ -1397,7 +1403,9 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 .ft a{color:inherit;text-decoration:none}
 /* the closing claim is one of the page's large texts, so it is set at the
    size the ledes are — it breaks on its own line rather than on a measure */
-.ft-say{margin:0 0 clamp(22px,2.8vw,44px);max-width:20ch;font-weight:300;
+/* the break is written into the copy, so the measure does not need to
+   guess one: a 20ch cap was folding the first sentence in half again */
+.ft-say{margin:0 0 clamp(22px,2.8vw,44px);max-width:none;font-weight:300;
   font-size:var(--t-hero);line-height:calc(var(--t-hero) * 1.08);letter-spacing:var(--lede-ls)}
 
 .ft-cells{display:flex;flex-wrap:wrap;
