@@ -108,6 +108,12 @@
      It stops at 1200 however wide the window gets, which is also what
      keeps the rail modest: a plate at this measure is 1200 by 774. */
   --lede-w:min(calc(var(--cw) * .8),1200px);
+  /* The plates keep a measure of their own. They had been closing on the
+     one above, which is right for the rail — a picture in a rail is read
+     beside the paragraph — but a photograph and a map are plates, and the
+     1200 that keeps the rail modest left them small on a wide screen.
+     Four fifths of the column, and no ceiling. */
+  --plate-w:calc(var(--cw) * .8);
   /* Fixed, like the large setting above it: it holds at 35px from a
      laptop upward and steps down below that, rather than growing with the
      window. (The steps are in the block under this one.) */
@@ -803,7 +809,7 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    the sides were being cut. At the picture's own ratio there is no
    difference to take, at any width. */
 .shopfront{--sf:0;position:relative;margin-block:0;
-  margin-inline:calc((100% - var(--lede-w)) / 2 * var(--sf));
+  margin-inline:calc((100% - var(--plate-w)) / 2 * var(--sf));
   aspect-ratio:2400 / 1182;overflow:hidden;background:var(--vind-20)}
 @media (prefers-reduced-motion:reduce){ .shopfront{--sf:1} }
 /* The studio photograph itself does not drift — only its frame closes on
@@ -1280,9 +1286,9 @@ td.go svg{width:17px;height:11px}
    end on one line down each side. The height is still pinned to where the
    frame settles rather than left to the ratio — a frame that grew taller
    as it widened would move everything below it on every scroll frame. */
-.mapdraw{--sf:0;aspect-ratio:auto;height:calc(var(--lede-w) * 1080 / 1738);
+.mapdraw{--sf:0;aspect-ratio:auto;height:calc(var(--plate-w) * 1080 / 1738);
   margin-inline:calc((100% - var(--vw,100vw)) / 2 * (1 - var(--sf))
-                   + (100% - var(--lede-w)) / 2 * var(--sf))}
+                   + (100% - var(--plate-w)) / 2 * var(--sf))}
 @media (prefers-reduced-motion:reduce){ .mapdraw{--sf:1} }
 
 /* ---- the map, full screen ------------------------------------------
