@@ -98,7 +98,9 @@
   /* the narrower measure the large setting keeps, as a length rather than
      a percentage — the plates that close on it sit in other containers */
   --lede-w:calc(var(--cw) * .8);
-  --t-display:clamp(27px,2.3958vw,58px);   /* 46 / 1.2 / -0.46 / Light  */
+  /* four pixels off the whole ramp — taken from the fluid middle and from
+     both ends, so it is the same four at every width */
+  --t-display:clamp(23px,calc(2.3958vw - 4px),54px);  /* 46 / 1.2 / -0.46 / Light */
   --t-title:clamp(22px,1.9271vw,46px);     /* 37 / 1.2 /  0.74 / Light  */
   --t-ui:clamp(15px,1.0417vw,25px);        /* 20 / norm /  0.40 / Reg   */
   --t-body:clamp(14px,0.9375vw,22px);      /* 18 / 1.4  /  0.54 / Reg   */
