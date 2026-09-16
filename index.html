@@ -964,7 +964,7 @@ body:not(.map-full) .over{overflow-x:clip}
 .crsl{--csl-gap:30px;
   --csl-meta:calc(var(--t-display) * 2.4 + 18px);
   --csl-ratio:1.95;
-  --csl-cap:92vh;
+  --csl-cap:calc(var(--vh,100vh) * .92);
   --csl-h:min(calc(var(--lede-w) / var(--csl-ratio)),calc(var(--csl-cap) - var(--csl-meta)));
   --csl-w:min(calc(var(--csl-h) * var(--csl-ratio) + 76px),92vw)}
 
@@ -1068,7 +1068,7 @@ body:not(.map-full) .over{overflow-x:clip}
    chrome as well as the line: measured, the two together were putting the
    marquee at 61 and 64 per cent where the arithmetic said 60. */
 .cslide.career{--car-cap:calc(var(--t-body) * 1.6 + 26px);
-  --car-h:min(calc(var(--cw) * .373),calc(58vh - var(--car-cap)));
+  --car-h:min(calc(var(--cw) * .373),calc(var(--vh,100vh) * .58 - var(--car-cap)));
   width:calc(var(--car-h) / .666)}
 .cslide.career .shot{height:var(--car-h)}
 .cslide.career figcaption{margin-top:14px;color:var(--vind-80)}
@@ -1172,6 +1172,13 @@ img.icoimg.big{width:var(--ico-sz-lg);height:var(--ico-sz-lg)}
   display:flex;flex-wrap:wrap;gap:var(--rowgap) var(--gap);align-items:flex-start;
   margin-top:clamp(40px,6vh,64px)}
 .view-map{margin-top:clamp(40px,6vh,64px)}
+/* The map on the projects page is given the same two rules as the one at
+   home: the page's container decides its width, and its height stops at
+   95% of the screen. Drawn to its ratio it comes out 915 tall against an
+   889 screen — taller than the screen it is meant to be read on — so the
+   ratio is what gives, and the frame runs flatter when it has to. */
+.view-map .mapbox{aspect-ratio:auto;
+  height:min(calc(var(--cw) * 1080 / 1738),calc(var(--vh,100vh) * .95))}
 .card{display:block;min-width:0;
   flex:var(--ar,1.6) 1 calc(var(--ar,1.6) * var(--gh))}
 .card .shot{overflow:hidden;background:var(--vind-20);aspect-ratio:var(--ar,1.6)}
@@ -1314,7 +1321,7 @@ td.go svg{width:17px;height:11px}
    proportion instead: the height stops at 95% of the screen, and the
    frame simply runs flatter than it was drawn when it has to. */
 .mapdraw{--sf:0;aspect-ratio:auto;
-  height:min(calc(var(--plate-w) * 1080 / 1738),95vh);
+  height:min(calc(var(--plate-w) * 1080 / 1738),calc(var(--vh,100vh) * .95));
   margin-inline:calc((100% - var(--plate-open)) / 2 * (1 - var(--sf))
                    + (100% - var(--plate-w)) / 2 * var(--sf))}
 @media (prefers-reduced-motion:reduce){ .mapdraw{--sf:1} }
@@ -4697,8 +4704,15 @@ runVeil().then(liftVeil);
 
 /* the window's own width, without the scrollbar — 100vw counts it, and
    a rail measured with vw would overflow by that much on every page */
-const setVW=()=>document.documentElement.style.setProperty('--vw',
-  document.documentElement.clientWidth+'px');
+const setVW=()=>{
+  const r=document.documentElement.style;
+  r.setProperty('--vw',document.documentElement.clientWidth+'px');
+  /* and the height. 100vh is the large viewport — it ignores a phone's
+     address bar, and in an embedded pane it can be half a hundred pixels
+     off what the page actually has. A cap written against it lets through
+     what it was meant to catch. */
+  r.setProperty('--vh',innerHeight+'px');
+};
 setVW();
 addEventListener('resize',setVW,{passive:true});
 
