@@ -387,8 +387,11 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    start on them. Five paragraphs all beginning at the same edge read as a
    list however large the type is; staggered, the page has a rhythm you
    follow rather than a column you scan. --c1 is the start, --cn the span. */
-.prins{display:grid;grid-template-columns:repeat(12,1fr);
-  column-gap:clamp(12px,1.4vw,28px);row-gap:0;
+/* One measure down the page. The principles had sat in a twelve-column
+   grid at differing spans and offsets; they take the claim's measure now,
+   so every paragraph on the page is the same width and starts on the same
+   line. */
+.prins{display:block;
   padding-block:clamp(40px,7vh,110px) clamp(80px,11vh,180px)}
 /* A screen each. The point is centred in its own viewport height, so the
    one before it and the one after are a full screen away and neither is on
@@ -400,8 +403,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    Done with a class rather than a scroll-driven animation because this
    page drives its own inertial scroll; anything reading scroll position
    per frame would be fighting that loop for the same pixels. */
-.prin{grid-column:var(--c1) / span var(--cn);
-  min-height:100svh;display:grid;align-content:center;
+.prin{min-height:100svh;display:grid;align-content:center;
   padding-block:clamp(40px,7vh,90px);
   opacity:.16;transition:opacity .55s var(--ease)}
 .prin.on{opacity:1}
@@ -418,22 +420,16 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .prin .lede-body::before{margin-inline-end:.08em}
 .prin .lede-body::after{margin-inline-start:.06em}
 
-/* The claim hangs its title in the margin; a principle would have had to
-   hang four lines of one, and five of those turned the margin into a second
-   column. It takes the accent instead, above the text and on one line —
-   a different mark for a different job, and the only orange on the page. */
-/* These carry the argument, so they are sized like headings rather than
-   like labels — --t-title against the claim's --t-hero, which is a clear
-   step down without becoming a caption. */
-.prin-label{margin:0 0 clamp(20px,2.4vw,44px);
-  font-size:var(--t-title);font-weight:300;letter-spacing:-.01em;line-height:1.16;
-  color:var(--accent);max-width:22ch}
+/* A principle names itself the way the claim does: a small label hanging
+   in the margin, with the paragraph indented past it. It had been set in
+   the accent above the text instead — a different mark for a different
+   job — but one lockup down the page reads as one argument. */
 
 @media (max-width:900px){ .prin{min-height:0;opacity:1} }
 @media (prefers-reduced-motion:reduce){ .prin{opacity:1;transition:none} }
 
 /* the way in to the examples: the same plus the page already uses */
-.prin-more{display:inline-flex;align-items:center;gap:14px;justify-self:start;
+.prin-more{display:inline-flex;align-items:center;gap:14px;
   margin-top:clamp(26px,3.2vw,56px);padding:0;border:0;background:none;cursor:pointer;
   font-family:inherit;font-size:var(--t-micro);color:var(--walnut);
   transition:color .25s var(--ease)}
@@ -592,8 +588,9 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   /* the browser's own orphan control: it will pull a word back from the
      line above rather than leave one alone at the end */
   text-wrap:pretty}
-/* only the opening claim hangs a label, so only it clears one */
-.lede .lede-body{font-size:inherit;line-height:inherit;
+/* anything that hangs a label in the margin clears one — the opening
+   claim and, now, each principle */
+.lede-in > .lede-body{font-size:inherit;line-height:inherit;
   text-indent:calc(var(--lede-lab) + clamp(24px,2.4vw,56px))}
 
 a.lede-label,a.sec-label{text-decoration:none;color:var(--walnut);
@@ -2723,7 +2720,6 @@ const PRIN_CASE = [
    span different, and none of them twelve: at full width the first point
    was the same shape as the claim above it, which read as one paragraph
    that had simply carried on. */
-const PRIN_COL = [[2,10],[1,8],[2,11],[4,9],[6,7]];
 
 /* Two example projects per principle, and a different pair each time —
    all five drawers used to open on the same three, which said the same
@@ -2749,10 +2745,12 @@ function visionHTML(){
   </section>
 
   <section class="wrap prins">
-    ${PRINCIPLES.map(([t,k,b],i)=>`<article class="prin rv" style="--c1:${PRIN_COL[i][0]};--cn:${PRIN_COL[i][1]}">
-      <h2 class="prin-label">${esc(t)}</h2>
-      <p class="lede-body">${k?`<span class="pkick">${esc(k)} </span>`:''}${esc(b)}</p>
-      <button class="prin-more" data-gal="${i}" type="button"><span class="pm"></span><span>פרויקטים לדוגמא</span></button>
+    ${PRINCIPLES.map(([t,k,b],i)=>`<article class="prin rv">
+      <div class="lede-in">
+        <h2 class="lede-label">${esc(t)}</h2>
+        <p class="lede-body">${k?`<span class="pkick">${esc(k)} </span>`:''}${esc(b)}</p>
+        <button class="prin-more" data-gal="${i}" type="button"><span class="pm"></span><span>פרויקטים לדוגמא</span></button>
+      </div>
     </article>`).join('')}
   </section>
 
