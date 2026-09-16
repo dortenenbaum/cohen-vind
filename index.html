@@ -307,8 +307,8 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    gets a stroke on each.
    -------------------------------------------------------------------- */
 svg.uline{position:absolute;overflow:visible;pointer-events:none;z-index:1}
-svg.uline path{fill:none;stroke:var(--accent);stroke-width:2.4;stroke-linecap:round;
-  stroke-linejoin:round;vector-effect:non-scaling-stroke;
+svg.uline path{fill:none;stroke:var(--accent);stroke-width:var(--sw,4px);stroke-linecap:butt;
+  vector-effect:non-scaling-stroke;
   stroke-dasharray:1;stroke-dashoffset:1}
 svg.uline.on path{stroke-dashoffset:0;
   transition:stroke-dashoffset 1s cubic-bezier(.22,.61,.36,1) var(--d,0s)}
@@ -3525,12 +3525,19 @@ function drawUnder(el,instant){
     svg.setAttribute('preserveAspectRatio','none');
     svg.setAttribute('aria-hidden','true');
     svg.setAttribute('class','uline'+(instant?' set':''));
-    /* drawn from the reading edge: the path starts at x=297 and runs out
-       to x=3, with enough wander in it to read as a hand and not a rule */
-    svg.innerHTML='<path pathLength="1" d="M297 4.8C247 8.4 191 9.6 140 8.4 97 7.4 48 6.2 3 8"/>';
-    const h=Math.max(7,Math.min(15,r.height*0.2));
+    /* Straight, and exactly as wide as the phrase: butt caps and a path
+       that runs the full box mean the rule starts and stops on the first
+       and last letter. It is drawn from the reading edge — the path
+       starts at x=300 and runs out to x=0.
+       The rule sits just under the baseline rather than under the line
+       box, which in Hebrew, with almost nothing below the baseline, would
+       leave it floating clear of the words. */
+    svg.innerHTML='<path pathLength="1" d="M300 6H0"/>';
+    const sw=Math.max(3,Math.min(7,r.height*0.085));
+    const h=sw+2;
+    svg.style.setProperty('--sw',sw.toFixed(2)+'px');
     svg.style.left=(r.left-hb.left)+'px';
-    svg.style.top=(r.bottom-hb.top+Math.max(2,r.height*0.04))+'px';
+    svg.style.top=(r.top-hb.top+r.height*0.90-h/2)+'px';
     svg.style.width=r.width+'px';
     svg.style.height=h+'px';
     svg.style.setProperty('--d',(k*0.16).toFixed(2)+'s');
