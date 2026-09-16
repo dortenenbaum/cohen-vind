@@ -95,6 +95,9 @@
   /* the tracking the large setting reads at — a fixed measure, not a
      ratio, so it stays the same however the size moves */
   --lede-ls:.375px;
+  /* the narrower measure the large setting keeps, as a length rather than
+     a percentage — the plates that close on it sit in other containers */
+  --lede-w:calc(var(--cw) * .8);
   --t-display:clamp(27px,2.3958vw,58px);   /* 46 / 1.2 / -0.46 / Light  */
   --t-title:clamp(22px,1.9271vw,46px);     /* 37 / 1.2 /  0.74 / Light  */
   --t-ui:clamp(15px,1.0417vw,25px);        /* 20 / norm /  0.40 / Reg   */
@@ -540,7 +543,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    and stands in the middle of it — the block is centred, the reading
    inside it is not: the type stays ranged to the reading edge, and the
    label in the margin travels in with the block it belongs to. */
-.lede-in{width:80%;margin-inline:auto;
+.lede-in{width:var(--lede-w);margin-inline:auto;
   font-size:var(--t-hero);line-height:calc(var(--t-hero) * 1.08)}
 .lede-body{margin:0;font-weight:300;font-size:var(--t-hero);
   line-height:calc(var(--t-hero) * 1.08);
@@ -764,7 +767,7 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    resolves cleanly. A block with auto width fills whatever the margins
    leave it, which is the same result by a road the engine likes. */
 .shopfront{--sf:0;position:relative;margin-block:0;
-  margin-inline:calc((100% - var(--cw)) / 2 * var(--sf));
+  margin-inline:calc((100% - var(--lede-w)) / 2 * var(--sf));
   height:clamp(300px,42vw,760px);overflow:hidden;background:var(--vind-20)}
 @media (prefers-reduced-motion:reduce){ .shopfront{--sf:1} }
 /* The studio photograph itself does not drift — only its frame closes on
@@ -1217,8 +1220,14 @@ td.go svg{width:17px;height:11px}
    Its height is pinned to where it settles rather than left to the ratio:
    a frame that grew taller as it widened would have moved everything below
    it on every scroll frame, and the page eases toward a number. */
-.mapdraw{--sf:0;aspect-ratio:auto;height:calc(var(--cw) * 1080 / 1738);
-  margin-inline:calc((100% - var(--vw,100vw)) / 2 * (1 - var(--sf)))}
+/* Both plates now settle on the large setting's measure rather than the
+   full column, so the picture, the map and the paragraph above them all
+   end on one line down each side. The height is still pinned to where the
+   frame settles rather than left to the ratio — a frame that grew taller
+   as it widened would move everything below it on every scroll frame. */
+.mapdraw{--sf:0;aspect-ratio:auto;height:calc(var(--lede-w) * 1080 / 1738);
+  margin-inline:calc((100% - var(--vw,100vw)) / 2 * (1 - var(--sf))
+                   + (100% - var(--lede-w)) / 2 * var(--sf))}
 @media (prefers-reduced-motion:reduce){ .mapdraw{--sf:1} }
 
 /* ---- the map, full screen ------------------------------------------
