@@ -112,8 +112,10 @@
      one above, which is right for the rail — a picture in a rail is read
      beside the paragraph — but a photograph and a map are plates, and the
      1200 that keeps the rail modest left them small on a wide screen.
-     Four fifths of the column, and no ceiling. */
-  --plate-w:calc(var(--cw) * .8);
+     Nine tenths of the window, measured off the document's own width
+     rather than 100vw, which counts the scrollbar and would push them
+     past the glass. */
+  --plate-w:calc(var(--vw,100vw) * .9);
   /* Fixed, like the large setting above it: it holds at 35px from a
      laptop upward and steps down below that, rather than growing with the
      window. (The steps are in the block under this one.) */
