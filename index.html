@@ -1519,6 +1519,14 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
   [data-typed]{position:relative}
   .tp-ghost{opacity:0}
   .tp-live{position:absolute;inset-inline-start:0;top:0;width:100%}
+  /* While a passage is being written it breaks its lines as it goes. The
+     orphan control rebalances the whole block on every character, so
+     lines already read would shuffle about under the reader — it comes
+     back on once the sentence has finished. The ghost has carried it the
+     whole time, so the box was always the finished text's height and
+     nothing moves when the live copy adopts it. */
+  .tp-live{text-wrap:auto}
+  .tp-live.done{text-wrap:pretty}
 
   .rv-pre .ln>i{transform:translateY(108%)}
   .rv-in  .ln>i{transform:translateY(0);
@@ -3628,7 +3636,7 @@ function wireAutoType(){
   splitType(el);                        /* the ghost holds the box open */
   const live=el.querySelector('.tp-live'), text=el.dataset.raw||'';
   if(!live||!text) return;
-  if(REDUCED){ live.textContent=text; markPhrase(el,true); return; }
+  if(REDUCED){ live.textContent=text; live.classList.add('done'); markPhrase(el,true); return; }
   live.textContent='';
   const cps=Math.max(AUTO_MIN,text.length/AUTO_SECS);
   let n=0, acc=0, last=performance.now();
@@ -3640,6 +3648,7 @@ function wireAutoType(){
     }
     if(n<text.length){ autoRAF=requestAnimationFrame(step); return; }
     autoRAF=0;
+    live.classList.add('done');       /* the orphan control comes back on */
     markPhrase(el);
   };
   autoRAF=requestAnimationFrame(step);
