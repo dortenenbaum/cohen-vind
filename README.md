@@ -37,8 +37,9 @@ assets/
 
 ## הערות טכניות
 
-- **פונט**: SimplerPro_V3 מוטמע מקומית. הלוגוטייפ בפיגמה הוא
-  Narkiss Block Bold — אין אצלנו, מוחלף ב-SimplerPro Bold.
+- **פונט**: האתר מבקש את **Narkiss Block** (Fontef, 2019 — עיצוב צבי
+  נרקיס, מהדורה דיגיטלית של ינק יונטף ודניאל גרומר), עם SimplerPro_V3
+  כגיבוי. ראו "הפונט במסירה" למטה.
 - **מפת גוגל**: בראש הסקריפט יש `GOOGLE_MAPS_KEY`. עם מפתח תקף
   ומארח שלא חוסם את `maps.googleapis.com`, סקשן המפה עובר למפת
   גוגל חיה. בלי מפתח הוא מציג תצריף מכויל עם גרירה וזום.
@@ -46,6 +47,39 @@ assets/
   טרנספורמציית מרקטור שהותאמה לתצריף.
 - **אנימציות**: חשיפת שורות במסכה וחשיפת תמונות בבלוק צבע,
   כולן מכובות תחת `prefers-reduced-motion`.
+
+## הפונט במסירה
+
+שורה אחת קובעת את הגופן של כל האתר — `--face` ב-`index.html`:
+
+```css
+--face:"Narkiss Block","SimplerPro_V3","Assistant","Arial Hebrew",system-ui,sans-serif;
+```
+
+**קבצי נרקיס אינם בריפו.** הגופן מסחרי ואינו שלנו להפצה, ולכן האתר מבקש
+אותו בשם: מי שיש לו את המשפחה מותקנת במערכת יראה אותה, וכל השאר יקבלו
+SimplerPro שכן מוטמע כאן.
+
+מכאן שתי דרכים בלבד שמישהו אחר יראה את הגופן:
+
+1. **הגופן מותקן אצלו.** בלי שום שינוי בקוד.
+2. **רישיון webfont מ-Fontef.** אז מוסיפים ל-`index.html`, ליד הצהרות
+   ה-@font-face של SimplerPro:
+
+   ```css
+   @font-face{font-family:"NarkissBlockWeb";src:url("assets/fonts/narkiss-light.woff2") format("woff2");font-weight:300;font-display:swap}
+   @font-face{font-family:"NarkissBlockWeb";src:url("assets/fonts/narkiss-regular.woff2") format("woff2");font-weight:400;font-display:swap}
+   @font-face{font-family:"NarkissBlockWeb";src:url("assets/fonts/narkiss-bold.woff2") format("woff2");font-weight:700;font-display:swap}
+   ```
+
+   ומקדימים את השם ב-`--face`. האתר משתמש בשלושה משקלים בלבד —
+   300 / 400 / 700 — ולשלושתם יש חתך משלהם במהדורה הזו.
+
+הערה שנמדדה ולא נוחשה: קיימות במחזור כמה משפחות בשם דומה. המהדורה של
+מאסטרפונט (`NarkisBlockMF`) מחזירה את **אותו רוחב בכל משקל** — בקשה
+ל-Light מחזירה חתך כבד והעמוד יוצא שמן. המהדורה של פונטף
+(`Narkiss Block`) מדרגת נכון: 394 / 399 / 419 ב-40px על Light /
+Regular / Bold. זו המהדורה שהאתר מבקש, ובכוונה.
 
 ## מה עוד לא נעשה
 
