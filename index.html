@@ -369,7 +369,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   background-repeat:no-repeat;
   background-position:right bottom;
   background-size:0 max(3px,.075em)}
-.umark.on{background-size:100% max(3px,.075em);
+.umark.on,.prin.on .umark{background-size:100% max(3px,.075em);
   transition:background-size 1s cubic-bezier(.22,.61,.36,1)}
 .umark.set{transition:none}
 
@@ -3498,7 +3498,7 @@ function render(reveal=true){
   renderMenu();
   wireMap(); wireCarousels(); wireFilm(); wireOpener(); wireIndexPreview(); wireParallax();
   wireHeroNotes(); wirePrinciples(); wireGallery();
-  wireRules(); wireTicker(); fitLabels(); wireAutoType();
+  wireRules(); wireTicker(); fitLabels(); markPrinciples(); wireAutoType();
   if(reveal) initReveal();
 }
 
@@ -3666,25 +3666,48 @@ function wireRules(){
 const AUTO_SECS=4;                       /* however long the passage, it says
                                             itself in about this many */
 const AUTO_MIN=52;                       /* characters a second, at least */
-const UNDER_PHRASE='להיטיב עם הסביבה הפיזית';
+/* the phrases the page turns on. Each is looked for once, in the block it
+   belongs to, and the one it is found in draws a rule under it. */
+const UNDER_PHRASES=['להיטיב עם הסביבה הפיזית',
+                     'באנשים שיחיו בו',
+                     'יחד איתו',
+                     'נהנים להתמודד עם מורכבות'];
 let autoRAF=0;
 
-function markPhrase(el,instant){
-  const live=el.querySelector('.tp-live')||el;
-  let span=live.querySelector('.umark');
-  if(!span){
-    const node=[...live.childNodes].find(n=>n.nodeType===3);
-    if(!node) return;
-    const i=(node.nodeValue||'').indexOf(UNDER_PHRASE);
-    if(i<0) return;
-    const rg=document.createRange();
-    rg.setStart(node,i); rg.setEnd(node,i+UNDER_PHRASE.length);
-    span=document.createElement('span');
-    span.className='umark';
-    rg.surroundContents(span);
+/* Wrap the first phrase this block contains, if any. The run is wrapped
+   rather than measured and overlaid, so the rule belongs to the words and
+   cannot drift from them. */
+function markIn(root){
+  if(root.querySelector('.umark')) return root.querySelector('.umark');
+  const walk=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  let node;
+  while((node=walk.nextNode())){
+    const t=node.nodeValue||'';
+    for(const ph of UNDER_PHRASES){
+      const i=t.indexOf(ph);
+      if(i<0) continue;
+      const rg=document.createRange();
+      rg.setStart(node,i); rg.setEnd(node,i+ph.length);
+      const span=document.createElement('span');
+      span.className='umark';
+      try{ rg.surroundContents(span); }catch(e){ return null; }
+      return span;
+    }
   }
+  return null;
+}
+
+function markPhrase(el,instant){
+  const span=markIn(el.querySelector('.tp-live')||el);
+  if(!span) return;
   if(instant){ span.classList.add('set','on'); return; }
   requestAnimationFrame(()=>requestAnimationFrame(()=>span.classList.add('on')));
+}
+
+/* The principles are not typed, so their rules are wrapped at render and
+   drawn by the class that already says which principle you are reading. */
+function markPrinciples(){
+  document.querySelectorAll('.prin .lede-body').forEach(markIn);
 }
 
 /* The indent under a hanging label is the label's own width, so it has to
