@@ -1245,7 +1245,11 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 .pinner>.rv-img{flex:none;width:100%}
 /* direction:ltr on the scroller puts the bar on the right of an RTL page;
    the inner wrapper flips the content back */
-.pscroll{height:100%;overflow-y:auto;overscroll-behavior:contain;direction:ltr;
+/* Setting one axis to auto makes the other compute to auto as well, so the
+   drawer could be dragged sideways by whatever stuck out — a marker's
+   tooltip, a rounding remainder. It is a column of text: there is nothing
+   to read off to the side, so the axis is closed outright. */
+.pscroll{height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;direction:ltr;
   scrollbar-width:thin;scrollbar-color:var(--vind-60) transparent}
 .pscroll::-webkit-scrollbar{width:6px}
 .pscroll::-webkit-scrollbar-track{background:transparent}
