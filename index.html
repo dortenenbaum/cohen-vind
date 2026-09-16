@@ -940,17 +940,23 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    the screen's height, not its width: the picture is 1.82 times as wide as
    it is tall, so 112vh is what keeps it from standing taller than the
    window on a short one. */
-/* The plate keeps one proportion, 1.55, and takes the large setting's
-   measure — that rule wins outright now rather than competing with the
-   screen's height. It can, because the measure stops at 1280: the plate
-   is 1280 by 826 at its largest. The 92vh left in the height is a floor
-   under a short window rather than a second rule — on one of those the
-   plate does come in, since a slide this tall no longer fits everywhere
-   the way an 800 one did. */
+/* The plate keeps one proportion, 1.55, and is the smaller of two things:
+   the large setting's measure, or the share of the screen a slide is
+   allowed. The height is settled first and the width read back from it,
+   so where the screen governs, the whole card is simply smaller rather
+   than wide and flattened. */
 .crsl{--csl-gap:30px;
   --csl-meta:calc(var(--t-display) * 2.4 + 18px);
-  --csl-h:min(calc(var(--lede-w) / 1.55),92vh);
+  --csl-cap:66vh;
+  --csl-h:min(calc(var(--lede-w) / 1.55),calc(var(--csl-cap) - var(--csl-meta)));
   --csl-w:min(calc(var(--csl-h) * 1.55 + 76px),92vw)}
+/* The bigger the screen, the smaller the share of it a slide takes. A
+   generous window does not want the rail filling it — it wants the rail
+   sitting in it with the page visible around it — while a laptop has
+   nothing to spare and needs most of what it has. */
+@media (max-width:1500px){ .crsl{--csl-cap:73vh} }
+@media (max-width:1280px){ .crsl{--csl-cap:80vh} }
+@media (max-width:1000px){ .crsl{--csl-cap:86vh} }
 /* The rail runs to both edges of the window at every width, the way the
    reference does. Negating the gutter was not enough: .wrap caps at
    --maxw and centres, so a wide screen still left the auto margin on
