@@ -414,11 +414,18 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    hold, with the leading closed to nothing so they never open a gap in the
    line — a quotation mark that changes the line height stops being
    punctuation and becomes a character. */
+/* The claim is spoken too, so it takes the marks as well — but only once
+   it has finished writing itself: a closing mark standing at the end of a
+   sentence that has not been said yet is a mark with nothing to close. */
 .prin .lede-body::before,
-.prin .lede-body::after{content:"\05F4";color:var(--accent);
+.prin .lede-body::after,
+[data-autotype] .tp-live.done::before,
+[data-autotype] .tp-live.done::after{content:"\05F4";color:var(--accent);
   font-size:.8em;line-height:0;vertical-align:.06em}
-.prin .lede-body::before{margin-inline-end:.08em}
-.prin .lede-body::after{margin-inline-start:.06em}
+.prin .lede-body::before,
+[data-autotype] .tp-live.done::before{margin-inline-end:.22em}
+.prin .lede-body::after,
+[data-autotype] .tp-live.done::after{margin-inline-start:.16em}
 
 /* A principle names itself the way the claim does: a small label hanging
    in the margin, with the paragraph indented past it. It had been set in
@@ -569,8 +576,12 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
    its own leading now and is pushed down by half the difference, so its
    FIRST line still centres on the paragraph's first line however many lines
    follow it. */
+/* The label states itself on one line, and the paragraph starts just past
+   where it ends: the indent is the label's own width, measured, rather
+   than a column every label has to fit into. Two of the five principles
+   were breaking across two lines in a fixed column. */
 .lede-label{position:absolute;inset-inline-start:0;top:0;z-index:2;
-  width:var(--lede-lab);margin:0;overflow-wrap:break-word;
+  width:auto;max-width:none;white-space:nowrap;margin:0;
   font-size:var(--t-micro);font-weight:400;letter-spacing:.06em;color:var(--walnut);
   line-height:1.35;
   padding-top:calc((var(--t-hero) * var(--lede-lh) - var(--t-micro) * 1.35) / 2)}
@@ -621,8 +632,11 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
 
 /* below the labelled measure there is no margin to hang in */
 @media (max-width:820px){
-  .lede-label{position:static;width:auto;line-height:1.4;margin-bottom:6px}
-  .lede .lede-body{text-indent:0}
+  /* stacked above the paragraph at this width, so it may wrap again —
+     nowrap here would simply run a long label off the page */
+  .lede-label{position:static;width:auto;white-space:normal;
+    line-height:1.4;margin-bottom:6px}
+  .lede-in > .lede-body{text-indent:0}
 }
 
 /* ---------- hero notes ----------------------------------------------
@@ -3484,7 +3498,7 @@ function render(reveal=true){
   renderMenu();
   wireMap(); wireCarousels(); wireFilm(); wireOpener(); wireIndexPreview(); wireParallax();
   wireHeroNotes(); wirePrinciples(); wireGallery();
-  wireRules(); wireTicker(); wireAutoType();
+  wireRules(); wireTicker(); fitLabels(); wireAutoType();
   if(reveal) initReveal();
 }
 
@@ -3672,6 +3686,22 @@ function markPhrase(el,instant){
   if(instant){ span.classList.add('set','on'); return; }
   requestAnimationFrame(()=>requestAnimationFrame(()=>span.classList.add('on')));
 }
+
+/* The indent under a hanging label is the label's own width, so it has to
+   be measured: a fixed column either wastes space under a short label or
+   breaks a long one across two lines. Set per lockup, and again on resize
+   because the label's type is fluid. */
+function fitLabels(){
+  for(const box of document.querySelectorAll('.lede-in')){
+    const lab=box.querySelector('.lede-label');
+    if(!lab) continue;
+    box.style.removeProperty('--lede-lab');
+    const w=Math.ceil(lab.getBoundingClientRect().width);
+    if(w) box.style.setProperty('--lede-lab',w+'px');
+  }
+}
+let fitT=0;
+addEventListener('resize',()=>{ clearTimeout(fitT); fitT=setTimeout(fitLabels,140); },{passive:true});
 
 function wireAutoType(){
   cancelAnimationFrame(autoRAF); autoRAF=0;
