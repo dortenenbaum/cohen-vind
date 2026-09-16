@@ -106,9 +106,10 @@
   /* the narrower measure the large setting keeps, as a length rather than
      a percentage — the plates that close on it sit in other containers */
   --lede-w:calc(var(--cw) * .8);
-  /* four pixels off the whole ramp — taken from the fluid middle and from
-     both ends, so it is the same four at every width */
-  --t-display:clamp(23px,calc(2.3958vw - 4px),54px);  /* 46 / 1.2 / -0.46 / Light */
+  /* Fixed, like the large setting above it: it holds at 35px from a
+     laptop upward and steps down below that, rather than growing with the
+     window. (The steps are in the block under this one.) */
+  --t-display:35px;                       /* 46 / 1.2 / -0.46 / Light */
   --t-title:clamp(22px,1.9271vw,46px);     /* 37 / 1.2 /  0.74 / Light  */
   --t-ui:clamp(15px,1.0417vw,25px);        /* 20 / norm /  0.40 / Reg   */
   --t-body:clamp(14px,0.9375vw,22px);      /* 18 / 1.4  /  0.54 / Reg   */
@@ -523,12 +524,12 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
      the map and the careers rail closer than it holds the studio plate. */
   --gap-lead:var(--gap-sec)}
 
-/* the large setting, stepped down as the window narrows */
-@media (max-width:1500px){ :root{--t-hero:43px} }
-@media (max-width:1280px){ :root{--t-hero:39px} }
-@media (max-width:1000px){ :root{--t-hero:35px} }
-@media (max-width:760px) { :root{--t-hero:31px} }
-@media (max-width:560px) { :root{--t-hero:27px} }
+/* the two large settings, stepped down as the window narrows */
+@media (max-width:1500px){ :root{--t-hero:43px;--t-display:33px} }
+@media (max-width:1280px){ :root{--t-hero:39px;--t-display:31px} }
+@media (max-width:1000px){ :root{--t-hero:35px;--t-display:28px} }
+@media (max-width:760px) { :root{--t-hero:31px;--t-display:26px} }
+@media (max-width:560px) { :root{--t-hero:27px;--t-display:23px} }
 .lede{padding-block:var(--gap-sec)}
 /* A lede that runs straight into the thing it introduces holds it close —
    but not as close as a 13px label holds its own content: a paragraph set
