@@ -906,7 +906,18 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    the screen's height, not its width: the picture is 1.82 times as wide as
    it is tall, so 112vh is what keeps it from standing taller than the
    window on a short one. */
-.crsl{--csl-gap:30px;--csl-w:min(84vw,1160px,132vh)}
+/* The plate is as wide as the large setting's measure, so the picture in
+   the middle of the rail ends on the same two lines as the paragraph
+   above it — and no taller than the screen will hold with its caption
+   underneath, so the whole slide can be read without scrolling.
+
+   Which of the two governs depends on the screen: on a tall one the
+   proportion does and the plate settles at 1.55; on a short one the
+   height does and the plate simply runs flatter. The caption is two lines
+   of display type plus the gap over it. */
+.crsl{--csl-gap:30px;
+  --csl-meta:calc(var(--t-display) * 2.4 + 18px);
+  --csl-w:min(calc(var(--lede-w) + 76px),92vw)}
 /* The rail runs to both edges of the window at every width, the way the
    reference does. Negating the gutter was not enough: .wrap caps at
    --maxw and centres, so a wide screen still left the auto margin on
@@ -960,14 +971,8 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
 .opener-txt img.icoimg,.opener-txt .ico{width:26px;height:26px}
 .shot-marks .ico,.opener-txt .ico{background:var(--marker-tint);border:1px solid var(--marker);color:var(--marker)}
 .opener-txt .ico{font-size:calc(26px * .56)}
-.crsl .shot{aspect-ratio:847/466}
-/* On a large screen the plate stands taller. The card's width is capped,
-   so height is the only room left — and it costs nothing: every project
-   image here is taller than 847/466 (they run 1.28 to 1.79 against the
-   frame's 1.82), so a taller frame shows more of each rather than
-   cropping it further. */
-@media (min-width:1281px){ .crsl .shot{aspect-ratio:847/546} }
-@media (min-width:1700px){ .crsl .shot{aspect-ratio:847/580} }
+.crsl .shot{aspect-ratio:auto;
+  height:min(calc((var(--csl-w) - 76px) / 1.55),calc(88vh - var(--csl-meta)))}
 .crsl .cslide .shot>img{will-change:transform}
 /* Only the transform moves. A filter on the picture has to re-raster the
    whole image on every frame, which is what made the first pass stutter,
@@ -1919,7 +1924,6 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
   .values{grid-template-columns:repeat(2,1fr);row-gap:48px}
   .grid{--gh:clamp(190px,26vw,320px)}
   .cslide .shot{height:min(43.5vw,424px)}
-  .crsl .shot{height:auto}
   .cslide.career{width:min(58vw,540px)}
   .cslide.career .shot{height:min(38.7vw,360px)}
 }
@@ -1940,7 +1944,6 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
   .crsl{--csl-w:86vw}
   .cslide.career{width:86vw}
   .cslide .shot,.cslide.career .shot{height:48vw}
-  .crsl .shot{height:auto}
   .tools{align-items:stretch}.tool-right,.views{width:100%}
 }
 </style>
