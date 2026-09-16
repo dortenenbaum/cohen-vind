@@ -88,10 +88,13 @@
   --cw:min(var(--maxw), 100vw - 2*var(--gutter));
 
   /* type — exact Figma values at 1920, scaled fluidly below it */
-  /* four points off the whole ramp — 4pt is 5.333px, taken from the fluid
-     middle and from both ends, so the reduction is the same at every
-     width rather than only at the top */
-  --t-hero:clamp(24.667px,calc(3.177vw - 5.333px),71.667px);
+  /* The large setting stops growing with the window. It had been fluid all
+     the way up, which on a wide screen took it far past the size it wants
+     to be read at; it holds at 47px from a laptop upward and steps down
+     below that. Steps rather than a ramp, because the size is now a
+     decision at each width rather than a consequence of the width.
+     (The steps are in the block under this one.) */
+  --t-hero:47px;
   /* the tracking the large setting reads at — a fixed measure, not a
      ratio, so it stays the same however the size moves */
   --lede-ls:.375px;
@@ -519,6 +522,13 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
      whether that is a photograph, a map or a rail — it had been holding
      the map and the careers rail closer than it holds the studio plate. */
   --gap-lead:var(--gap-sec)}
+
+/* the large setting, stepped down as the window narrows */
+@media (max-width:1500px){ :root{--t-hero:43px} }
+@media (max-width:1280px){ :root{--t-hero:39px} }
+@media (max-width:1000px){ :root{--t-hero:35px} }
+@media (max-width:760px) { :root{--t-hero:31px} }
+@media (max-width:560px) { :root{--t-hero:27px} }
 .lede{padding-block:var(--gap-sec)}
 /* A lede that runs straight into the thing it introduces holds it close —
    but not as close as a 13px label holds its own content: a paragraph set
