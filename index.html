@@ -4179,6 +4179,17 @@ function wireCarousels(){
 
     /* Three copies of the set, and you are always on the middle one. */
     const originals=[...track.querySelectorAll('.cslide')];
+    /* The rail arrives as one object rather than card by card. The clones
+       never carried the reveal — they are copies, and a copy has nothing
+       to announce — so leaving it on the originals meant half the rail was
+       simply there while the other half waited to be revealed: at rest the
+       peek on one side was solid and the peek on the other was still at
+       zero. The head above the rail still announces it. */
+    originals.forEach(c=>{
+      c.classList.remove('rv','rv-pre','rv-in');
+      c.querySelectorAll('.rv,.rv-img').forEach(x=>
+        x.classList.remove('rv','rv-img','rv-pre','rv-in'));
+    });
     const N=originals.length, loop=N>1;
     if(loop && !track.querySelector('[data-clone]')){
       const copy=()=>originals.map(c=>{
