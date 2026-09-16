@@ -940,21 +940,22 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    the screen's height, not its width: the picture is 1.82 times as wide as
    it is tall, so 112vh is what keeps it from standing taller than the
    window on a short one. */
-/* The plate keeps one proportion, 1.55, and takes the large setting's
-   measure — that is the rule. Under it sits a ceiling on how much of the
-   screen a slide may take, which only comes into play on a window too
-   short to hold a plate of that measure; there the height is settled
-   first and the width read back from it, so the card is smaller at the
-   same proportion rather than wide and flattened. */
+/* The plate takes the large setting's measure — that is the rule, and it
+   is what decides the width on every ordinary window. What keeps it from
+   being tall with it is the proportion: 1.95 rather than 1.55, so a plate
+   at full measure is a long low band rather than a block.
+
+   The ceiling under it is a backstop only. At 92% it catches nothing but
+   a window too short to hold a plate of that measure at all; there the
+   height settles first and the width is read back from it, so the card
+   comes down whole rather than flattening further. */
 .crsl{--csl-gap:30px;
   --csl-meta:calc(var(--t-display) * 2.4 + 18px);
-  --csl-cap:88vh;
-  --csl-h:min(calc(var(--lede-w) / 1.55),calc(var(--csl-cap) - var(--csl-meta)));
-  --csl-w:min(calc(var(--csl-h) * 1.55 + 76px),92vw)}
-/* The cap is a backstop, not a second rule: it is loose enough that the
-   measure decides the plate on any window of ordinary height, and only
-   catches a window too short to hold a plate of that measure — which is
-   where the rail was coming out enormous. */
+  --csl-ratio:1.95;
+  --csl-cap:92vh;
+  --csl-h:min(calc(var(--lede-w) / var(--csl-ratio)),calc(var(--csl-cap) - var(--csl-meta)));
+  --csl-w:min(calc(var(--csl-h) * var(--csl-ratio) + 76px),92vw)}
+
 /* The rail runs to both edges of the window at every width, the way the
    reference does. Negating the gutter was not enough: .wrap caps at
    --maxw and centres, so a wide screen still left the auto margin on
