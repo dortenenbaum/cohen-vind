@@ -940,23 +940,21 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    the screen's height, not its width: the picture is 1.82 times as wide as
    it is tall, so 112vh is what keeps it from standing taller than the
    window on a short one. */
-/* The plate keeps one proportion, 1.55, and is the smaller of two things:
-   the large setting's measure, or the share of the screen a slide is
-   allowed. The height is settled first and the width read back from it,
-   so where the screen governs, the whole card is simply smaller rather
-   than wide and flattened. */
+/* The plate keeps one proportion, 1.55, and takes the large setting's
+   measure — that is the rule. Under it sits a ceiling on how much of the
+   screen a slide may take, which only comes into play on a window too
+   short to hold a plate of that measure; there the height is settled
+   first and the width read back from it, so the card is smaller at the
+   same proportion rather than wide and flattened. */
 .crsl{--csl-gap:30px;
   --csl-meta:calc(var(--t-display) * 2.4 + 18px);
-  --csl-cap:66vh;
+  --csl-cap:88vh;
   --csl-h:min(calc(var(--lede-w) / 1.55),calc(var(--csl-cap) - var(--csl-meta)));
   --csl-w:min(calc(var(--csl-h) * 1.55 + 76px),92vw)}
-/* The bigger the screen, the smaller the share of it a slide takes. A
-   generous window does not want the rail filling it — it wants the rail
-   sitting in it with the page visible around it — while a laptop has
-   nothing to spare and needs most of what it has. */
-@media (max-width:1500px){ .crsl{--csl-cap:73vh} }
-@media (max-width:1280px){ .crsl{--csl-cap:80vh} }
-@media (max-width:1000px){ .crsl{--csl-cap:86vh} }
+/* The cap is a backstop, not a second rule: it is loose enough that the
+   measure decides the plate on any window of ordinary height, and only
+   catches a window too short to hold a plate of that measure — which is
+   where the rail was coming out enormous. */
 /* The rail runs to both edges of the window at every width, the way the
    reference does. Negating the gutter was not enough: .wrap caps at
    --maxw and centres, so a wide screen still left the auto margin on
