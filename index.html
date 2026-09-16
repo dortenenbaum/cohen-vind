@@ -92,6 +92,9 @@
      middle and from both ends, so the reduction is the same at every
      width rather than only at the top */
   --t-hero:clamp(24.667px,calc(3.177vw - 5.333px),71.667px);
+  /* the tracking the large setting reads at — a fixed measure, not a
+     ratio, so it stays the same however the size moves */
+  --lede-ls:.375px;
   --t-display:clamp(27px,2.3958vw,58px);   /* 46 / 1.2 / -0.46 / Light  */
   --t-title:clamp(22px,1.9271vw,46px);     /* 37 / 1.2 /  0.74 / Light  */
   --t-ui:clamp(15px,1.0417vw,25px);        /* 20 / norm /  0.40 / Reg   */
@@ -536,7 +539,7 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .lede-in{font-size:var(--t-hero);line-height:calc(var(--t-hero) * 1.08)}
 .lede-body{margin:0;font-weight:300;font-size:var(--t-hero);
   line-height:calc(var(--t-hero) * 1.08);
-  letter-spacing:-.01em;color:var(--vind-text)}
+  letter-spacing:var(--lede-ls);color:var(--vind-text)}
 /* only the opening claim hangs a label, so only it clears one */
 .lede .lede-body{font-size:inherit;line-height:inherit;
   text-indent:calc(var(--lede-lab) + clamp(24px,2.4vw,56px))}
@@ -1365,7 +1368,7 @@ body.map-full .hdr,body.map-full .floats{opacity:0;pointer-events:none;
 /* the closing claim is one of the page's large texts, so it is set at the
    size the ledes are — it breaks on its own line rather than on a measure */
 .ft-say{margin:0 0 clamp(22px,2.8vw,44px);max-width:20ch;font-weight:300;
-  font-size:var(--t-hero);line-height:calc(var(--t-hero) * 1.08);letter-spacing:-.01em}
+  font-size:var(--t-hero);line-height:calc(var(--t-hero) * 1.08);letter-spacing:var(--lede-ls)}
 
 .ft-cells{display:flex;flex-wrap:wrap;
   border-block:1px solid currentColor}
