@@ -1298,9 +1298,21 @@ td.go svg{width:17px;height:11px}
    end on one line down each side. The height is still pinned to where the
    frame settles rather than left to the ratio — a frame that grew taller
    as it widened would move everything below it on every scroll frame. */
-.mapdraw{--sf:0;aspect-ratio:auto;height:calc(var(--plate-w) * 1080 / 1738);
+/* The map stands inside one screen, and takes less of a big one. The
+   height is capped first and the width read back from it, so the frame
+   keeps the 1738:1080 it was drawn to and simply gets smaller — cap the
+   height alone and the frame goes flat, which on a map means cutting the
+   north and the south off the country rather than showing less detail. */
+.mapdraw{--sf:0;aspect-ratio:auto;
+  --map-cap:70vh;
+  --map-h:min(calc(var(--plate-w) * 1080 / 1738),var(--map-cap));
+  --map-w:calc(var(--map-h) * 1738 / 1080);
+  height:var(--map-h);
   margin-inline:calc((100% - var(--vw,100vw)) / 2 * (1 - var(--sf))
-                   + (100% - var(--plate-w)) / 2 * var(--sf))}
+                   + (100% - var(--map-w)) / 2 * var(--sf))}
+@media (max-width:1500px){ .mapdraw{--map-cap:80vh} }
+@media (max-width:1280px){ .mapdraw{--map-cap:88vh} }
+@media (max-width:1000px){ .mapdraw{--map-cap:95vh} }
 @media (prefers-reduced-motion:reduce){ .mapdraw{--sf:1} }
 
 /* ---- the map, full screen ------------------------------------------
