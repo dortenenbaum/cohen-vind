@@ -103,9 +103,12 @@
      own offset, and the footer's claim — and they have to agree or the
      label walks off the first line. */
   --lede-lh:1.14;
-  /* the narrower measure the large setting keeps, as a length rather than
-     a percentage — the plates that close on it sit in other containers */
-  --lede-w:calc(var(--cw) * .8);
+  /* The narrower measure the large setting keeps, as a length rather than
+     a percentage — the plates that close on it sit in other containers.
+     It stops at 800 however wide the window gets, which is also what
+     keeps the rail modest: a plate at this measure is 800 by 516, and
+     that stands inside any screen worth the name. */
+  --lede-w:min(calc(var(--cw) * .8),800px);
   /* Fixed, like the large setting above it: it holds at 35px from a
      laptop upward and steps down below that, rather than growing with the
      window. (The steps are in the block under this one.) */
@@ -925,20 +928,15 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    the screen's height, not its width: the picture is 1.82 times as wide as
    it is tall, so 112vh is what keeps it from standing taller than the
    window on a short one. */
-/* The plate keeps one proportion, 1.55, and is sized by whichever of two
-   limits is tighter: the large setting's measure, or what the screen has
-   left once the caption is allowed for — and it now takes 78 per cent of
-   the screen rather than 88, so there is air around it.
-
-   The height is settled first and the width read back from it, so on a
-   short screen the whole card is simply smaller. Sizing the width first
-   and letting the height be clipped, as it was, kept the card wide and
-   flattened the picture instead. On a tall enough screen the measure
-   governs and the picture ends on the same two lines as the paragraph
-   above it. The caption is two lines of display type plus its gap. */
+/* The plate keeps one proportion, 1.55, and takes the large setting's
+   measure — that rule wins outright now rather than competing with the
+   screen's height. It can, because the measure stops at 800: the plate is
+   800 by 516 at its largest, and a slide of that with its caption stands
+   inside any screen. The 92vh left in the height is a floor under absurd
+   windows, not a second rule. */
 .crsl{--csl-gap:30px;
   --csl-meta:calc(var(--t-display) * 2.4 + 18px);
-  --csl-h:min(calc(var(--lede-w) / 1.55),calc(78vh - var(--csl-meta)));
+  --csl-h:min(calc(var(--lede-w) / 1.55),92vh);
   --csl-w:min(calc(var(--csl-h) * 1.55 + 76px),92vw)}
 /* The rail runs to both edges of the window at every width, the way the
    reference does. Negating the gutter was not enough: .wrap caps at
