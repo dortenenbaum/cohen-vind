@@ -924,18 +924,21 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    the screen's height, not its width: the picture is 1.82 times as wide as
    it is tall, so 112vh is what keeps it from standing taller than the
    window on a short one. */
-/* The plate is as wide as the large setting's measure, so the picture in
-   the middle of the rail ends on the same two lines as the paragraph
-   above it — and no taller than the screen will hold with its caption
-   underneath, so the whole slide can be read without scrolling.
+/* The plate keeps one proportion, 1.55, and is sized by whichever of two
+   limits is tighter: the large setting's measure, or what the screen has
+   left once the caption is allowed for — and it now takes 78 per cent of
+   the screen rather than 88, so there is air around it.
 
-   Which of the two governs depends on the screen: on a tall one the
-   proportion does and the plate settles at 1.55; on a short one the
-   height does and the plate simply runs flatter. The caption is two lines
-   of display type plus the gap over it. */
+   The height is settled first and the width read back from it, so on a
+   short screen the whole card is simply smaller. Sizing the width first
+   and letting the height be clipped, as it was, kept the card wide and
+   flattened the picture instead. On a tall enough screen the measure
+   governs and the picture ends on the same two lines as the paragraph
+   above it. The caption is two lines of display type plus its gap. */
 .crsl{--csl-gap:30px;
   --csl-meta:calc(var(--t-display) * 2.4 + 18px);
-  --csl-w:min(calc(var(--lede-w) + 76px),92vw)}
+  --csl-h:min(calc(var(--lede-w) / 1.55),calc(78vh - var(--csl-meta)));
+  --csl-w:min(calc(var(--csl-h) * 1.55 + 76px),92vw)}
 /* The rail runs to both edges of the window at every width, the way the
    reference does. Negating the gutter was not enough: .wrap caps at
    --maxw and centres, so a wide screen still left the auto margin on
@@ -989,8 +992,7 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
 .opener-txt img.icoimg,.opener-txt .ico{width:26px;height:26px}
 .shot-marks .ico,.opener-txt .ico{background:var(--marker-tint);border:1px solid var(--marker);color:var(--marker)}
 .opener-txt .ico{font-size:calc(26px * .56)}
-.crsl .shot{aspect-ratio:auto;
-  height:min(calc((var(--csl-w) - 76px) / 1.55),calc(88vh - var(--csl-meta)))}
+.crsl .shot{aspect-ratio:auto;height:var(--csl-h)}
 .crsl .cslide .shot>img{will-change:transform}
 /* Only the transform moves. A filter on the picture has to re-raster the
    whole image on every frame, which is what made the first pass stutter,
@@ -1000,7 +1002,7 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
 .cslide .shot>img{width:100%;height:100%;object-fit:cover;transform:scale(1.001);
   backface-visibility:hidden;
   transition:transform .65s var(--ease)}
-.cslide:hover .shot>img{transform:scale(1.04)}
+.cslide:hover .shot>img{transform:scale(1.018)}
 .cslide .shot::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:var(--paper);opacity:.12;transition:opacity .45s var(--ease)}
 .cslide:hover .shot::before{opacity:0}
