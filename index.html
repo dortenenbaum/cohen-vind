@@ -766,9 +766,16 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
    end of the travel in Chromium, where the same arithmetic in a margin
    resolves cleanly. A block with auto width fills whatever the margins
    leave it, which is the same result by a road the engine likes. */
+/* The frame carries the photograph's own proportion — 2400 by 1182 — so
+   as it closes the picture is reduced rather than trimmed. It had a fixed
+   height instead, and a frame that keeps its height while its width comes
+   in grows proportionally taller than the picture in it: object-fit then
+   fills the height and takes the difference off the sides, which is why
+   the sides were being cut. At the picture's own ratio there is no
+   difference to take, at any width. */
 .shopfront{--sf:0;position:relative;margin-block:0;
   margin-inline:calc((100% - var(--lede-w)) / 2 * var(--sf));
-  height:clamp(300px,42vw,760px);overflow:hidden;background:var(--vind-20)}
+  aspect-ratio:2400 / 1182;overflow:hidden;background:var(--vind-20)}
 @media (prefers-reduced-motion:reduce){ .shopfront{--sf:1} }
 /* The studio photograph itself does not drift — only its frame closes on
    the measure as you come to it, and the reveal wipes it in. Nothing
