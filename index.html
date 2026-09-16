@@ -536,7 +536,12 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   padding-top:calc((var(--t-hero) * 1.08 - var(--t-micro) * 1.35) / 2)}
 /* a length, not a ratio: a unitless line-height inherits as the number, so
    the 13px label was building a 14px line box instead of the paragraph's */
-.lede-in{font-size:var(--t-hero);line-height:calc(var(--t-hero) * 1.08)}
+/* The large setting keeps a narrower measure than the rest of the page
+   and stands in the middle of it — the block is centred, the reading
+   inside it is not: the type stays ranged to the reading edge, and the
+   label in the margin travels in with the block it belongs to. */
+.lede-in{width:80%;margin-inline:auto;
+  font-size:var(--t-hero);line-height:calc(var(--t-hero) * 1.08)}
 .lede-body{margin:0;font-weight:300;font-size:var(--t-hero);
   line-height:calc(var(--t-hero) * 1.08);
   letter-spacing:var(--lede-ls);color:var(--vind-text)}
