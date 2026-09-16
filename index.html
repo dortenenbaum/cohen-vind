@@ -85,7 +85,11 @@
   --ico-sz:clamp(19px,1.29vw,28px);
   --ico-sz-lg:clamp(23px,1.55vw,34px);
   --mark-sz:clamp(22px,1.45vw,29px);  /* plan, scale and domain, one size everywhere */
-  --cw:min(var(--maxw), 100vw - 2*var(--gutter));
+  /* what .wrap leaves inside its gutter. Measured off the document's own
+     width: 100vw counts the scrollbar, which made this fifteen pixels
+     wider than the container it is supposed to describe, and anything
+     lining up against it sat that much outside the page. */
+  --cw:calc(min(var(--maxw), var(--vw,100vw)) - 2*var(--gutter));
 
   /* type — exact Figma values at 1920, scaled fluidly below it */
   /* The large setting stops growing with the window. It had been fluid all
@@ -112,10 +116,11 @@
      one above, which is right for the rail — a picture in a rail is read
      beside the paragraph — but a photograph and a map are plates, and the
      1200 that keeps the rail modest left them small on a wide screen.
-     Nine tenths of the window, measured off the document's own width
-     rather than 100vw, which counts the scrollbar and would push them
-     past the glass. */
-  --plate-w:calc(var(--vw,100vw) * .9);
+     They take the page's own container — the one the header's lockup and
+     the footer's content sit in — so a plate ends on the same two lines
+     as the logo above it and the address below. That is --cw, which is
+     exactly what .wrap leaves inside its gutter. */
+  --plate-w:var(--cw);
   /* Fixed, like the large setting above it: it holds at 35px from a
      laptop upward and steps down below that, rather than growing with the
      window. (The steps are in the block under this one.) */
