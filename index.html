@@ -300,19 +300,26 @@ body.hdr-clear .burger{color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
   background:linear-gradient(to top,rgba(16,15,13,.80) 0%,rgba(16,15,13,.46) 30%,rgba(16,15,13,.12) 58%,rgba(16,15,13,0) 78%),
              linear-gradient(to bottom,rgba(16,15,13,.52) 0%,rgba(16,15,13,.12) 16%,rgba(16,15,13,0) 30%)}
 /* ---- the line under the phrase --------------------------------------
-   The sentence finishes saying itself and then a stroke is drawn under
-   the words the practice turns on, by hand rather than by rule — it
-   starts at the reading edge and travels the way the line was just read.
-   One is placed per client rect, so a phrase that breaks across two lines
-   gets a stroke on each.
+   The rule is not laid over the words, it belongs to them: a background
+   on the inline run itself, grown from no width to full. That way it can
+   never drift — a face arriving late, a column changing width, the page
+   settling, all move the words and the rule with them, with nothing to
+   measure and nothing to re-place.
+
+   Anchored to the reading edge, so it is drawn from the right, the way
+   the line was read. box-decoration-break makes each fragment of a run
+   that breaks across two lines paint its own rule rather than sharing
+   one sliced between them.
    -------------------------------------------------------------------- */
-svg.uline{position:absolute;overflow:visible;pointer-events:none;z-index:1}
-svg.uline path{fill:none;stroke:var(--accent);stroke-width:var(--sw,4px);stroke-linecap:butt;
-  vector-effect:non-scaling-stroke;
-  stroke-dasharray:1;stroke-dashoffset:1}
-svg.uline.on path{stroke-dashoffset:0;
-  transition:stroke-dashoffset 1s cubic-bezier(.22,.61,.36,1) var(--d,0s)}
-svg.uline.set path{transition:none;stroke-dashoffset:0}
+.umark{position:relative;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone;
+  background-image:linear-gradient(var(--accent),var(--accent));
+  background-repeat:no-repeat;
+  background-position:right bottom;
+  background-size:0 max(3px,.075em)}
+.umark.on{background-size:100% max(3px,.075em);
+  transition:background-size 1s cubic-bezier(.22,.61,.36,1)}
+.umark.set{transition:none}
 
 /* ---------- vision: the principles, in the opening voice --------------
    The page speaks in one size. Each principle takes the shape the claim
@@ -3493,77 +3500,46 @@ function wireRules(){
    Every other large text here sets against the scroll: the reader's own
    travel down the page is what fills it. This one sits at the top with
    nothing to travel through, so it runs on a clock instead — and when the
-   sentence has finished, a stroke is drawn under the phrase it turns on.
+   sentence has finished, the phrase it turns on is wrapped in a run of
+   its own and that run draws its own rule.
+
+   An earlier pass measured the phrase and laid a stroke over it, which
+   drifted: a face arriving after the measurement moved the words and left
+   the rule short of them. The rule is part of the run now, so there is
+   nothing left to keep in step.
    --------------------------------------------------------------------- */
 const AUTO_SECS=4;                       /* however long the passage, it says
                                             itself in about this many */
 const AUTO_MIN=52;                       /* characters a second, at least */
 const UNDER_PHRASE='להיטיב עם הסביבה הפיזית';
-let autoRAF=0, autoEl=null;
+let autoRAF=0;
 
-function underRects(el){
-  const host=el.closest('.lede-in')||el.parentElement;
+function markPhrase(el,instant){
   const live=el.querySelector('.tp-live')||el;
-  const node=[...live.childNodes].find(n=>n.nodeType===3);
-  if(!node) return null;
-  const i=(node.nodeValue||'').indexOf(UNDER_PHRASE);
-  if(i<0) return null;
-  const rg=document.createRange();
-  rg.setStart(node,i); rg.setEnd(node,i+UNDER_PHRASE.length);
-  return {host,rects:[...rg.getClientRects()].filter(r=>r.width>4)};
-}
-
-function drawUnder(el,instant){
-  const found=underRects(el);
-  if(!found) return;
-  const {host,rects}=found;
-  host.querySelectorAll('svg.uline').forEach(n=>n.remove());
-  const hb=host.getBoundingClientRect();
-  rects.forEach((r,k)=>{
-    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.setAttribute('viewBox','0 0 300 12');
-    svg.setAttribute('preserveAspectRatio','none');
-    svg.setAttribute('aria-hidden','true');
-    svg.setAttribute('class','uline'+(instant?' set':''));
-    /* Straight, and exactly as wide as the phrase: butt caps and a path
-       that runs the full box mean the rule starts and stops on the first
-       and last letter. It is drawn from the reading edge — the path
-       starts at x=300 and runs out to x=0.
-       The rule sits just under the baseline rather than under the line
-       box, which in Hebrew, with almost nothing below the baseline, would
-       leave it floating clear of the words. */
-    svg.innerHTML='<path pathLength="1" d="M300 6H0"/>';
-    const sw=Math.max(3,Math.min(7,r.height*0.085));
-    const h=sw+2;
-    svg.style.setProperty('--sw',sw.toFixed(2)+'px');
-    svg.style.left=(r.left-hb.left)+'px';
-    svg.style.top=(r.top-hb.top+r.height*0.96-h/2)+'px';
-    svg.style.width=r.width+'px';
-    svg.style.height=h+'px';
-    svg.style.setProperty('--d',(k*0.16).toFixed(2)+'s');
-    host.appendChild(svg);
-    if(!instant) requestAnimationFrame(()=>requestAnimationFrame(()=>svg.classList.add('on')));
-  });
-}
-
-/* Both passes wait out the 1s draw — replacing the strokes mid-travel
-   would snap them to full length in front of the reader. */
-function settleUnder(el){
-  const again=()=>{ if(el.isConnected) drawUnder(el,true); };
-  document.fonts?.ready?.then(()=>setTimeout(again,1400));
-  setTimeout(again,1400);
-  setTimeout(again,2800);
+  let span=live.querySelector('.umark');
+  if(!span){
+    const node=[...live.childNodes].find(n=>n.nodeType===3);
+    if(!node) return;
+    const i=(node.nodeValue||'').indexOf(UNDER_PHRASE);
+    if(i<0) return;
+    const rg=document.createRange();
+    rg.setStart(node,i); rg.setEnd(node,i+UNDER_PHRASE.length);
+    span=document.createElement('span');
+    span.className='umark';
+    rg.surroundContents(span);
+  }
+  if(instant){ span.classList.add('set','on'); return; }
+  requestAnimationFrame(()=>requestAnimationFrame(()=>span.classList.add('on')));
 }
 
 function wireAutoType(){
-  cancelAnimationFrame(autoRAF); autoRAF=0; autoEl=null;
+  cancelAnimationFrame(autoRAF); autoRAF=0;
   const el=document.querySelector('[data-autotype]');
   if(!el) return;
   splitType(el);                        /* the ghost holds the box open */
   const live=el.querySelector('.tp-live'), text=el.dataset.raw||'';
   if(!live||!text) return;
-  autoEl=el;
-  if(REDUCED){ live.textContent=text; drawUnder(el,true); settleUnder(el); return; }
+  if(REDUCED){ live.textContent=text; markPhrase(el,true); return; }
   live.textContent='';
   const cps=Math.max(AUTO_MIN,text.length/AUTO_SECS);
   let n=0, acc=0, last=performance.now();
@@ -3575,20 +3551,10 @@ function wireAutoType(){
     }
     if(n<text.length){ autoRAF=requestAnimationFrame(step); return; }
     autoRAF=0;
-    drawUnder(el);
-    /* The rule is placed against where the words are at that instant. A
-       face that arrives late, or anything above still settling, moves
-       them afterwards and would leave the rule behind — so it is placed
-       again, already drawn, once the page has stopped moving. */
-    settleUnder(el);
+    markPhrase(el);
   };
   autoRAF=requestAnimationFrame(step);
 }
-/* the phrase moves when the measure does, so the strokes are replaced —
-   already drawn, with no second performance */
-addEventListener('resize',()=>{
-  if(autoEl && !autoRAF) drawUnder(autoEl,true);
-},{passive:true});
 
 /* ---------- parallax -------------------------------------------------
    An image inside a fixed frame drifts against the page as it passes,
