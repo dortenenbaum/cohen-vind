@@ -3335,7 +3335,7 @@ let ruleIO=null;
    It runs only while it is on screen — an endless translate off the foot
    of the page still costs a frame every frame.
    --------------------------------------------------------------------- */
-const TICK_SPEED=30;            /* px a second, the reference's own rate */
+const TICK_SPEED=60;            /* px a second — twice the reference's creep */
 let tickIO=null, tickRAF=0, tickRail=[], tickLast=0;
 
 function tickFrame(now){
