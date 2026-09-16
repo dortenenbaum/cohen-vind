@@ -909,6 +909,12 @@ a.sec-label:hover svg,a.sec-label:focus-visible svg{opacity:1;transform:translat
 .cslide .shot::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:var(--paper);opacity:.12;transition:opacity .45s var(--ease)}
 .cslide:hover .shot::before{opacity:0}
+/* The careers rail is a row of photographs, not a set of links. Nothing in
+   it lifts, nothing closes a hairline around it, and nothing sits under a
+   wash waiting to be cleared by a hover that leads nowhere — the pictures
+   are simply themselves. */
+.cslide.career .shot::before,.cslide.career .shot::after{content:none}
+.cslide.career:hover .shot>img{transform:scale(1.001)}
 .cslide .meta{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:18px}
 /* the title block is shared by the cards and the carousel; only the
    carousel centres, and centring it here quietly centred the grid too */
@@ -3061,7 +3067,7 @@ function projectHTML(){
 
 /* ---------- menu ---------- */
 const NAV = [
-  ['בית','home'],['פרויקטים','projects'],['חזון וערכים','vision'],['הצוות','team'],
+  ['בית','home'],['פרויקטים','projects'],['החזון שלנו','vision'],['הצוות','team'],
   ['אודות המשרד','about'],['קריירה','join'],['מאמרים','article'],['צרו קשר',null]
 ];
 /* ---------- one person --------------------------------------------- */
