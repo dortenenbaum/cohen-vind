@@ -69,8 +69,15 @@
   /* layout — 1920 breakpoint, 1740 content, 90px gutters */
   /* the measure comes in with it: the large setting and everything else
      that sits in .wrap share this one container */
-  --maxw:clamp(1655px,86vw,2090px);
-  --gutter:clamp(16px,4.6875vw,116px);
+  /* The page's container is nine tenths of the window at every width —
+     the lockup in the bar, the footer's content, and the plates that
+     close on it all end on those two lines. It had capped at 2090 with a
+     116px gutter, so a wide screen took it down to about three quarters
+     and the page drifted into the middle of the glass.
+     Measured off the document's width rather than 100vw, which counts the
+     scrollbar; the floor keeps a phone's gutter usable. */
+  --maxw:var(--vw,100vw);
+  --gutter:max(16px,calc(var(--vw,100vw) * .05));
   --hdr-h:91px;
   /* The bar's transitions live in one place because the preloader has its
      own rule for the same element: the shorthand there was replacing this
